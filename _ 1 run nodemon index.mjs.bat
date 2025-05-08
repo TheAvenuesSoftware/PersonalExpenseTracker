@@ -1,0 +1,1 @@
+start /max nodemon index.mjs

@@ -1,0 +1,98 @@
+<!-- collapse all     Ctrl + k + 0 -->
+<!-- expand all       Ctrl + k + j -->
+<!-- format           Alt + Shift + F (USE WITH CAUTION)-->
+<!-- word wrap toggle Alt + z -->
+
+<!-- - Element IDs & Classes: Use kebab-case (e.g., <div id="user-profile">) -->
+<!-- - Attributes: Follow HTML syntax conventions, using lowercase (e.g., <input type="text">) -->
+<!-- - Custom Attributes: Typically data-* (e.g., data-user-id) -->
+    
+<!DOCTYPE html>
+<html lang="en" class="footer-position-grid">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+
+    <!-- <link rel="stylesheet" href="../../../_global/styles/global.css"> -->
+    <!-- <link rel="stylesheet" href="../styles/local.css"> -->
+    <!-- <script src="../../../_global/utils/global.js"></script> -->
+    <!-- <script src="../src/local.js"></script> -->
+
+    <link rel="stylesheet" href="/project.css">
+    <link rel="stylesheet" href="/global.css">
+
+    <script type="module" src="/project.js"></script>
+    <script type="module" src="/globalClient.js"></script>
+
+    <script type="module" src="/projectConfig.js"></script>
+
+    <link rel="icon" type="image/png" href="/favicon.png">
+</head>
+<body>
+    <header>
+        <h1>Personal Expense Tracker</h1>
+    </header>
+    <main>
+        <form id="expense-form" class="std-frm-flex-wrapper">
+            <div class="std-frm-flex-item">
+                <label for="date0" >Date:</label>
+                <input type="text" id="date0" required />
+            </div>
+            <div class="std-frm-flex-item">
+                <label for="amount0" >Amount:</label>
+                <input type="number" id="amount0" required />
+            </div>
+            <div class="std-frm-flex-item">
+                <label for="category0" >Category:</label>
+                <input type="text" id="category0" required />
+            </div>
+            <div class="std-frm-flex-item">
+                <label for="description0" >Description:</label>
+                <input type="text" id="description0" required />
+            </div>
+            <div id="submitData0" class="std-btn" >Add Expense</div>
+        </form>
+        <form id="expense-form" class="std-frm-grid">
+            <label for="date" class="">Date:</label>
+                <input type="date" id="date" required />
+            <label for="amount" class="">Amount:</label>
+                <input type="number" id="amount" required />
+            <label for="category" class="">Category:</label>
+                <input type="text" id="category" required />
+            <label for="description" class="">Description:</label>
+                <input type="text" id="description" required />
+            <div id="submitData" class="std-btn" >Add Expense</div>
+        </form>
+        <section id="expense-list">
+            <h2>Expense List</h2>
+            <!-- Expenses will be dynamically added here -->
+        </section>
+        <section id="expense-summary">
+            <h2>Summary</h2>
+            <!-- Totals and statistics -->
+        </section>
+        <!-- <div>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae vel cumque blanditiis distinctio enim excepturi voluptatum, odio culpa laudantium laboriosam nostrum neque aspernatur soluta dolorum alias! Soluta at in illo adipisci commodi, neque debitis omnis nihil, enim praesentium dignissimos molestias eligendi aliquam labore mollitia eum accusamus ut veniam amet id! Quos eligendi ipsum, ullam eaque accusantium perspiciatis, consectetur sed, dolor alias voluptatem a. Rem explicabo sapiente deserunt repudiandae, ipsum nesciunt rerum ad, alias eum praesentium ab et libero voluptatem. Minus!</div> -->
+    </main>
+    <footer>
+
+        <!-- project-footer -->
+            <div id="project-footer" class="project-footer">
+                <div class=global-footer-content>
+                    <p>&copy; ${moment.year} The Avenues Software. All rights reserved.</p>
+                    <nav>
+                        <ul>
+                            <li><a href="/about">About Us</a></li>
+                            <li><a href="/privacy">Privacy Policy</a></li>
+                            <li><a href="/contact">Contact</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+        <!-- global-footer -->
+            <div id="global-footer" class="global-footer"></div>
+
+    </footer>
+</body>
+</html>
