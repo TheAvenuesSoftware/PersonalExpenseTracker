@@ -30,38 +30,39 @@ console.log('LOADED:- index.mjs');
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // .ENV;  .MJS
     
-    import dotenv from "dotenv";
-        dotenv.config({path:`./config/globalNode.env`});
-        console.log(consoleTrace());
-            if(typeof process.env.GLOBAL_PROJECT !== undefined){
-                console.log('IMPORTED:- globalNode.env');
-            }
-        // ...not required???
-            // dotenv.config({path:`./config/globalClient.env`});
-            // console.log(consoleTrace());
-            //     if(typeof process.env.DEV_IP_ADDRESS !== undefined){
-            //         console.log('LOADED:- project.env');
-            //     }
-        // ...not required???
-        dotenv.config({path:`./config/project.env`});
+        import dotenv from "dotenv";
+            dotenv.config({path:`./config/globalNode.env`});
             console.log(consoleTrace());
-            if(typeof process.env.DEV_IP_ADDRESS !== undefined){
-                console.log('IMPORTED:- project.env');
-            }
+                if(typeof process.env.GLOBAL_PROJECT !== undefined){
+                    console.log('IMPORTED:- globalNode.env');
+                }
+            // ...not required???
+                // dotenv.config({path:`./config/globalClient.env`});
+                // console.log(consoleTrace());
+                //     if(typeof process.env.DEV_IP_ADDRESS !== undefined){
+                //         console.log('LOADED:- project.env');
+                //     }
+            // ...not required???
+            dotenv.config({path:`./config/project.env`});
+                console.log(consoleTrace());
+                if(typeof process.env.DEV_IP_ADDRESS !== undefined){
+                    console.log('IMPORTED:- project.env');
+                }
 
-    import * as globalNodeMJS from '../../__global/utils/globalNode.mjs';
-        console.log(consoleTrace());
-        if(globalNodeMJS.globalNodeMJSisLoaded() === true){
-            console.log('IMPORTED:- globalNode.mjs');
-        }
-            // import * as validate from './src/projectServerSideValidations.mjs';
+        import * as globalNodeMJS from '../../__global/utils/globalNode.mjs';
+            console.log(consoleTrace());
+            if(globalNodeMJS.globalNodeMJSisLoaded() === true){
+                console.log('IMPORTED:- globalNode.mjs');
+            }
+                // import * as validate from './src/projectServerSideValidations.mjs';
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    // const crypto = require("crypto");
-    import crypto from 'crypto'
-    // const sessionKey = crypto.randomBytes(32).toString("hex");
-    const sessionKey = process.env.SESSION_KEY || crypto.randomBytes(32).toString("hex");
-    console.log(consoleTrace());
-    console.log('sessionKey:- ',sessionKey);
+    // retrieve the session key OR create one if can't be retrieved
+        // const crypto = require("crypto");
+            import crypto from 'crypto'
+            // const sessionKey = crypto.randomBytes(32).toString("hex");
+            const sessionKey = process.env.SESSION_KEY || crypto.randomBytes(32).toString("hex");
+            // console.log(consoleTrace()); // DON'T LOG THIS!!!  KEEP IT SECURE!!!
+            // console.log('sessionKey:- ',sessionKey); // DON'T LOG THIS!!!  KEEP IT SECURE!!!
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // EPXRESS
         // const express = require("express");
@@ -78,14 +79,14 @@ console.log('LOADED:- index.mjs');
             app.use(session({
                 secret: process.env.SESSION_KEY || sessionKey,
                 resave: false,   // Don't save unchanged sessions. Prevents unnecessary session saves if nothing has changed, improving efficiency.
-                saveUninitialized: true,  // Ensures sessions are stored even if uninitialized (useful for logging new visitors).
+                saveUninitialized: true,  // Allows sessions without login.  Ensures sessions are stored even if uninitialized (useful for logging new visitors).
                 cookie: { 
                     // secure: false, // Means the session cookie is not restricted to HTTPS; set it to true in production for security.
                     secure: process.env.NODE_ENV === "production",  // Enable secure cookies in production
                     httpOnly: true, // Prevent client-side JavaScript access (mitigates XSS attacks)
                     sameSite: "strict", // Helps prevent CSRF attacks
                     maxAge: 15 * 60 * 1000 // ✅ Expires after 15 minutes (in milliseconds)
-                    } // Set to true for HTTPS
+                } // Set to true for HTTPS
             }));
             console.log(consoleTrace());
             console.log("Session 'secure' setting:", process.env.NODE_ENV === "production");
@@ -94,7 +95,8 @@ console.log('LOADED:- index.mjs');
                     console.log(consoleTrace());
                     console.log("/store-session:-",req.body);
                     req.session.userData = req.body; 
-                    console.log("req.session.userData:-",req.sessionKey);
+                    console.log("req.session.userData:-",req.session.userData);
+                    console.log("req.session:-",req.session);
                     res.json({ message: "User data stored in session OK!" });
                 });
             // RETRIEVE session data
@@ -116,21 +118,48 @@ console.log('LOADED:- index.mjs');
                 });
             // REFRESH session timeout cookie
                 app.post("/refresh-session", (req, res) => {
-                    if (!req.session.user) {
+                    // console.log(("99").repeat(55));
+                    // console.log(consoleTrace());
+                    // console.log(req.session);
+                    if (!req.session.userData.userRole) {
                         return res.status(401).json({ error: "Session has already expired..." });
                     }
                     req.session.cookie.maxAge = 15 * 60 * 1000; // ✅ Reset session expiration
                     res.json({ message: "Session refreshed!" });
+                    // console.log(("99").repeat(55));
                 });
-                
+            // LOGOUT
+                app.post("/logout", (req, res) => {
+                    req.session.destroy((err) => {
+                        if (err){
+                            console.log(("99").repeat(55));
+                            console.log(consoleTrace());
+                            console.log(err);
+                            return res.status(500).send("Error ending session");
+                        }
+                        res.clearCookie("connect.sid"); // Remove session cookie
+                        res.send("Session ended successfully");
+                    });
+                });
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // catch-all
 app.use((req, res, next) => {
+
     console.log((",,").repeat(55));
     const myDate = new Date();
     console.log(("<>").repeat(5),`Received request: ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()} ${req.method} ${req.url}`);
     console.log(`${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);
+
+    if (!req.session.visitCount) {
+        req.session.visitCount = 1;
+    } else {
+        req.session.visitCount++;
+    }
+    // res.send(`You have visited ${req.session.visitCount} times.`);
+    console.log(consoleTrace());
+    console.log(`Visit # ${req.session.visitCount} times.`);
+
     next();
 });
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

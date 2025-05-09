@@ -185,4 +185,18 @@ header {
   background-color: #0056b3;
 }
 
+#session-timer {
+  position: fixed;
+  bottom: 5px;
+  right: 5px;
+  height: 1.5rem;
+  min-width: 1.5rem;
+  width: fit-content;
+  color: #fff;
+  background-color: #007bff;
+  text-align: center;
+  margin: auto;
+  border-radius: 5%;
+}
+
 /*# sourceMappingURL=global.css.map */

@@ -28,7 +28,21 @@ function projectJSisLoaded(){
     };
 
     // window.addEventListener("load", () =>
-        window.addEventListener("load", () => { 
+        window.addEventListener("load", () => {
+
+            let sessionTime = 0;
+
+            if(document.getElementById("session-timer")){
+                const sessionTimer = document.getElementById("session-timer")
+                let sessionTimerId = setInterval(() => {
+                    // console.log(consoleTrace());
+                    // console.log('x:- ',sessionTime)
+                    sessionTime += 1;
+                    sessionTimer.innerHTML = `${sessionTime}`
+                },1 * 1000);
+                console.log(consoleTrace());
+                console.log("Session timer active.");
+            }
 
             // // session storage set-up
             //     fetch("/store-session", {
@@ -82,8 +96,8 @@ function projectJSisLoaded(){
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({ 
-                                userName: "User's name, set at client side", 
-                                userRole: "User's role, set at client side"
+                                // userName: "User's name. Set at client side at login, if any.", 
+                                userRole: `guest`
                             })
                         });
                         const data = await response.json();
@@ -95,47 +109,71 @@ function projectJSisLoaded(){
             // REFRESH SESSION
                 async function refreshSession() {
                     console.log('refreshSession() executed.');
+                    const now = Date.now(); // current time in milliseconds
                     try {
+                        const response = await fetch("/refresh-session", { 
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                // userName: "User's name. Set at client side at login, if any.", 
+                                userRole: `guest`
+                            })
+                        });
+                        const data = await response.json();
+                        console.log("Session refresh attempted:- :", data);
                         clearTimeout(sessionWarningTimeout);
                         clearTimeout(sessionExpiredTimeout);
                         console.log("Session setTimeout(s) cleared.");
                         startSessionTimers();
                         console.log("Session setTimeout(s) started.");
-                        const response = await fetch("/refresh-session", { method: "POST" });
-                        const data = await response.json();
-                        console.log("Session refreshed:", data);
                     } catch (error) {
                         console.error("Error refreshing session:", error);
                     }
+                    document.getElementById("transient-message-overlay").remove();
                     window.removeEventListener("click", refreshSession);
                     window.removeEventListener("mousemove", refreshSession);
                     window.removeEventListener("keydown", refreshSession);
                 }
             // START SESSION TIMER
                 function startSessionTimers() {
-                    const timeoutWarning = 0.5 * 60 * 1000; // 25 minutes warning
-                    const sessionExpiration = 1 * 60 * 1000; // Full expiration time
+                    const sessionTimer = document.getElementById("session-timer")
+                    sessionTime = 0;
+                    const timeoutWarning = 10 * 1000; // time till warning message is displayed
+                    const sessionExpiration = 20 * 1000; // time to session expiration
                     sessionWarningTimeout = setTimeout(() => {
                         // alert("Your session is about to expire! Click anywhere to stay active.");
                         // globalClientJS.showWarning();
                         const message = "Your session is about to expire! Click anywhere to stay active.";
-                        globalClientJS.showCustomAlert(message);
+                        // globalClientJS.showCustomAlert(message);
+                        globalClientJS.showTransientMessage(message);
                         // Detect user activity and refresh session asynchronously
                             window.addEventListener("click", refreshSession);
                             window.addEventListener("mousemove", refreshSession);
                             window.addEventListener("keydown", refreshSession);
                     }, timeoutWarning);
                     sessionExpiredTimeout = setTimeout(() => {
-                        // alert("Session expired...");
-                        // globalClientJS.showWarning();
-                        const message = "Session expired...";
-                        globalClientJS.showCustomAlert(message);
                         // remove event listeners
                             window.removeEventListener("click", refreshSession);
                             window.removeEventListener("mousemove", refreshSession);
                             window.removeEventListener("keydown", refreshSession);
-                        // navigate to non-existent page, cancels session???
-                            window.location.href = "/session_expired";
+                        // alert("Session expired...");
+                        // globalClientJS.showWarning();
+                        const message = "Session expired...";
+                        // globalClientJS.showCustomAlert(message);
+                        globalClientJS.showCustomMessage(message);
+                        // // navigate to non-existent page, cancels session???
+                        //     window.location.href = "/session_expired";
+                            fetch("/logout", { 
+                                    method: "POST", 
+                                    credentials: "include" 
+                                }).then(() => {
+                                    console.log("Session ended.");
+                                    sessionStorage.clear();
+                                    document.cookie = "connect.sid=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+                                //   window.location.reload(); // Refresh or redirect if needed
+                                    alert("session has timed out");
+                                    window.location.href = "/session_expired";
+                            });
                     }, sessionExpiration);
                 }
             // START SESSION and START SESSION TIMER

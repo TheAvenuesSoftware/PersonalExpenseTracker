@@ -204,7 +204,7 @@ const consoleOn = true;
     }
 
 // Function to create and showCustomAlert() alert
-    export function showCustomAlert(message) {
+    export function showCustomMessage(message) {
         // Create backdrop
         const backdrop = document.createElement("div");
         backdrop.id = "custom-alert-backdrop";
@@ -228,9 +228,13 @@ const consoleOn = true;
         dialog.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.2)";
         dialog.style.textAlign = "center";
     
+        // Create title paragraph
+        const messageParagraph1 = document.createElement("p");
+        messageParagraph1.textContent = "Alert";
+    
         // Create message paragraph
-        const messageParagraph = document.createElement("p");
-        messageParagraph.textContent = message;
+        const messageParagraph2 = document.createElement("p");
+        messageParagraph2.textContent = message;
     
         // Create OK button
         const okButton = document.createElement("button");
@@ -252,19 +256,21 @@ const consoleOn = true;
         });
     
         okButton.addEventListener("click", () => {
-        document.body.removeChild(backdrop); // Remove the dialog from the DOM
+            document.body.removeChild(backdrop); // Remove the dialog from the DOM
         });
     
         // Append elements together
-        dialog.appendChild(messageParagraph);
+        dialog.appendChild(messageParagraph1);
+        dialog.appendChild(messageParagraph2);
         dialog.appendChild(okButton);
         backdrop.appendChild(dialog);
         document.body.appendChild(backdrop); // Add the dialog to the document
     }
-export function closeCustomAlert() {
-    const backdrop = document.getElementById('custom-alert-backdrop');
-    backdrop.style.display = 'none';
-}
+    // export function closeCustomAlert() {
+    //     const backdrop = document.getElementById('custom-alert-backdrop');
+    //     // backdrop.style.display = 'none';
+    //     backdrop.remove();
+    // }
 
 // detectDeviceType() START
 export function detectDeviceType() {
@@ -337,18 +343,60 @@ export async function getGlobalFooter() {
     }
 }
 
-export function showWarning() {
-    const warningDiv = document.createElement("div");
-    warningDiv.innerHTML = `
-        <div class="session-warning">
-            <p>Your session is about to expire! Click anywhere to stay active.</p>
-            <button id="dismiss-warning">OK</button>
-        </div>
-    `;
-    document.body.appendChild(warningDiv);
+export function showTransientMessage(message,mSeconds) {
+    // const warningDiv = document.createElement("div");
+    // warningDiv.id = "transient-message";
+    // warningDiv.innerHTML = `
+    //     <div class="session-warning">
+    //         <p>Warning.</p>
+    //         <p>${message}</p>
+    //         <div id="my-timer"></div>
+    //     </div>
+    // `;
+    // document.body.appendChild(warningDiv);
+    // setTimeout(()=>{
+    //     warningDiv.remove();
+    // },6 * 1000);
+        // Create transientMessageOverlay
+        const transientMessageOverlay= document.createElement("div");
+        transientMessageOverlay.id = "transient-message-overlay";
+        transientMessageOverlay.style.position = "fixed";
+        transientMessageOverlay.style.top = 0;
+        transientMessageOverlay.style.left = 0;
+        transientMessageOverlay.style.width = "100%";
+        transientMessageOverlay.style.height = "100%";
+        transientMessageOverlay.style.background = "rgba(0, 0, 0, 0.5)";
+        transientMessageOverlay.style.zIndex = "9999";
+        transientMessageOverlay.style.display = "flex";
+        transientMessageOverlay.style.justifyContent = "center";
+        transientMessageOverlay.style.alignItems = "center";
+    
+        // Create transientMessageDialog
+        const transientMessageDialog = document.createElement("div");
+        transientMessageDialog.id = "transientMessageDialog";
+        // transientMessageDialog.style.background = "#ffffff";
+        transientMessageDialog.style.background = "rgba(200, 0, 0, 0.3)";
+        transientMessageDialog.style.padding = "20px";
+        transientMessageDialog.style.borderRadius = "8px";
+        transientMessageDialog.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.2)";
+        transientMessageDialog.style.textAlign = "center";
+    
+        // Create title paragraph
+        const messageParagraph1 = document.createElement("p");
+        messageParagraph1.textContent = "Message will dissappear automatically...";
+    
+        // Create message paragraph
+        const messageParagraph2 = document.createElement("p");
+        messageParagraph2.textContent = message;
+        
+        // Append elements together
+        transientMessageDialog.appendChild(messageParagraph1);
+        transientMessageDialog.appendChild(messageParagraph2);
+        // transientMessageDialog.appendChild(okButton);
+        transientMessageOverlay.appendChild(transientMessageDialog);
+        document.body.appendChild(transientMessageOverlay); // Add the transientMessageDialog to the document
+    // setTimeout(()=>{
+    //     transientMessageOverlay.remove(); // Remove the dialog from the DOM
+    // },6 * 1000);
 
-    document.getElementById("dismiss-warning").addEventListener("click", () => {
-        document.body.removeChild(warningDiv);
-        refreshSession(); // Refresh session when user dismisses warning
-    });
 }
