@@ -49,7 +49,7 @@ console.log('LOADED:- index.mjs');
                 console.log('IMPORTED:- project.env');
             }
 
-    import * as globalNodeMJS from '../../_global/utils/globalNode.mjs';
+    import * as globalNodeMJS from '../../__global/utils/globalNode.mjs';
         console.log(consoleTrace());
         if(globalNodeMJS.globalNodeMJSisLoaded() === true){
             console.log('IMPORTED:- globalNode.mjs');
