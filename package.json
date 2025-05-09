@@ -19,5 +19,13 @@
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheAvenuesSoftware/PersonalExpenseTracker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/TheAvenuesSoftware/PersonalExpenseTracker/issues"
+  },
+  "homepage": "https://github.com/TheAvenuesSoftware/PersonalExpenseTracker#readme",
   "description": ""
 }

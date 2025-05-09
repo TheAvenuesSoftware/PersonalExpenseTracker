@@ -28,18 +28,18 @@ echo
 echo	2.1	del package-lock.json		will now execute
 pause
 del package-lock.json
-pause
 echo	2.2	rmdir /s /q node_modules 	will now execute
+pause
 rmdir /s /q node_modules
-pause
 echo	3	npm install			will now execute
-npm install
 pause
+npm install
 echo	4	...no
 echo	5	...no
 echo	6	npm list			will now execute
-npm list
 pause
+npm list
 echo	npx npm-check-updates -u		will now execute
+pause
 npx npm-check-updates -u
 pause
