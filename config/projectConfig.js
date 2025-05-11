@@ -27,7 +27,7 @@
 
 console.log(consoleTrace());
 console.log("LOADED:- projectConfig.js is loaded")
-function projectConfigJSisLoaded(){
+export function projectConfigJSisLoaded(){
     return true;
 }
 // Override console.trace to only output the first line of the stack trace START
@@ -42,12 +42,17 @@ function projectConfigJSisLoaded(){
         }
     };
 
-export const projectConfigJS = {
+const sessionWarningDelay = (60 * 60 * 1000);
+const sessionExpiredDelay = (65 * 60 * 1000);
+export const configSettings = {
     APP_NAME: "Personal Expense Tracker",
     API_KEY: "your-key-here", // public key only!!!
     BASE_URL: "http://192.168.1.117:3000",
     CONSOLE_ON: true,
     DATES_ALLOW_FUTURE: false,
-    DATES_ALLOW_ANY_PAST: false
+    DATES_ALLOW_ANY_PAST: false,
+    SESSION_WARNING_DELAY: sessionWarningDelay,
+    SESSION_EXPIRED_DELAY: sessionExpiredDelay
 };
-console.log('Project configuration variables, from projectConfig.js:-\n',projectConfigJS);
+console.log('Project configuration variables, from projectConfig.js:-\n',configSettings);
+console.log('Project configuration variables, from projectConfig.js:-\n',configSettings.SESSION_WARNING_DELAY);

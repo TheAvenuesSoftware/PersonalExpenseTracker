@@ -24,6 +24,8 @@ echo		Check the installed versions to confirm that they match your specification
 echo		npm list
 pause
 echo	----------------------------------------------------------------------------
+git config --global core.ignorecase false
+pause
 echo
 echo	2.1	del package-lock.json		will now execute
 pause

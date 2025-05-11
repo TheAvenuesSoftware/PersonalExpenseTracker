@@ -35,6 +35,8 @@ const consoleOn = true;
 import express from 'express';
 const router = express.Router();
 
+import fs from 'fs';
+
 import * as globalClient from './globalClient.js';
 // import { newDateAttributes } from './globalClient.js';
 
@@ -60,6 +62,52 @@ router.get("/getGlobalFooter", (req, res) => {
     res.send(myHtml);
     // const myHtml = `<div>...footer</div>`;
     // res.send(myHtml);
+});
+
+router.get("/isLoginRequired", (req, res) => {
+    console.log(consoleTrace());
+    console.log("router.get('/isLoginRequired...");
+    // const isLoginRequired = process.env.IS_LOGIN_REQUIRED; // DOESN'T WORK! it stores a text value of true, not the boolean.
+    const isLoginRequired = process.env.IS_LOGIN_REQUIRED?.toLowerCase() === "true"; // Handles case variations
+    console.log(consoleTrace());
+    console.log('isLoginRequired:- ',isLoginRequired);
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    if(isLoginRequired===true){
+        res.send({"message":true});
+    }else{
+        res.send({"message":false});
+    }
+});
+router.post("/login_step2", (req, res) => {
+    console.log(consoleTrace());
+    console.log("router.get(/login_step2...");
+    console.log(consoleTrace());
+    console.log('loginUserEmailAddress:- ',req.body.userEmailAddress);
+    // const filePath = `./data/${userEmailAddress}/${userEmailAddress}.db`;
+    const filePath = `./data/${req.body.userEmailAddress}.db`;
+    console.log(consoleTrace());
+    console.log(filePath);
+    if (fs.existsSync(filePath)) {
+        console.log(consoleTrace());
+        console.log('File exists!');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+        res.send({"message":`${req.body.userEmailAddress}.db found.`,"createNewAccout":false});
+    } else {
+        console.log(consoleTrace());
+        console.log('File not found.');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+        res.send({"message":`${req.body.userEmailAddress}.db not found.`,"createNewAccount":true});
+    }
+    // res.setHeader('Access-Control-Allow-Origin', '*');
+    // res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    // res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    // res.send({"message":req.body.userEmailAddress});
 });
 
 export default router;

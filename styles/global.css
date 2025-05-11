@@ -199,4 +199,67 @@ header {
   border-radius: 5%;
 }
 
+.busy-animation {
+  /* Center the animation */
+  /* The animated dots */
+  /* Use animation delay to stagger movement */
+  /* Keyframes for bounce effect */
+}
+.busy-animation .container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+.busy-animation .dot {
+  width: 12px;
+  height: 12px;
+  background-color: #3498db;
+  border-radius: 50%;
+  animation: bounce 1.5s infinite ease-in-out;
+}
+.busy-animation .dot:nth-child(1) {
+  animation-delay: 0s;
+}
+.busy-animation .dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.busy-animation .dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+@keyframes bounce {
+  0%, 80%, 100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  40% {
+    transform: scale(1.5);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+.fade-out {
+  animation: fadeOut 0.5s ease-out forwards;
+}
+
 /*# sourceMappingURL=global.css.map */

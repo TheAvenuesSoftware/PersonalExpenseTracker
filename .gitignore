@@ -5,13 +5,13 @@
         node_mdoules/
     # To recursively exclude a folder and its entire hierarchy and files therein, use the folder's name with a trailing slash.
 
-    *.doc*
-    
     *.env*
         # Will ignore any files that contain ".env" anywhere in their name. For instance, it would exclude files such as: 
         # .env, .env.local, .env.production, .myconfig.env
         # This is a flexible way to ensure that all variations of .env files are ignored in one go. 
-    
+    *.doc*
+    *GITignore*
+
     # Additional Notes:
     #     NEVER list the .git/ folder in the .gitignore file !!!
     #     Make sure the .gitignore file is placed in the root of your Git repository to apply these rules globally.

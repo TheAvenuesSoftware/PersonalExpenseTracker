@@ -96,7 +96,8 @@ console.log('LOADED:- index.mjs');
                     console.log("/store-session:-",req.body);
                     req.session.userData = req.body; 
                     console.log("req.session.userData:-",req.session.userData);
-                    console.log("req.session:-",req.session);
+                    // console.log(consoleTrace());
+                    // console.log("req.session:-",req.session);
                     res.json({ message: "User data stored in session OK!" });
                 });
             // RETRIEVE session data
@@ -163,6 +164,9 @@ app.use((req, res, next) => {
     next();
 });
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    // fs - fileSystem
+        // import fs from 'fs';
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // PATH
         import path from 'path';
         import { fileURLToPath } from 'url';
@@ -176,16 +180,16 @@ console.log(`${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);
 console.log(("<>").repeat(55));
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // ROUTERS
-        import routesProject, * as routesProjectFunctions from './src/globalNodeRoutes.mjs'; 
+        import routesGlobal, * as routesGlobalFunctions from './src/globalNodeRoutes.mjs'; 
+            app.use("/routesGlobal", routesGlobal);
+            console.log(consoleTrace());
+            console.log('IMPORTED:- router from ./src/globalNodeRoutes.mjs');
+
+        import routesProject, * as routesProjectFunctions from './src/projectNodeRoutes.mjs';
             app.use("/routesProject", routesProject);
             console.log(consoleTrace());
-            console.log('IMPORTED:- projectRoutes, routesProjectFunctions from ./src/globalNodeRoutes.mjs');
-
-        import routesDatval, * as routesDatvalFunctions from './src/projectServerSideValidations.mjs';
-            app.use("/routesDatval", routesDatval);
-            console.log(consoleTrace());
-            if(routesDatvalFunctions.test() === true){
-                console.log('IMPORTED:- datvalRoutes, routesDatvalFunctions from projectServerSideValidations.mjs');
+            if(routesProjectFunctions.test() === true){
+                console.log('IMPORTED:- router from projectServerSideValidations.mjs');
             }
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 myDate = new Date();
