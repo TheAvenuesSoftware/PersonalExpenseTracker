@@ -32,18 +32,21 @@ const consoleOn = true;
         }
     };
 
+import * as projectNodeSQLite from './projectNodeSQLite.mjs';
+projectNodeSQLite.accessDb("project");
+
 import express from 'express';
 const router = express.Router();
 
 import fs from 'fs';
 
-import * as globalClient from './globalClient.js';
-// import { newDateAttributes } from './globalClient.js';
+import * as browserJS from "./globalClient.js";
+import * as browserMessagesJS from "./globalClientOverlayMessages.js";
 
 // getGlobalFooter
 router.get("/getGlobalFooter", (req, res) => {
     console.log("router.get('/getGlobalFooter...");
-    const moment = globalClient.newDateAttributes();
+    const moment = browserJS.newDateAttributes();
     const myHtml = `
         <div class=global-footer-content>
             <p>&copy; ${moment.year} The Avenues Software. All rights reserved.</p>
@@ -108,6 +111,21 @@ router.post("/login_step2", (req, res) => {
     // res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     // res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     // res.send({"message":req.body.userEmailAddress});
+});
+export async function login_step3(req,res){
+    if(req.body.createNewAccount){
+        await projectNodeSQLite.accessDb(req.body.userEmailAddress);
+        console.log(consoleTrace());
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+        res.send({"message":`${req.body.userEmailAddress}.db created successfully.`});
+    }
+}
+router.post("/login_step3", (req, res) => {
+    console.log(consoleTrace());
+    console.log(req.body);
+    login_step3(req,res);
 });
 
 export default router;

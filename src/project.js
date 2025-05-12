@@ -26,10 +26,15 @@ function projectJSisLoaded(){
     return true;
 }
 
-globalClientJS.isLoginRequired();
+import * as browserJS from "./globalClient.js";
+import * as browserLoginJS from "./globalClientLogin.js";
+import * as browserMessagesJS from "./globalClientOverlayMessages.js";
+import * as projectConfigJS from "./projectConfig.js";
 
     // window.addEventListener("load", () =>
         window.addEventListener("load", () => {
+
+            browserLoginJS.isLoginRequired();
 
             let sessionDuration = 0;
 
@@ -87,7 +92,11 @@ globalClientJS.isLoginRequired();
                     } catch (error) {
                         console.error("Error refreshing session:", error);
                     }
-                    document.getElementById("transient-message-overlay").remove();
+                    document.querySelectorAll('.overlay').forEach(el => {
+                        el.style.transition = "opacity 0.5s";
+                        el.style.opacity = "0";
+                        setTimeout(() => el.remove(), 500);
+                    });
                     window.removeEventListener("click", refreshSession);
                     window.removeEventListener("mousemove", refreshSession);
                     window.removeEventListener("keydown", refreshSession);
@@ -100,39 +109,46 @@ globalClientJS.isLoginRequired();
                     const sessionExpiration = 1 * projectConfigJS.configSettings.SESSION_EXPIRED_DELAY // 20 * 1000; // time to session expiration
                     console.log('projectConfigJS.configSettings.SESSION_WARNING_DELAY:-\n',projectConfigJS.configSettings.SESSION_WARNING_DELAY,timeoutWarning /1000 / 60 /60,'\nprojectConfigJS.configSettings.SESSION_EXPIRED_DELAY:-\n',projectConfigJS.configSettings.SESSION_EXPIRED_DELAY,sessionExpiration / 1000 / 60 /60);
                     sessionWarningTimeout = setTimeout(() => {
-                        // alert("Your session is about to expire! Click anywhere to stay active.");
-                        // globalClientJS.showWarning();
+                        document.querySelectorAll('.overlay').forEach(el => {
+                            el.style.transition = "opacity 0.5s";
+                            el.style.opacity = "0";
+                            setTimeout(() => el.remove(), 500);
+                        });
                         const message = "Your session is about to expire! Click anywhere to stay active.";
-                        // globalClientJS.showCustomAlert(message);
-                        globalClientJS.showTransientMessage(message);
+                        browserMessagesJS.showTransientMessage(message,"warning",5);
                         // Detect user activity and refresh session asynchronously
                             window.addEventListener("click", refreshSession);
                             window.addEventListener("mousemove", refreshSession);
                             window.addEventListener("keydown", refreshSession);
                     }, timeoutWarning);
-                    sessionExpiredTimeout = setTimeout(() => {
+                    sessionExpiredTimeout = setTimeout(async () => {
                         // remove event listeners
                             window.removeEventListener("click", refreshSession);
                             window.removeEventListener("mousemove", refreshSession);
                             window.removeEventListener("keydown", refreshSession);
-                        // alert("Session expired...");
-                        // globalClientJS.showWarning();
+                        document.querySelectorAll('.overlay').forEach(el => {
+                            el.style.transition = "opacity 0.5s";
+                            el.style.opacity = "0";
+                            setTimeout(() => el.remove(), 500);
+                        });
                         const message = "Session expired...";
-                        // globalClientJS.showCustomAlert(message);
-                        globalClientJS.showCustomMessage(message);
-                        // // navigate to non-existent page, cancels session???
-                        //     window.location.href = "/session_expired";
-                            fetch("/logout", { 
-                                    method: "POST", 
-                                    credentials: "include" 
-                                }).then(() => {
-                                    console.log("Session ended.");
-                                    sessionStorage.clear();
-                                    document.cookie = "connect.sid=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
-                                //   window.location.reload(); // Refresh or redirect if needed
-                                    alert("session has timed out");
-                                    window.location.href = "/session_expired";
-                            });
+                        browserMessagesJS.showCustomMessage(message,"plain");
+                        await fetch("/logout", { 
+                                method: "POST", 
+                                credentials: "include" 
+                        }).then(() => {
+                            const myDate = new Date();
+                            console.log(`${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);
+                            console.log("Session ended.");
+                            sessionStorage.clear();
+                            document.cookie = "connect.sid=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+                            setTimeout(() => {
+                                const message = document.createElement("p");
+                                message.innerHTML = `<h1>Session timed out.</h1><br><p>Your session timed out at ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}.</p>`
+                                document.body.innerHTML = "";
+                                document.body.appendChild(message);
+                            },2000);
+                        });
                     }, sessionExpiration);
                 }
             // START SESSION and START SESSION TIMER
@@ -235,9 +251,9 @@ globalClientJS.isLoginRequired();
     });
 
 // ###################################################################################################
-import * as globalClientJS from "./globalClient.js";
-console.log('globalClientJS.globalCientJSisLoaded():- ',globalClientJS.globalCientJSisLoaded());
-globalClientJS.getGlobalFooter();
+console.log('browserJS.globalCientJSisLoaded():- ',browserJS.globalCientJSisLoaded());
+browserJS.getGlobalFooter();
 
-import * as projectConfigJS from "./projectConfig.js";
+console.log('browserMessagesJS.globalCientOverlayMessagesJSisLoaded():- ',browserMessagesJS.globalCientOverlayMessagesJSisLoaded());
+
 console.log('projectConfigJS.projectConfigJSisLoaded():- ',projectConfigJS.projectConfigJSisLoaded());

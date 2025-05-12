@@ -199,19 +199,23 @@ console.log(("<>").repeat(55));
     // SQLITE
         // const sqlite3 = require("sqlite3").verbose();
             import sqlite3 from "sqlite3";
-        // Connect to SQLite database
-        const db = new sqlite3.Database(`${process.env.PATH_TO_DATABASE}${process.env.DATABASE}`, (err) => {
-            if (err) {
-                console.log(consoleTrace());
-                console.error("Error connecting to SQLite database:",process.env.DATABASE_FILE_NAME, err);
-            } else {
-                console.log(consoleTrace());
-                console.log("Connected to SQLite database.",process.env.DATABASE_FILE_NAME);
-            }
-            myDate = new Date();
-            console.log(`${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);
-            console.log(("<>").repeat(55));
-        });
+        // Connect to SQLite database || Create if it doesn't exist
+        // export function accessDb(fileName){
+        //     const db = new sqlite3.Database(`${process.env.PATH_TO_DATABASE}${fileName}.db`, (err) => {
+        //         if (err) {
+        //             console.log(consoleTrace());
+        //             console.error("Error connecting to SQLite database:",fileName, err);
+        //         } else {
+        //             console.log(consoleTrace());
+        //             console.log(`Connected to SQLite database. ${fileName}.db`);
+        //         }
+        //         myDate = new Date();
+        //         console.log(`${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);
+        //         console.log(("<>").repeat(55));
+        //     });
+        // }
+        import * as projectNodeSQLite from './src/projectNodeSQLite.mjs';
+        projectNodeSQLite.accessDb("project");
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // CORS handling START
         import cors from 'cors';
