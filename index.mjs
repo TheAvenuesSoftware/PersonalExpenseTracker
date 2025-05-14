@@ -281,9 +281,9 @@ setInterval(() => {
     // console.clear();
     console.log(`🖥️ Memory Usage Monitor`);
     let memoryUsagePercent = (memory.rss / os.totalmem()) * 100;
-    console.log(`RSS:        ${formatMemoryBar(memory.rss, 100000000)} [1Gb bar length] % of total memory used:- ${memoryUsagePercent.toFixed(2)}% ${memory.rss / 1024 / 1024} MB`);
+    console.log(`RSS:        ${formatMemoryBar(memory.rss, 100000000)} [1Gb bar length] % of total memory used:- ${memoryUsagePercent.toFixed(2)}% ${(memory.rss / 1024 / 1024).toFixed(1)} MB`);
     memoryUsagePercent = (memory.heapUsed / os.totalmem()) * 100;
-    console.log(`Heap Used:  ${formatMemoryBar(memory.heapUsed, 100000000)} [1Gb bar length] % of total memory used:- ${memoryUsagePercent.toFixed(2)}% ${memory.heapUsed / 1024 / 1024} MB`);
+    console.log(`Heap Used:  ${formatMemoryBar(memory.heapUsed, 100000000)} [1Gb bar length] % of total memory used:- ${memoryUsagePercent.toFixed(2)}% ${(memory.heapUsed / 1024 / 1024).toFixed(1)} MB`);
     // console.log(`Heap Used:  ${formatMemoryBar(memory.heapUsed, 100000000)} ${memory.heapUsed / 1024 / 1024} MB`);
 }, 60000);
 

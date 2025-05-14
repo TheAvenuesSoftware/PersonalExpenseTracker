@@ -149,16 +149,16 @@ function login_step1(emailAddress="",createNewAccount){ // get UserEmailAddress;
     // 
         overlay.id = "overlay";
         overlay.classList.add("overlay");
-        overlay.style.position = "fixed";
-        overlay.style.top = 0;
-        overlay.style.left = 0;
-        overlay.style.width = "100%";
-        overlay.style.height = "100%";
-        overlay.style.background = "rgba(0, 0, 0, 0.25)";
-        overlay.style.zIndex = "9999";
-        overlay.style.display = "flex";
-        overlay.style.justifyContent = "center";
-        overlay.style.alignItems = "center";
+        // overlay.style.position = "fixed";
+        // overlay.style.top = 0;
+        // overlay.style.left = 0;
+        // overlay.style.width = "100%";
+        // overlay.style.height = "100%";
+        // overlay.style.background = "rgba(0, 0, 0, 0.25)";
+        // overlay.style.zIndex = "9999";
+        // overlay.style.display = "flex";
+        // overlay.style.justifyContent = "center";
+        // overlay.style.alignItems = "center";
     
     // 
         dialog.id = "dialog";

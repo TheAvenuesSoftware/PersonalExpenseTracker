@@ -63,19 +63,17 @@ loginRouter.get("/isLoginRequired", (req, res) => {
         console.log(consoleTrace());
         console.log(filePath);
         if (fs.existsSync(filePath)) {
-            console.log(consoleTrace());
-            console.log('File exists!');
+            console.log(consoleTrace(),'File exists!');
             res.setHeader('Access-Control-Allow-Origin', '*');
             res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
             res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-            res.send({"message":`${req.body.userEmailAddress}.db found.`,"createNewAccout":false});
+            res.send({"message":`${req.body.userEmailAddress}.db found.`,"createNewAccout":false,"issueLoginCode":true});
         } else {
-            console.log(consoleTrace());
-            console.log('File not found.');
+            console.log(consoleTrace(),'File not found.');
             res.setHeader('Access-Control-Allow-Origin', '*');
             res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
             res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-            res.send({"message":`${req.body.userEmailAddress}.db not found.`,"createNewAccount":true});
+            res.send({"message":`${req.body.userEmailAddress}.db not found.`,"createNewAccount":true,"issueLoginCode":false});
         }
         // res.setHeader('Access-Control-Allow-Origin', '*');
         // res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
