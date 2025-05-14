@@ -2,7 +2,6 @@
 <!-- expand all       Ctrl + k + j -->
 <!-- format           Alt + Shift + F (USE WITH CAUTION)-->
 <!-- word wrap toggle Alt + z -->
-
 <!-- - Element IDs & Classes: Use kebab-case (e.g., <div id="user-profile">) -->
 <!-- - Attributes: Follow HTML syntax conventions, using lowercase (e.g., <input type="text">) -->
 <!-- - Custom Attributes: Typically data-* (e.g., data-user-id) -->
@@ -14,19 +13,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expense Tracker</title>
 
-    <!-- <link rel="stylesheet" href="../../../_global/styles/global.css"> -->
-    <!-- <link rel="stylesheet" href="../styles/local.css"> -->
-    <!-- <script src="../../../_global/utils/global.js"></script> -->
-    <!-- <script src="../src/local.js"></script> -->
+    <link rel="stylesheet" href="project.css">
+    <link rel="stylesheet" href="global.css">
 
-    <link rel="stylesheet" href="/project.css">
-    <link rel="stylesheet" href="/global.css">
+    <script type="module" src="/globalLoginClient.mjs"></script>
+    <!-- <script type="module" src="/globalRoutes.mjs"></script> -->
 
-    <script type="module" src="/project.js"></script>
-    <script type="module" src="/globalClient.js"></script>
-    <script type="module" src="/globalClientOverlayMessages.js"></script>
+    <script type="module" src="globalClient.mjs"></script>
+    <script type="module" src="projectClient.mjs"></script>
+    
+    <script type="module" src="globalUIpopups.mjs"></script>
 
-    <script type="module" src="/projectConfig.js"></script>
+    <script type="module" src="projectConfig.mjs"></script>
 
     <link rel="icon" type="image/png" href="/favicon.png">
 
@@ -36,6 +34,7 @@
         <h1>Personal Expense Tracker</h1>
     </header>
     <main>
+        <img src="/project-signed-in.png" style="height:25px;width:25px;position:fixed;top:5px;right:5px;">
         <form id="expense-form" class="std-frm-flex-wrapper">
             <div class="std-frm-flex-item">
                 <label for="date0" >Date:</label>
@@ -76,6 +75,7 @@
         </section>
         <!-- <div>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae vel cumque blanditiis distinctio enim excepturi voluptatum, odio culpa laudantium laboriosam nostrum neque aspernatur soluta dolorum alias! Soluta at in illo adipisci commodi, neque debitis omnis nihil, enim praesentium dignissimos molestias eligendi aliquam labore mollitia eum accusamus ut veniam amet id! Quos eligendi ipsum, ullam eaque accusantium perspiciatis, consectetur sed, dolor alias voluptatem a. Rem explicabo sapiente deserunt repudiandae, ipsum nesciunt rerum ad, alias eum praesentium ab et libero voluptatem. Minus!</div> -->
     </main>
+    <!-- <canvas id="memoryChart"></canvas> -->
     <footer>
 
         <!-- project-footer -->

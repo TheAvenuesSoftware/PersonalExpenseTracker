@@ -2,16 +2,19 @@
 // <!-- expand all       Ctrl + k + j -->
 // <!-- format           Alt + Shift + F (USE WITH CAUTION)-->
 // <!-- word wrap toggle Alt + z -->
-
 // - Variables & Functions: Use camelCase (e.g., getUserName(), totalAmount)
 // - Classes & Constructors: Use PascalCase (e.g., UserModel, DataProcessor)
 // - Constants: Use UPPER_CASE_SNAKE_CASE (e.g., API_KEY, MAX_LIMIT)
-// - Modules: Often kebab-case for filenames (e.g., user-profile.js)
+// - Modules: Often kebab-case for filenames (e.g., user-profile.mjs)
 // - Event & Callback Handlers: Prefix with on (e.g., onClick, onDataReceived)
 // - Private Variables: Some use leading _ to indicate private properties (_hiddenProperty)
 
 let myDate;
 myDate = new Date();
+console.log(("<>").repeat(55));
+console.log(("SERVER RE-START <> ").repeat(6));
+console.log(`${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);
+console.log(("<>").repeat(55));
 
 console.log(consoleTrace());
 console.log('LOADED:- index.mjs');
@@ -49,12 +52,13 @@ console.log('LOADED:- index.mjs');
                     console.log('IMPORTED:- project.env');
                 }
 
-        import * as globalNodeMJS from '../../__global/utils/globalNode.mjs';
-            console.log(consoleTrace());
-            if(globalNodeMJS.globalNodeMJSisLoaded() === true){
-                console.log('IMPORTED:- globalNode.mjs');
-            }
-                // import * as validate from './src/projectServerSideValidations.mjs';
+        // import * as globalNodeMJS from './src/globalNode.mjs';
+        //     // import * as globalNodeMJS from '../../__global/utils/globalNode.mjs';
+        //     console.log(consoleTrace());
+        //     if(globalNodeMJS.globalNodeMJSisLoaded() === true){
+        //         console.log('IMPORTED:- globalNode.mjs');
+        //     }
+        //         // import * as validate from './src/projectServerSideValidations.mjs';
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // retrieve the session key OR create one if can't be retrieved
         // const crypto = require("crypto");
@@ -73,6 +77,8 @@ console.log('LOADED:- index.mjs');
         const staticFolders = ['config', 'media', 'public', 'src', 'styles'];
         staticFolders.forEach(folder => {
             app.use(express.static(folder));
+            app.use(`/${folder}`,express.static(folder));
+            console.log(`mapped folder:- ${folder}`);
         });
         // EXPRESS-SESSION
             import session from "express-session";
@@ -90,58 +96,6 @@ console.log('LOADED:- index.mjs');
             }));
             console.log(consoleTrace());
             console.log("Session 'secure' setting:", process.env.NODE_ENV === "production");
-            // SET-UP Store user data in the session
-                app.post("/store-session", (req, res) => {
-                    console.log(consoleTrace());
-                    console.log("/store-session:-",req.body);
-                    req.session.userData = req.body; 
-                    console.log("req.session.userData:-",req.session.userData);
-                    // console.log(consoleTrace());
-                    // console.log("req.session:-",req.session);
-                    res.json({ message: "User data stored in session OK!" });
-                });
-            // RETRIEVE session data
-                app.get("/get-session", (req, res) => {
-                    if (!req.session.username && !req.session.userData) {
-                        return res.status(401).json({ error: "Session data not found!" });
-                    }
-                    res.json({
-                        username: req.session.username || "No username data",
-                        role: req.session.role || "No role data",
-                        sessionData: req.session.userData || "No session data found."
-                    });
-                });
-            // ADD to session data
-                app.post("/set-session", (req, res) => {
-                    req.session.favoriteColor = "Blue";  
-                    req.session.isLoggedIn = true;    
-                    res.json({ message: "Additional session data added!" });
-                });
-            // REFRESH session timeout cookie
-                app.post("/refresh-session", (req, res) => {
-                    // console.log(("99").repeat(55));
-                    // console.log(consoleTrace());
-                    // console.log(req.session);
-                    if (!req.session.userData.userRole) {
-                        return res.status(401).json({ error: "Session has already expired..." });
-                    }
-                    req.session.cookie.maxAge = 15 * 60 * 1000; // ✅ Reset session expiration
-                    res.json({ message: "Session refreshed!" });
-                    // console.log(("99").repeat(55));
-                });
-            // LOGOUT
-                app.post("/logout", (req, res) => {
-                    req.session.destroy((err) => {
-                        if (err){
-                            console.log(("99").repeat(55));
-                            console.log(consoleTrace());
-                            console.log(err);
-                            return res.status(500).send("Error ending session");
-                        }
-                        res.clearCookie("connect.sid"); // Remove session cookie
-                        res.send("Session ended successfully");
-                    });
-                });
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // catch-all
@@ -165,7 +119,10 @@ app.use((req, res, next) => {
 });
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // fs - fileSystem
-        // import fs from 'fs';
+        import fs from 'fs';
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    // os - operatingSystem
+        import os from 'os';
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // PATH
         import path from 'path';
@@ -180,16 +137,32 @@ console.log(`${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);
 console.log(("<>").repeat(55));
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // ROUTERS
-        import routesGlobal, * as routesGlobalFunctions from './src/globalNodeRoutes.mjs'; 
-            app.use("/routesGlobal", routesGlobal);
+        import loginRouter, * as loginFunctions from './src/globalLoginServer.mjs';
+            app.use("/loginRouter", loginRouter);
             console.log(consoleTrace());
-            console.log('IMPORTED:- router from ./src/globalNodeRoutes.mjs');
+            if(loginFunctions.globalLoginServerMJSisLoaded() === true){
+                console.log('IMPORTED:- router from ./src/globalLoginServer.mjs');
+            }
 
-        import routesProject, * as routesProjectFunctions from './src/projectNodeRoutes.mjs';
-            app.use("/routesProject", routesProject);
+        import globalRouter, * as globalFunctions from './src/globalRouter.mjs'; 
+            app.use("/globalRouter", globalRouter);
             console.log(consoleTrace());
-            if(routesProjectFunctions.test() === true){
-                console.log('IMPORTED:- router from projectServerSideValidations.mjs');
+            if(globalFunctions.globalRoutesMJSisLoaded() === true){
+                console.log('IMPORTED:- router from ./src/globalRoutes.mjs');
+            }
+
+        import projectRouter, * as projectFunctions from './src/projectRouter.mjs';
+            app.use("/projectRouter", projectRouter);
+            console.log(consoleTrace());
+            if(projectFunctions.projectRoutesMJSisLoaded() === true){
+                console.log('IMPORTED:- router from projectRoutes.mjs');
+            }
+
+        import sessionsRouter, * as sessionsFunctions from './src/globalSessionsServer.mjs';
+            app.use("/sessionsRouter", sessionsRouter);
+            console.log(consoleTrace());
+            if(sessionsFunctions.globalSessionsServerMJSisLoaded() === true){
+                console.log('IMPORTED:- router from globalSessionsServer.mjs');
             }
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 myDate = new Date();
@@ -214,7 +187,7 @@ console.log(("<>").repeat(55));
         //         console.log(("<>").repeat(55));
         //     });
         // }
-        import * as projectNodeSQLite from './src/projectNodeSQLite.mjs';
+        import * as projectNodeSQLite from './src/projectSQLite.mjs';
         projectNodeSQLite.accessDb("project");
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // CORS handling START
@@ -275,7 +248,45 @@ console.log(("<>").repeat(55));
                 res.status(500).json({ error: 'Failed to process expenses' });
             }
         });
-    
+
+// monitor memory usage
+    // const formatMemoryUsage = (data) => `${(data / 1024 / 1024).toFixed(2)} MB`;
+    // setInterval(() => {
+    //     const memoryUsage = process.memoryUsage();
+    //     console.clear(); // Clears previous logs for readability
+    //     console.log(("__").repeat(55));
+    //     console.log(`🖥️ Memory Usage Monitor`);
+    //     console.log(`1️⃣ RSS: Resident Size Set\n- The total memory allocated to your Node.mjs process, including:\n- Heap memory\n- Stack memory\n- Code segment\n- Why it matters:\n- This gives an overview of how much RAM your application is consuming. If RSS keeps increasing, it could indicate a memory leak.`);
+    //     console.log(`${(" ").repeat(5)}RSS: ${formatMemoryUsage(memoryUsage.rss)}`);
+    //     console.log(`${(" ").repeat(5)}${("~~").repeat(15)}`);
+    //     console.log(`2️⃣ Heap Used\n- What it is: The amount of actively used memory in the JavaScript heap.\n- Why it matters: This is the actual memory being used to store variables, objects, and function executions.\n- Key observation: If heapUsed keeps growing without dropping, it could signal inefficient memory management.`);
+    //     console.log(`${(" ").repeat(5)}Heap Used: ${formatMemoryUsage(memoryUsage.heapUsed)}`);
+    //     console.log(`${(" ").repeat(5)}${("~~").repeat(15)}`);
+    //     console.log(`3️⃣ Heap Total\n- What it is: The total allocated memory for the heap.\n- Why it matters: Node.mjs expands this dynamically, so a growing heap might indicate high memory demand.`);
+    //     console.log(`${(" ").repeat(5)}Heap Total: ${formatMemoryUsage(memoryUsage.heapTotal)}`);
+    //     console.log(`${(" ").repeat(5)}${("~~").repeat(15)}`);
+    //     console.log(`4️⃣ External\n- What it is: Memory used by objects managed outside of the JavaScript heap, such as:\n- Buffer allocations (Buffer.from())\n- WebAssembly objects\n- Native C++ extensions\n- Why it matters: If your app uses a lot of Buffers (e.g., file handling or network requests), external might be a significant factor.`);
+    //     console.log(`${(" ").repeat(5)}External: ${formatMemoryUsage(memoryUsage.external)}`);
+    //     console.log(`${(" ").repeat(5)}${("~~").repeat(15)}`);
+    //     console.log(`How to Use These Stats\n✅ If RSS is too high, your app might need optimization or might be consuming too much memory.\n✅ If heapUsed > heapTotal, it suggests memory saturation, potentially slowing performance.\n✅ If external memory spikes, you may have large Buffer allocations affecting memory usage.\n🚀`);
+    //     console.log(("__").repeat(55));
+    // }, 2000); // Logs every 2 seconds
+
+const formatMemoryBar = (value, max) => {
+    const barLength = Math.floor((value / max) * 40);
+    return '█'.repeat(barLength).padEnd(40, ' ');
+};
+setInterval(() => {
+    const memory = process.memoryUsage();
+    // console.clear();
+    console.log(`🖥️ Memory Usage Monitor`);
+    let memoryUsagePercent = (memory.rss / os.totalmem()) * 100;
+    console.log(`RSS:        ${formatMemoryBar(memory.rss, 100000000)} [1Gb bar length] % of total memory used:- ${memoryUsagePercent.toFixed(2)}% ${memory.rss / 1024 / 1024} MB`);
+    memoryUsagePercent = (memory.heapUsed / os.totalmem()) * 100;
+    console.log(`Heap Used:  ${formatMemoryBar(memory.heapUsed, 100000000)} [1Gb bar length] % of total memory used:- ${memoryUsagePercent.toFixed(2)}% ${memory.heapUsed / 1024 / 1024} MB`);
+    // console.log(`Heap Used:  ${formatMemoryBar(memory.heapUsed, 100000000)} ${memory.heapUsed / 1024 / 1024} MB`);
+}, 60000);
+
 // Start the server
     const PORT = process.env.PORT;
     const DEV_IP_ADDRESS = process.env.DEV_IP_ADDRESS;
