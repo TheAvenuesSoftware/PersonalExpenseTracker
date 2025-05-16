@@ -1,14 +1,6 @@
-function consoleTrace() {
-    try {
-        const stack = new Error().stack;
-        const firstLine = stack.split('\n')[2].trim();
-        return `Trace line: ${firstLine}`;
-    } catch (error) {
-        return 'Trace line: not available';
-    }
-};
+const consoleLog = false;
 
-console.log(consoleTrace(),"\nLOADED:- project.mjs is loaded",new Date().toLocaleString());
+if(consoleLog===true){console.log(consoleTrace(),"\nLOADED:- project.mjs is loaded",new Date().toLocaleString());}
 function projectMJSisLoaded(){
     return true;
 }
@@ -21,7 +13,7 @@ function projectMJSisLoaded(){
 // window.addEventListener("load", () =>
     window.addEventListener("load", () => {
 
-        console.log(consoleTrace(),'\nwindow "load" successsful.');
+        if(consoleLog===true){console.log(consoleTrace(),'\nwindow "load" successsful.');}
 
         // globalLoginMJS.isLoginRequired();
 
@@ -57,7 +49,7 @@ function projectMJSisLoaded(){
 
         // getAllExpenses()
             async function getAllExpenses(){
-                console.log(getAllExpenses());
+                if(consoleLog===true){console.log(getAllExpenses());}
                 const v_data = JSON.stringify(
                     {
                         x: "y"
@@ -67,16 +59,16 @@ function projectMJSisLoaded(){
                 // await fetch('http://localhost:3000/getAllExpenses',v_options)
                 await fetch('http://process.env.LOCALHOST:3000/getAllExpenses',v_options)
                 .then(res => {
-                    console.log(res);
+                    if(consoleLog===true){console.log(res);}
                     // Note that despite the method being named json(), 
                     // the result is not JSON but is instead the result of 
                     // taking JSON as input and parsing it to produce a JavaScript object.
                     return res.json();
                 })
                 .then(res =>{
-                    // console.log(res);
+                    // if(consoleLog===true){console.log(res);}
                     const myDate = new Date(res).toLocaleString();
-                    // console.log(myDate);
+                    // if(consoleLog===true){console.log(myDate);}
                     // document.getElementById("versionNumber").innerHTML = myDate.slice(0,10) + " " + res.slice(11,19);
                     document.getElementById("versionNumber").innerHTML = myDate.slice(0,10) + "<br>" + myDate.slice(11,myDate.length);
                 })
@@ -98,9 +90,9 @@ function projectMJSisLoaded(){
                         });                
                         if (!response.ok) throw new Error(`Server Error: ${response.statusText}`);
                         const data = await response.json();
-                        console.log("Response:", data.response);
+                        if(consoleLog===true){console.log("Response:", data.response);}
                     } catch (error) {
-                        console.error("Error sending POST request:", error.message);
+                        if(consoleLog===true){console.error("Error sending POST request:", error.message);}
                     }
                 }
                 validate_date();

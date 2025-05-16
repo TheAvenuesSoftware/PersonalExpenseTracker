@@ -1,17 +1,14 @@
-function consoleTrace() {
-    try {
-        const stack = new Error().stack;
-        const firstLine = stack.split('\n')[2].trim();
-        return `Trace line: ${firstLine}`;
-    } catch (error) {
-        return 'Trace line: not available';
-    }
-};
+const consoleLog = false;
 
-console.log(consoleTrace(),"\nLOADED:- globalUIpopups.mjs is loaded",new Date().toLocaleString());
+if(consoleLog===true){console.log(consoleTrace(),"\nLOADED:- globalUIpopups.mjs is loaded",new Date().toLocaleString());}
 export function globalUIpopupsJSisLoaded(){
     return true;
 }
+
+// ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
+    import {} from "./globalClient.mjs";
+// ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
+
 
 // Function to create and showCustomAlert() alert
     export function showCustomMessage(message,type="plain",nSeconds=0) {

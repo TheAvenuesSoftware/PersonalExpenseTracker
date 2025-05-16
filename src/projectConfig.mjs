@@ -1,3 +1,5 @@
+const consoleLog = false;
+
 // <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 //      robocopy C:\SourceFolder D:\DestinationFolder /E /V /XD C:\SourceFolder\ExcludeFolder1 C:\SourceFolder\ExcludeFolder2
 // <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
@@ -35,8 +37,8 @@ function consoleTrace() {
     }
 };
 
-console.log(consoleTrace());
-console.log("LOADED:- projectConfig.mjs is loaded")
+if(consoleLog===true){console.log(consoleTrace());}
+if(consoleLog===true){console.log("LOADED:- projectConfig.mjs is loaded");}
 export function projectConfigJSisLoaded(){
     return true;
 }
@@ -54,8 +56,8 @@ export const configSettings = {
     SESSION_EXPIRED_DELAY: sessionExpiredDelay,
     CONSOLE_ON: true
 };
-console.log('Project configuration variables, from projectConfig.mjs:-\n',configSettings);
-console.log('Project configuration variables, from projectConfig.mjs:-\n',configSettings.SESSION_WARNING_DELAY);
+if(consoleLog===true){console.log('Project configuration variables, from projectConfig.mjs:-\n',configSettings);}
+if(consoleLog===true){console.log('Project configuration variables, from projectConfig.mjs:-\n',configSettings.SESSION_WARNING_DELAY);}
 
 // loginEmailHtml
     export function loginEmailHtml(loginCode){

@@ -1,21 +1,13 @@
-export function consoleTrace() {
-    try {
-        const stack = new Error().stack;
-        const firstLine = stack.split('\n')[2].trim();
-        return `Trace line: ${firstLine}`;
-    } catch (error) {
-        return 'Trace line: not available';
-    }
-};
+const consoleLog = false;
 
-console.log(consoleTrace(),"\nLOADED:- globalClient.mjs is loaded",new Date().toLocaleString());
+if(consoleLog===true){console.log("LOADED:- globalClient.mjs is loaded",new Date().toLocaleString());}
 export function globalClientJSisLoaded(){
     return true;
 }
 
 // universal fetch
     export async function universalFetch(url, method = 'GET', data = null) {
-        console.log(consoleTrace(),"\n",url,'\n',method,'\n',data);
+        if(consoleLog===true){console.log("\n",url,'\n',method,'\n',data);}
         try {
             // Ensure data is correctly formatted before using it in the request
                 const body = isValidJSONString(data)
@@ -73,34 +65,34 @@ export function globalClientJSisLoaded(){
 
         const newDate = new Date();
 
-        // console.log('newDate',newDate);
-        // console.log('newDate.toDateString()',newDate.toDateString());
-        // console.log('newDate.toISOString()',newDate.toISOString());
-        // console.log('newDate.toJSON()',newDate.toJSON());
-        // console.log('newDate.toLocaleDateString()',newDate.toLocaleDateString());
-        // console.log('newDate.toLocaleString()',newDate.toLocaleString());
-        // console.log('newDate.toLocaleTimeString()',newDate.toLocaleTimeString());
-        // console.log('newDate.toString()',newDate.toString());
-        // console.log('newDate.toTimeString()',newDate.toTimeString());
-        // console.log('newDate.toUTCString()',newDate.toUTCString());
-        // console.log('newDate.getTimezoneOffset()',newDate.getTimezoneOffset());
-        // console.log('newDate.getTime()',newDate.getTime());
-        // console.log('newDate.getDate()',newDate.getDate());
-        // console.log('newDate.getDay()',newDate.getDay());
-        // console.log('newDate.getMonth()',newDate.getMonth());
-        // console.log('newDate.getFullYear()',newDate.getFullYear());
-        // console.log('newDate.getHours()',newDate.getHours());
-        // console.log('newDate.getMinutes()',newDate.getMinutes());
-        // console.log('newDate.getSeconds()',newDate.getSeconds());
-        // console.log('newDate.getMilliseconds()',newDate.getMilliseconds());
-        // console.log('newDate.getUTCDate()',newDate.getUTCDate());
-        // console.log('newDate.getUTCDay()',newDate.getUTCDay());
-        // console.log('newDate.getUTCMonth()',newDate.getUTCMonth());
-        // console.log('newDate.getUTCFullYear()',newDate.getUTCFullYear());
-        // console.log('newDate.getUTCHours()',newDate.getUTCHours());
-        // console.log('newDate.getUTCMinutes()',newDate.getUTCMinutes());
-        // console.log('newDate.getUTCSeconds()',newDate.getUTCSeconds());
-        // console.log('newDate.getUTCMilliseconds()',newDate.getUTCMilliseconds());
+        // if(consoleLog===true){console.log('newDate',newDate);}
+        // if(consoleLog===true){console.log('newDate.toDateString()',newDate.toDateString());}
+        // if(consoleLog===true){console.log('newDate.toISOString()',newDate.toISOString());}
+        // if(consoleLog===true){console.log('newDate.toJSON()',newDate.toJSON());}
+        // if(consoleLog===true){console.log('newDate.toLocaleDateString()',newDate.toLocaleDateString());}
+        // if(consoleLog===true){console.log('newDate.toLocaleString()',newDate.toLocaleString());}
+        // if(consoleLog===true){console.log('newDate.toLocaleTimeString()',newDate.toLocaleTimeString());}
+        // if(consoleLog===true){console.log('newDate.toString()',newDate.toString());}
+        // if(consoleLog===true){console.log('newDate.toTimeString()',newDate.toTimeString());}
+        // if(consoleLog===true){console.log('newDate.toUTCString()',newDate.toUTCString());}
+        // if(consoleLog===true){console.log('newDate.getTimezoneOffset()',newDate.getTimezoneOffset());}
+        // if(consoleLog===true){console.log('newDate.getTime()',newDate.getTime());}
+        // if(consoleLog===true){console.log('newDate.getDate()',newDate.getDate());}
+        // if(consoleLog===true){console.log('newDate.getDay()',newDate.getDay());}
+        // if(consoleLog===true){console.log('newDate.getMonth()',newDate.getMonth());}
+        // if(consoleLog===true){console.log('newDate.getFullYear()',newDate.getFullYear());}
+        // if(consoleLog===true){console.log('newDate.getHours()',newDate.getHours());}
+        // if(consoleLog===true){console.log('newDate.getMinutes()',newDate.getMinutes());}
+        // if(consoleLog===true){console.log('newDate.getSeconds()',newDate.getSeconds());}
+        // if(consoleLog===true){console.log('newDate.getMilliseconds()',newDate.getMilliseconds());}
+        // if(consoleLog===true){console.log('newDate.getUTCDate()',newDate.getUTCDate());}
+        // if(consoleLog===true){console.log('newDate.getUTCDay()',newDate.getUTCDay());}
+        // if(consoleLog===true){console.log('newDate.getUTCMonth()',newDate.getUTCMonth());}
+        // if(consoleLog===true){console.log('newDate.getUTCFullYear()',newDate.getUTCFullYear());}
+        // if(consoleLog===true){console.log('newDate.getUTCHours()',newDate.getUTCHours());}
+        // if(consoleLog===true){console.log('newDate.getUTCMinutes()',newDate.getUTCMinutes());}
+        // if(consoleLog===true){console.log('newDate.getUTCSeconds()',newDate.getUTCSeconds());}
+        // if(consoleLog===true){console.log('newDate.getUTCMilliseconds()',newDate.getUTCMilliseconds());}
 
         const date = newDate.getDate().toString().padStart(2, '0');
         const day = newDate.getDay().toString();
@@ -121,7 +113,7 @@ export function globalClientJSisLoaded(){
         if(hour >= 12 & second > 0){
             hour12 = (hour - 12).toString().padStart(2,"0");
             ampm = "pm"
-            // console.log("ampm");
+            // if(consoleLog===true){console.log("ampm");}
         }
 
         const jsonObject = {
@@ -144,7 +136,7 @@ export function globalClientJSisLoaded(){
             hhmmss12:`${hour12}:${minute}:${second}`,
             ampm:ampm
         };
-        // if(consoleOn){(console.log(`newDate:- ${newDate}\ndate:- ${date}\nday:- ${day}\nmonth:- ${month}\nyear:- ${year}\nhour12:- ${hour12}${ampm}\nhour24:- ${hour24}${ampm}\nminute:- ${minute}\nsecond:- ${second}\n`));}
+        if(consoleLog===true){(console.log(`newDate:- ${newDate}\ndate:- ${date}\nday:- ${day}\nmonth:- ${month}\nyear:- ${year}\nhour12:- ${hour12}${ampm}\nhour24:- ${hour24}${ampm}\nminute:- ${minute}\nsecond:- ${second}\n`));}
         return jsonObject;
     // return attributes for:- new Date() END
     }
@@ -168,9 +160,9 @@ export function globalClientJSisLoaded(){
     // addToDate(baseDate, years = 0, months = 0, days = 0, hours = 0, minutes = 0, seconds = 0) END
     }
     const newDate = new Date(); // Base date
-    // console.log('Base Date:', newDate);
+    // if(consoleLog===true){console.log('Base Date:', newDate);}
     const modifiedDate = addToDate(newDate, 1, -2, 10, -5, 30, 45); // Add/subtract values
-    // console.log('Modified Date:', modifiedDate);
+    // if(consoleLog===true){console.log('Modified Date:', modifiedDate);}
 
 // test API end point active/not-active START
     export async function sendDataToApi(testData,localhostEndpoint,wwwEndpoint) {
@@ -192,7 +184,7 @@ export function globalClientJSisLoaded(){
         }
         // Return response if successful
         const result = await response.json();
-        console.log('Success from Primary API:', result);
+        if(consoleLog===true){console.log('Success from Primary API:', result);}
         return result;
         } catch (error) {
         console.warn('Primary API failed, switching to Secondary API:', error.message);
@@ -210,7 +202,7 @@ export function globalClientJSisLoaded(){
             }
             // Return response if successful
             const fallbackResult = await fallbackResponse.json();
-            console.log('Success from Secondary API:', fallbackResult);
+            if(consoleLog===true){console.log('Success from Secondary API:', fallbackResult);}
             return fallbackResult;
         } catch (fallbackError) {
             console.error('Both APIs failed:', fallbackError.message);
@@ -242,7 +234,7 @@ export function detectDeviceType() {
         return "Unknown Device";
 // detectDeviceType() END
 }
-// console.log(detectDeviceType());
+// if(consoleLog===true){console.log(detectDeviceType());}
 
 // detectOS() START
 export function detectOS() {
@@ -269,20 +261,19 @@ export function detectOS() {
     return "Unknown Operating System";
 // detectOS() END
 }
-// console.log(detectOS());
+// if(consoleLog===true){console.log(detectOS());}
 
 // getGlobalFooter()
 export async function getGlobalFooter() {
-    console.log(consoleTrace());
-    console.log('getGlobalFooter()...');
+    if(consoleLog===true){console.log('getGlobalFooter()...');}
     const fetchUrl = `/globalRouter/getGlobalFooter`;
-    console.log(fetchUrl);
+    if(consoleLog===true){console.log(fetchUrl);}
     try {
         // fetch
             const response = await fetch(fetchUrl);
             if (!response.ok) throw new Error(`Server Error: ${response.statusText}`);
             const html = await response.text(); // Fetch HTML as text
-            // console.log(html); // Logs correctly? Great!
+            // if(consoleLog===true){console.log(html);} // Logs correctly? Great!
         // Inject into the page
             document.getElementById("global-footer").innerHTML = html;
     } catch (error) {

@@ -1,14 +1,6 @@
-export function consoleTrace() {
-    try {
-        const stack = new Error().stack;
-        const firstLine = stack.split('\n')[2].trim();
-        return `Trace line: ${firstLine}`;
-    } catch (error) {
-        return 'Trace line: not available';
-    }
-};
+const consoleLog = false;
 
-console.log(consoleTrace(),"\nLOADED:- globalRoutes.mjs is loaded",new Date().toLocaleString());
+if(consoleLog===true){console.log(consoleTrace(),"\nLOADED:- globalRoutes.mjs is loaded",new Date().toLocaleString());}
 export function globalRoutesMJSisLoaded(){
     return true;
 }
@@ -18,10 +10,11 @@ export function globalRoutesMJSisLoaded(){
     const globalRouter = Router();
     // import * as globalClientJS from "./globalClient.mjs";
     import {newDateAttributes} from "./globalClient.mjs";
+    import {consoleTrace} from "./globalServer.mjs";
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 
 globalRouter.get("/getGlobalFooter", (req, res) => {
-    console.log("router.get('/getGlobalFooter...");
+    if(consoleLog===true){console.log("router.get('/getGlobalFooter...");}
     const moment = newDateAttributes();
     const myHtml = `
         <div class=global-footer-content>

@@ -1,14 +1,6 @@
-export function consoleTrace() {
-    try {
-        const stack = new Error().stack;
-        const firstLine = stack.split('\n')[2].trim();
-        return `Trace line: ${firstLine}`;
-    } catch (error) {
-        return 'Trace line: not available';
-    }
-};
+const consoleLog = false;
 
-console.log(consoleTrace(),"\nLOADED:- projectRoutes.mjs is loaded",new Date().toLocaleString());
+if(consoleLog===true){console.log(consoleTrace(),"\nLOADED:- projectRoutes.mjs is loaded",new Date().toLocaleString());}
 export function projectRoutesMJSisLoaded(){
     return true;
 }
@@ -16,16 +8,17 @@ export function projectRoutesMJSisLoaded(){
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
     import { Router } from "express";
     const projectRouter = Router();
+    import {consoleTrace} from "./globalServer.mjs";
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 
 projectRouter.post('/validate_date', (req,res) => {
-    console.log(consoleTrace());
-    console.log('req.body:- ',req.body);
+    if(consoleLog===true){console.log(consoleTrace());}
+    if(consoleLog===true){console.log('req.body:- ',req.body);}
     const date = new Date(req.body.date);
-    console.log('new Date(req.body.date):- ',date);
+    if(consoleLog===true){console.log('new Date(req.body.date):- ',date);}
     let today = new Date().toLocaleDateString();
     today = new Date(new Date());
-    console.log('today:- ',today);
+    if(consoleLog===true){console.log('today:- ',today);}
     if(date > today){
         res.send(`{"response":"A future date is not valid, please try again."}`)
     }
