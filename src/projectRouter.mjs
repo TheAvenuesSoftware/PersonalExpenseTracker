@@ -28,4 +28,53 @@ projectRouter.post('/validate_date', (req,res) => {
     }
 });
 
+    // Endpoint to get data from database
+        projectRouter.get("/getExpenses", (req, res) => {
+            if(consoleLog===true){console.log(consoleTrace());}
+            if(consoleLog===true){console.log("app.get('/getExpenses', async (req, res)");}
+            db.all("SELECT * FROM expenses", [], (err, rows) => {
+                if (err) {
+                    res.status(500).send(err.message);
+                } else {
+                    res.json(rows);
+                }
+            });
+        });
+
+    // Endpoint to get data from database
+        projectRouter.post('/getAllExpenses', async (req, res) => {
+            if(consoleLog===true){console.log(consoleTrace());}
+            if(consoleLog===true){console.log("app.get('/getAllExpenses', async (req, res)");}
+            try {
+                if(consoleLog===true){console.log(consoleTrace());}
+                if(consoleLog===true){console.log(req.body);}
+                // Step 1: Fetch data from an external source (mocked for simplicity)
+                    const externalData = [
+                        { id: 1, item: 'Groceries', amount: 50 },
+                        { id: 2, item: 'Rent', amount: 1200 },
+                        { id: 3, item: 'Utilities', amount: 150 },
+                    ];
+
+                // Step 2: Validate or enrich the data
+                    const validatedData = externalData.map(expense => {
+                        if (!expense.item || expense.amount <= 0) {
+                            throw new Error(`Invalid expense data: ${JSON.stringify(expense)}`);
+                        }
+                        return {
+                            ...expense,
+                            timestamp: new Date().toISOString() // Add a timestamp
+                        };
+                    });
+
+                // Step 3: Send the processed data to the client
+                    res.status(200).json(validatedData);
+
+            } catch (error) {
+                if(consoleLog===true){console.log(consoleTrace());}
+                console.error('🔴 Error:', error.message);
+                res.status(500).json({ error: 'Failed to process expenses' });
+            }
+        });
+
+
 export default projectRouter;

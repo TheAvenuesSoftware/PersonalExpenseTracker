@@ -17,6 +17,29 @@ function globalLoginClientJSisLoaded(){
 
         isLoginRequired();
 
+        // const signInOutButton = document.getElementById("sign-in-out-button")
+        // signInOutButton.addEventListener("mouseenter", () => {
+        //     signInOutButton.style.transform = "scale(1.05)";
+        //     signInOutButton.style.background = "linear-gradient(135deg, #1440AF, #4A90E2)";
+        // });
+        // signInOutButton.addEventListener("mouseleave", () => {
+        //     signInOutButton.style.transform = "scale(1)";
+        //     signInOutButton.style.background = "linear-gradient(135deg,rgb(226, 74, 74),rgb(175, 20, 20))";
+        // });
+
+        // signInOutButton.addEventListener("mouseenter",signInOutButtonFocus);
+        // function signInOutButtonFocus(){
+        //     signInOutButton.style.transform = "scale(1.05)";
+        //     signInOutButton.style.background = "linear-gradient(135deg, #1440AF, #4A90E2)";
+        // }
+        // signInOutButton.removeEventListener("mouseenter",signInOutButtonFocus);
+        // signInOutButton.addEventListener("mouseenter",signInOutButtonFocus);
+        // function signInOutButtonBlur(){
+        //     signInOutButton.style.transform = "scale(1)";
+        //     signInOutButton.style.background = "linear-gradient(135deg,rgb(226, 74, 74),rgb(175, 20, 20))";
+        // }
+        // signInOutButton.removeEventListener("mouseenter",signInOutButtonBlur);
+
     });
 
 // check email address
@@ -98,6 +121,7 @@ async function login_step4(userEmailAddress,createNewAccount,userLoginCode){
     const data = await universalFetch(fetchUrl,fetchType,JSON.stringify(fetchPayload));
     if(consoleLog===true){console.log(data);}
     if(consoleLog===true){console.log(data.message,data.loginApproved);}
+
     if(data.loginApproved===true){
         document.querySelectorAll('.overlay').forEach(el => {
             el.style.transition = "opacity 0.5s";
@@ -105,6 +129,9 @@ async function login_step4(userEmailAddress,createNewAccount,userLoginCode){
             setTimeout(() => el.remove(), 500);
         });
         alert("🟢 Secure login is successful.");
+        document.getElementById("sign-in-out-button").innerHTML = "Sign out";
+        document.getElementById("sign-in-out-button").classList.add("sign-out-button");
+        document.getElementById("sign-in-out-button").classList.remove("sign-in-button");
     }else{
         document.querySelectorAll('.overlay').forEach(el => {
             el.style.transition = "opacity 0.5s";
@@ -112,6 +139,9 @@ async function login_step4(userEmailAddress,createNewAccount,userLoginCode){
             setTimeout(() => el.remove(), 500);
         });
         alert("login failed, please try again");
+        document.getElementById("sign-in-out-button").innerHTML = "Sign in";
+        document.getElementById("sign-in-out-button").classList.add("sign-in-button");
+        document.getElementById("sign-in-out-button").classList.remove("sign-out-button");
     }
 }
 async function login_step3(userEmailAddress,createNewAccount=false){

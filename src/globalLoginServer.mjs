@@ -138,12 +138,12 @@ loginRouter.get("/isLoginRequired", (req, res) => {
         if(consoleLog===true){console.log(consoleTrace(),JSON.stringify(req.session.securityCode.code, null, 2));}
         if(consoleLog===true){console.log(consoleTrace(),"\nreq.session.securityCode:-",JSON.stringify(req.session.securityCode.code, null, 2));}
         if(req.body.userLoginCode===req.session.securityCode.code.toString()){
-            
             res.setHeader('Access-Control-Allow-Origin', '*');
             res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
             res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
             res.send({"message":`Login approved for ${req.body.userEmailAddress}.`,"loginApproved":true});
             console.log(`🔒🟢 login success`);
+            console.log(req.session);
         }else{
             res.setHeader('Access-Control-Allow-Origin', '*');
             res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');

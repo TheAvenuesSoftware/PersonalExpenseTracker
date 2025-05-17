@@ -127,7 +127,7 @@ if(consoleLog===true){console.log(consoleTrace(),'\nLOADED:- index.mjs');}
 app.use((req, res, next) => {
 
     console.log(("~~").repeat(54));
-    console.log(("🛜<>").repeat(18));
+    console.log(("  🛜").repeat(27));
 
     const myDate = new Date();
     if(consoleLog===true){console.log(`\n${consoleTrace()}\n${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}\n${req.method}\n${req.url}`);}
@@ -148,7 +148,7 @@ app.use((req, res, next) => {
             console.log(consoleTrace(),'\nSession details:', req.session.name);
         }
 
-    console.log(("🛜<>").repeat(18));
+    console.log(("  🛜").repeat(27));
     console.log(("~~").repeat(54));
 
     next();
@@ -227,7 +227,7 @@ if(consoleLog===true){console.log(("<>").repeat(55));}
         import sessionsRouter, * as sessionsFunctions from './src/globalSessionsServer.mjs';
             app.use("/sessionsRouter", sessionsRouter);
             if(sessionsFunctions.globalSessionsServerMJSisLoaded() === true){
-                if(consoleLog===true){console.log(consoleTrace(),'IMPORTED:- router & all functions from globalSessionsServer.mjs');}
+                if(consoleLog===true){console.log(consoleTrace(),'\nIMPORTED:- router & all functions from globalSessionsServer.mjs');}
             }else{
                 console.log(`🔴 ${consoleTrace()}\nError.`);
             }
@@ -241,25 +241,25 @@ if(consoleLog===true){console.log(("<>").repeat(55));}
 myDate = new Date();
 if(consoleLog===true){console.log(`${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);}
 if(consoleLog===true){console.log(("<>").repeat(55));}
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    // SQLITE
-        // // const sqlite3 = require("sqlite3").verbose();
-        //     import sqlite3 from "sqlite3";
-        // // Connect to SQLite database || Create if it doesn't exist
-        // export function accessDb(fileName){
-        //     const db = new sqlite3.Database(`${process.env.PATH_TO_DATABASE}${fileName}.db`, (err) => {
-        //         if (err) {
-        //             console.error(`${consoleTrace()}\n🔴 Error connecting to database:\n`,fileName, err);
-        //         } else {
-        //             console.log(`${consoleTrace()}\n🟢 Connected to ${fileName}.db`);
-        //         }
-        //         myDate = new Date();
-        //         if(consoleLog===true){console.log(`${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);}
-        //         if(consoleLog===true){console.log(("<>").repeat(55));}
-        //     });
-        // }
-        import {accessDb} from './src/SQLite_ServerSide.mjs';
-        accessDb("project");
+// // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//     // SQLITE
+//         // // const sqlite3 = require("sqlite3").verbose();
+//         //     import sqlite3 from "sqlite3";
+//         // // Connect to SQLite database || Create if it doesn't exist
+//         // export function accessDb(fileName){
+//         //     const db = new sqlite3.Database(`${process.env.PATH_TO_DATABASE}${fileName}.db`, (err) => {
+//         //         if (err) {
+//         //             console.error(`${consoleTrace()}\n🔴 Error connecting to database:\n`,fileName, err);
+//         //         } else {
+//         //             console.log(`${consoleTrace()}\n🟢 Connected to ${fileName}.db`);
+//         //         }
+//         //         myDate = new Date();
+//         //         if(consoleLog===true){console.log(`${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);}
+//         //         if(consoleLog===true){console.log(("<>").repeat(55));}
+//         //     });
+//         // }
+//         import {accessDb} from './src/SQLite_ServerSide.mjs';
+//         accessDb("project");
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // CORS handling START
         import cors from 'cors';
@@ -272,53 +272,6 @@ if(consoleLog===true){console.log(("<>").repeat(55));}
                 next();
             });
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    // Endpoint to get data from database
-        app.get("/getExpenses", (req, res) => {
-            if(consoleLog===true){console.log(consoleTrace());}
-            if(consoleLog===true){console.log("app.get('/getExpenses', async (req, res)");}
-            db.all("SELECT * FROM expenses", [], (err, rows) => {
-                if (err) {
-                    res.status(500).send(err.message);
-                } else {
-                    res.json(rows);
-                }
-            });
-        });
-
-    // Endpoint to get data from database
-        app.post('/getAllExpenses', async (req, res) => {
-            if(consoleLog===true){console.log(consoleTrace());}
-            if(consoleLog===true){console.log("app.get('/getAllExpenses', async (req, res)");}
-            try {
-                if(consoleLog===true){console.log(consoleTrace());}
-                if(consoleLog===true){console.log(req.body);}
-                // Step 1: Fetch data from an external source (mocked for simplicity)
-                    const externalData = [
-                        { id: 1, item: 'Groceries', amount: 50 },
-                        { id: 2, item: 'Rent', amount: 1200 },
-                        { id: 3, item: 'Utilities', amount: 150 },
-                    ];
-
-                // Step 2: Validate or enrich the data
-                    const validatedData = externalData.map(expense => {
-                        if (!expense.item || expense.amount <= 0) {
-                            throw new Error(`Invalid expense data: ${JSON.stringify(expense)}`);
-                        }
-                        return {
-                            ...expense,
-                            timestamp: new Date().toISOString() // Add a timestamp
-                        };
-                    });
-
-                // Step 3: Send the processed data to the client
-                    res.status(200).json(validatedData);
-
-            } catch (error) {
-                if(consoleLog===true){console.log(consoleTrace());}
-                console.error('🔴 Error:', error.message);
-                res.status(500).json({ error: 'Failed to process expenses' });
-            }
-        });
 
 // monitor memory usage
     // const formatMemoryUsage = (data) => `${(data / 1024 / 1024).toFixed(2)} MB`;
@@ -365,10 +318,10 @@ setInterval(() => {
     const PORT = process.env.PORT;
     const DEV_IP_ADDRESS = process.env.DEV_IP_ADDRESS;
     app.listen(PORT,'0.0.0.0', () => {
-        console.log(("🏁").repeat(64));
+        console.log(("🏁").repeat(55));
         // console.log(`${consoleTrace()}\nServer is running on port:${PORT}\nAccessible on the server at either http://localhost:${PORT} or http://${DEV_IP_ADDRESS}:${PORT}.\nAccessible on the LAN at http://${DEV_IP_ADDRESS}:${PORT}.`);
         console.log(`${consoleTrace()}\nServer is running on port:${PORT}.`);
         myDate = new Date();
         console.log(`${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);
-        console.log(("🏁").repeat(64));
+        console.log(("🏁").repeat(55));
     });
