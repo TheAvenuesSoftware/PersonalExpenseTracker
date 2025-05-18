@@ -1,46 +1,40 @@
 const consoleLog = true;
 
 if(consoleLog===true){console.log("LOADED:- globalLoginClient.mjs is loaded",new Date().toLocaleString());}
-function globalLoginClientJSisLoaded(){
+export function globalLoginClientJSisLoaded(){
     return true;
 }
 
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
-    // import * as globalClientMJS from './globalClient.mjs';
+//  ONLY IMPORT CLIENT SIDE MODULES TO HERE
+//     // import * as globalClientMJS from './globalClient.mjs';
     import {universalFetch} from './globalClient.mjs';
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 
-// window.addEventListener("load", () =>
-    window.addEventListener("load", () => {
-
-        if(consoleLog===true){console.log('window "load" successsful.');}
-
-        isLoginRequired();
-
-        // const signInOutButton = document.getElementById("sign-in-out-button")
-        // signInOutButton.addEventListener("mouseenter", () => {
-        //     signInOutButton.style.transform = "scale(1.05)";
-        //     signInOutButton.style.background = "linear-gradient(135deg, #1440AF, #4A90E2)";
-        // });
-        // signInOutButton.addEventListener("mouseleave", () => {
-        //     signInOutButton.style.transform = "scale(1)";
-        //     signInOutButton.style.background = "linear-gradient(135deg,rgb(226, 74, 74),rgb(175, 20, 20))";
+        // document.addEventListener("DOMContentLoaded", () => {
+        //     if(consoleLog===true){console.log('globalOoginClient DOMContentLoaded successsful.',Date.now());}
+        //         window.addEventListener("load", () => { 
+        //         if(consoleLog===true){console.log('globalOoginClient window load successsful.',Date.now());}
+        //     });
         // });
 
-        // signInOutButton.addEventListener("mouseenter",signInOutButtonFocus);
-        // function signInOutButtonFocus(){
-        //     signInOutButton.style.transform = "scale(1.05)";
-        //     signInOutButton.style.background = "linear-gradient(135deg, #1440AF, #4A90E2)";
-        // }
-        // signInOutButton.removeEventListener("mouseenter",signInOutButtonFocus);
-        // signInOutButton.addEventListener("mouseenter",signInOutButtonFocus);
-        // function signInOutButtonBlur(){
-        //     signInOutButton.style.transform = "scale(1)";
-        //     signInOutButton.style.background = "linear-gradient(135deg,rgb(226, 74, 74),rgb(175, 20, 20))";
-        // }
-        // signInOutButton.removeEventListener("mouseenter",signInOutButtonBlur);
+            export function doAfterDOMandWindowLoad_globalLoginClient(){
 
-    });
+                if(consoleLog===true){console.log('doAfterDOMandWindowLoad_globalLoginClient() launched.',Date.now());}
+
+                isLoginRequired();
+
+                document.getElementById("sign-in-out-button").addEventListener("click", (e) => {
+                    console.log("sign-in-out-button clicked");
+                    console.log(e.target.textContent);
+                    if(e.target.textContent.toLowerCase()==="sign in"){
+                        login_step1();
+                    }
+                    if(e.target.textContent.toLowerCase()==="sign out"){
+                        logout_step1();
+                    }
+                });
+            }
 
 // check email address
     function isValidEmailFormat(email) {
@@ -99,11 +93,11 @@ async function isLoginRequired() {
             const response = await fetch(fetchUrl);
             if (!response.ok) throw new Error(`Server Error: ${response.statusText}`);
             const data = await response.json(); // Fetch JSON object
-            if(consoleLog===true){console.log(data);} // Logs correctly? Great!
-            if(consoleLog===true){console.log(data.message);} // Logs correctly? Great!
+            if(consoleLog===true){console.log(`isLoginRequired():- `,data);} // Logs correctly? Great!
+            // if(consoleLog===true){console.log(`isLoginRequi red():- `,data.message);} // Logs correctly? Great!
             if(data.message===true){
                 // login_step1:- emailAddress, createNewAccount, userLoginCodeSent, loginApproved
-                login_step1("",false,false,false);
+                login_step1();
             }
     } catch (error) {
         // console.error("Error fetching HTML from:",fetchUrl, error.message);
@@ -129,7 +123,7 @@ async function login_step4(userEmailAddress,createNewAccount,userLoginCode){
             setTimeout(() => el.remove(), 500);
         });
         alert("🟢 Secure login is successful.");
-        document.getElementById("sign-in-out-button").innerHTML = "Sign out";
+        document.getElementById("sign-in-out-button").innerHTML = "Sign Out";
         document.getElementById("sign-in-out-button").classList.add("sign-out-button");
         document.getElementById("sign-in-out-button").classList.remove("sign-in-button");
     }else{
@@ -139,7 +133,7 @@ async function login_step4(userEmailAddress,createNewAccount,userLoginCode){
             setTimeout(() => el.remove(), 500);
         });
         alert("login failed, please try again");
-        document.getElementById("sign-in-out-button").innerHTML = "Sign in";
+        document.getElementById("sign-in-out-button").innerHTML = "Sign In";
         document.getElementById("sign-in-out-button").classList.add("sign-in-button");
         document.getElementById("sign-in-out-button").classList.remove("sign-out-button");
     }

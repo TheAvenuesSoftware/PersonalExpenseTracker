@@ -1,4 +1,4 @@
-const consoleLog = false;
+const consoleLog = true
 
 if(consoleLog===true){console.log(consoleTrace(),"\nLOADED:- projectRoutes.mjs is loaded",new Date().toLocaleString());}
 export function projectRoutesMJSisLoaded(){
@@ -6,6 +6,7 @@ export function projectRoutesMJSisLoaded(){
 }
 
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
+//  SERVER SIDE IMPORTS ONLY
     import { Router } from "express";
     const projectRouter = Router();
     import {consoleTrace} from "./globalServer.mjs";

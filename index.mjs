@@ -9,7 +9,7 @@
 // - Event & Callback Handlers: Prefix with on (e.g., onClick, onDataReceived)
 // - Private Variables: Some use leading _ to indicate private properties (_hiddenProperty)
 
-const consoleLog = true;
+const consoleLog = true
 
 let myDate;
 myDate = new Date();
@@ -126,11 +126,12 @@ if(consoleLog===true){console.log(consoleTrace(),'\nLOADED:- index.mjs');}
 // catch-all START 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 
 app.use((req, res, next) => {
 
-    console.log(("~~").repeat(54));
+    console.log("\n",("↓ ").repeat(55));
     console.log(("  🛜").repeat(27));
 
     const myDate = new Date();
-    if(consoleLog===true){console.log(`\n${consoleTrace()}\n${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}\n${req.method}\n${req.url}`);}
+    // if(consoleLog===true){console.log(`\n${consoleTrace()}\n${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}\n${req.method}\n${req.url}`);}
+    console.log(`${consoleTrace()}\n${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}\n${req.method}\n${req.url}`);
 
     // session exists ?
         if(typeof req.session === "undefined"){
@@ -143,13 +144,13 @@ app.use((req, res, next) => {
             // res.send(`You have visited ${req.session.visitCount} times.`);
             // if(consoleLog===true){console.log(consoleTrace(),`\nVisit # ${req.session.visitCount} times.`);}
             if(consoleLog===true){console.log(consoleTrace(),`\n`,req.session);}
-            console.log(consoleTrace(),'\nSession details:', JSON.stringify(req.session, null, 2));
-            console.log(consoleTrace(),'\nSession details:', req.session.id);
-            console.log(consoleTrace(),'\nSession details:', req.session.name);
+            // console.log(consoleTrace(),'\nSession details:', JSON.stringify(req.session, null, 2));
+            console.log(consoleTrace(),'\nSession details id:', req.session.id);
+            console.log(consoleTrace(),'\nSession details name:', req.session.name);
         }
 
     console.log(("  🛜").repeat(27));
-    console.log(("~~").repeat(54));
+    console.log(("↑ ").repeat(55));
 
     next();
 
@@ -172,6 +173,7 @@ if(consoleLog===true){console.log(`${myDate.toLocaleDateString()} ${myDate.toLoc
 if(consoleLog===true){console.log(("<>").repeat(55));}
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // ROUTERS
+        let routerMounted = false;
         import dbRouter, * as dbFunctions from './src/SQLite_ServerSide.mjs';
             app.use("/dbRouter", dbRouter);
             if(dbFunctions.SQLite_ServerSideMJSisLoaded() === true){
@@ -181,10 +183,13 @@ if(consoleLog===true){console.log(("<>").repeat(55));}
             }
             dbRouter.stack.forEach((route) => {
                 if (route.route) {
-                    console.log(`${(" ").repeat(5)} Path: ${route.route.path}, Method: ${Object.keys(route.route.methods).join(", ")}`);
+                    routerMounted = true;
+                    if(consoleLog===true){console.log(`${(" ").repeat(5)} Path: ${route.route.path}, Method: ${Object.keys(route.route.methods).join(", ")}`);}
                 }
             });
+            if(routerMounted===false){console.log(`${consoleTrace()}\n🔴 Errorin router!\n`,dbRouter.stack);}
 
+        routerMounted = false;
         import loginRouter, * as loginFunctions from './src/globalLoginServer.mjs';
             app.use("/loginRouter", loginRouter);
             if(loginFunctions.globalLoginServerMJSisLoaded() === true){
@@ -194,10 +199,13 @@ if(consoleLog===true){console.log(("<>").repeat(55));}
             }
             loginRouter.stack.forEach((route) => {
                 if (route.route) {
-                    console.log(`${(" ").repeat(5)} Path: ${route.route.path}, Method: ${Object.keys(route.route.methods).join(", ")}`);
+                    routerMounted = true;
+                    if(consoleLog===true){console.log(`${(" ").repeat(5)} Path: ${route.route.path}, Method: ${Object.keys(route.route.methods).join(", ")}`);}
                 }
             });            
+            if(routerMounted===false){console.log(`${consoleTrace()}\n🔴 Errorin router!\n`,dbRouter.stack);}
 
+        routerMounted = false;
         import globalRouter, * as globalFunctions from './src/globalRouter.mjs'; 
             app.use("/globalRouter", globalRouter);
             if(globalFunctions.globalRoutesMJSisLoaded() === true){
@@ -207,10 +215,13 @@ if(consoleLog===true){console.log(("<>").repeat(55));}
             }
             globalRouter.stack.forEach((route) => {
                 if (route.route) {
-                    console.log(`${(" ").repeat(5)} Path: ${route.route.path}, Method: ${Object.keys(route.route.methods).join(", ")}`);
+                    routerMounted = true;
+                    if(consoleLog===true){console.log(`${(" ").repeat(5)} Path: ${route.route.path}, Method: ${Object.keys(route.route.methods).join(", ")}`);}
                 }
             });            
+            if(routerMounted===false){console.log(`${consoleTrace()}\n🔴 Errorin router!\n`,dbRouter.stack);}
 
+        routerMounted = false;
         import projectRouter, * as projectFunctions from './src/projectRouter.mjs';
             app.use("/projectRouter", projectRouter);
             if(projectFunctions.projectRoutesMJSisLoaded() === true){
@@ -220,10 +231,13 @@ if(consoleLog===true){console.log(("<>").repeat(55));}
             }
             projectRouter.stack.forEach((route) => {
                 if (route.route) {
-                    console.log(`${(" ").repeat(5)} Path: ${route.route.path}, Method: ${Object.keys(route.route.methods).join(", ")}`);
+                    routerMounted = true;
+                    if(consoleLog===true){console.log(`${(" ").repeat(5)} Path: ${route.route.path}, Method: ${Object.keys(route.route.methods).join(", ")}`);}
                 }
             });            
+            if(routerMounted===false){console.log(`${consoleTrace()}\n🔴 Errorin router!\n`,dbRouter.stack);}
 
+        routerMounted = false;
         import sessionsRouter, * as sessionsFunctions from './src/globalSessionsServer.mjs';
             app.use("/sessionsRouter", sessionsRouter);
             if(sessionsFunctions.globalSessionsServerMJSisLoaded() === true){
@@ -233,9 +247,11 @@ if(consoleLog===true){console.log(("<>").repeat(55));}
             }
             sessionsRouter.stack.forEach((route) => {
                 if (route.route) {
-                    console.log(`${(" ").repeat(5)} Path: ${route.route.path}, Method: ${Object.keys(route.route.methods).join(", ")}`);
+                    routerMounted = true;
+                    if(consoleLog===true){console.log(`${(" ").repeat(5)} Path: ${route.route.path}, Method: ${Object.keys(route.route.methods).join(", ")}`);}
                 }
             });            
+            if(routerMounted===false){console.log(`${consoleTrace()}\n🔴 Errorin router!\n`,dbRouter.stack);}
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 myDate = new Date();
@@ -318,10 +334,10 @@ setInterval(() => {
     const PORT = process.env.PORT;
     const DEV_IP_ADDRESS = process.env.DEV_IP_ADDRESS;
     app.listen(PORT,'0.0.0.0', () => {
-        console.log(("🏁").repeat(55));
+        console.log(("🏁").repeat(64));
         // console.log(`${consoleTrace()}\nServer is running on port:${PORT}\nAccessible on the server at either http://localhost:${PORT} or http://${DEV_IP_ADDRESS}:${PORT}.\nAccessible on the LAN at http://${DEV_IP_ADDRESS}:${PORT}.`);
         console.log(`${consoleTrace()}\nServer is running on port:${PORT}.`);
         myDate = new Date();
         console.log(`${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);
-        console.log(("🏁").repeat(55));
+        console.log(("🏁").repeat(64));
     });

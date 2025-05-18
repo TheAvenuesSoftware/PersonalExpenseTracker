@@ -5,6 +5,10 @@ export function globalSessionsClientJSisLoaded(){
     return true;
 }
 
+// ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
+//  ONLY IMPORT CLIENT SIDE MODULES TO HERE
+// ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
+
             let sessionDuration = 0;
 
             // START SESSION
@@ -63,9 +67,9 @@ export function globalSessionsClientJSisLoaded(){
                 export async function startSessionTimers() {
                     // document.getElementById("session-timer")
                     sessionDuration = 0;
-                    const timeoutWarning = 1 * projectConfigMJS.configSettings.SESSION_WARNING_DELAY // 10 * 1000; // time till warning message is displayed
-                    const sessionExpiration = 1 * projectConfigMJS.configSettings.SESSION_EXPIRED_DELAY // 20 * 1000; // time to session expiration
-                    if(consoleLog===true){console.log('projectConfigMJS.configSettings.SESSION_WARNING_DELAY:-\n',projectConfigMJS.configSettings.SESSION_WARNING_DELAY,timeoutWarning /1000 / 60 /60,'\nprojectConfigMJS.configSettings.SESSION_EXPIRED_DELAY:-\n',projectConfigMJS.configSettings.SESSION_EXPIRED_DELAY,sessionExpiration / 1000 / 60 /60);}
+                    const timeoutWarning = 1 * projectClientConfigMJS.configSettings.SESSION_WARNING_DELAY // 10 * 1000; // time till warning message is displayed
+                    const sessionExpiration = 1 * projectClientConfigMJS.configSettings.SESSION_EXPIRED_DELAY // 20 * 1000; // time to session expiration
+                    if(consoleLog===true){console.log('projectClientConfigMJS.configSettings.SESSION_WARNING_DELAY:-\n',projectClientConfigMJS.configSettings.SESSION_WARNING_DELAY,timeoutWarning /1000 / 60 /60,'\nprojectClientConfigMJS.configSettings.SESSION_EXPIRED_DELAY:-\n',projectClientConfigMJS.configSettings.SESSION_EXPIRED_DELAY,sessionExpiration / 1000 / 60 /60);}
                     sessionWarningTimeout = setTimeout(() => {
                         document.querySelectorAll('.overlay').forEach(el => {
                             el.style.transition = "opacity 0.5s";

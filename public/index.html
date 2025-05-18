@@ -24,7 +24,7 @@
     
     <script type="module" src="globalUIpopups.mjs"></script>
 
-    <script type="module" src="projectConfig.mjs"></script>
+    <script type="module" src="projectClientConfig.mjs"></script>
 
     <link rel="icon" type="image/png" href="/favicon.png">
 
@@ -34,7 +34,9 @@
         <h1>Personal Expense Tracker</h1>
     </header>
     <main>
-        <div id="sign-in-out-button" class="sign-in-button">Sign In</div>
+        <!-- initial class is "sign-in-button" and toggles to/from class "sign-out-button"-->
+            <div id="sign-in-out-button" class="sign-in-button" tabindex="0" role="button">Sign In</div> 
+        <!-- initial class is "sign-in-button" and toggles to/from class "sign-out-button"-->
         <form id="expense-form" class="std-frm-flex-wrapper">
             <div class="std-frm-flex-item">
                 <label for="date0" >Date:</label>

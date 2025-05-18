@@ -1,4 +1,4 @@
-const consoleLog = false;
+const consoleLog = true
 
 if(consoleLog===true){console.log(consoleTrace(),"\nLOADED:- globalLoginServer.mjs is loaded",new Date().toLocaleString());}
 export function globalLoginServerMJSisLoaded(){
@@ -6,6 +6,7 @@ export function globalLoginServerMJSisLoaded(){
 }
 
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
+//  SERVER SIDE IMPORTS ONLY
     import { Router } from "express";
         const loginRouter = Router();
     import fs from 'fs';
@@ -13,7 +14,7 @@ export function globalLoginServerMJSisLoaded(){
     import {accessDb} from './SQLite_ServerSide.mjs'
     import {randomInt, randomBytes} from "crypto";
     import {sendMail} from './globalServer.mjs'
-    import {loginEmailHtml} from './projectConfig.mjs'
+    import {loginEmailHtml} from './projectServerConfig.mjs'
     import dotenv from "dotenv";
         dotenv.config({path:`./config/globalServer.env`});
         // import {loginEmailHtml} from '../config/globalServer.env'
@@ -30,9 +31,11 @@ loginRouter.get("/isLoginRequired", (req, res) => {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     if(isLoginRequired===true){
-        res.send({"message":true});
+        // res.send({"message":true});
+        res.send(true);
     }else{
-        res.send({"message":false});
+        // res.send({"message":false});
+        res.send(false);
     }
 });
 
@@ -142,14 +145,15 @@ loginRouter.get("/isLoginRequired", (req, res) => {
             res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
             res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
             res.send({"message":`Login approved for ${req.body.userEmailAddress}.`,"loginApproved":true});
-            console.log(`🔒🟢 login success`);
-            console.log(req.session);
+            console.log(`${consoleTrace()}\n🔒🟢 login success`);
+            req.session.name = req.body.userEmailAddress;
+            console.log(consoleTrace(),"\n",req.session);
         }else{
             res.setHeader('Access-Control-Allow-Origin', '*');
             res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
             res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
             res.send({"message":`Login approved for ${req.body.userEmailAddress}.`,"loginApproved":false});
-            console.log(`🔒🔴 login fail`);
+            console.log(`${consoleTrace()}\n🔒🔴 login fail`);
         }
     });
 

@@ -1,14 +1,13 @@
-const consoleLog = false;
+const consoleLog = true
 
-if(consoleLog===true){console.log(consoleTrace(),"\nLOADED:- globalUIpopups.mjs is loaded",new Date().toLocaleString());}
+if(consoleLog===true){console.log("LOADED:- globalUIpopups.mjs is loaded",new Date().toLocaleString());}
 export function globalUIpopupsJSisLoaded(){
     return true;
 }
 
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
-    import {} from "./globalClient.mjs";
+//  ONLY IMPORT CLIENT SIDE MODULES TO HERE
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
-
 
 // Function to create and showCustomAlert() alert
     export function showCustomMessage(message,type="plain",nSeconds=0) {

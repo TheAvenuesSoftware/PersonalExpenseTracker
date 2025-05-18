@@ -1,9 +1,13 @@
-const consoleLog = false;
+const consoleLog = true
 
 if(consoleLog===true){console.log("LOADED:- globalClient.mjs is loaded",new Date().toLocaleString());}
 export function globalClientJSisLoaded(){
     return true;
 }
+
+// ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
+//  ONLY IMPORT CLIENT SIDE MODULES TO HERE
+// ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 
 // universal fetch
     export async function universalFetch(url, method = 'GET', data = null) {
