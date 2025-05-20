@@ -1,4 +1,4 @@
-const consoleLog = true;
+const consoleLog = false;
 
 if(consoleLog===true){console.log(consoleTrace(),"\nLOADED:- SQLite_ServerSide.mjs is loaded",new Date().toLocaleString());}
 export function SQLite_ServerSideMJSisLoaded(){

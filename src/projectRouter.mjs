@@ -1,4 +1,4 @@
-const consoleLog = true
+const consoleLog = false
 
 if(consoleLog===true){console.log(consoleTrace(),"\nLOADED:- projectRoutes.mjs is loaded",new Date().toLocaleString());}
 export function projectRoutesMJSisLoaded(){
@@ -9,6 +9,18 @@ export function projectRoutesMJSisLoaded(){
 //  SERVER SIDE IMPORTS ONLY
     import { Router } from "express";
     const projectRouter = Router();
+    // // CORS handling START
+    //     import cors from 'cors';
+    //     projectRouter.use(cors());
+    //     // fixes LOCAL CORS [start]
+    //         projectRouter.use((req, res, next) => {
+    //             res.header('Access-Control-Allow-Origin', '*'); // Adjust the '*' to your specific domain
+    //             res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    //             res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    //             next();
+    //         });    
+    //     // fixes LOCAL CORS [end]
+    // // CORS handling END
     import {consoleTrace} from "./globalServer.mjs";
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 

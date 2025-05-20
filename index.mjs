@@ -9,7 +9,7 @@
 // - Event & Callback Handlers: Prefix with on (e.g., onClick, onDataReceived)
 // - Private Variables: Some use leading _ to indicate private properties (_hiddenProperty)
 
-const consoleLog = true
+const consoleLog = false
 
 let myDate;
 myDate = new Date();
@@ -54,7 +54,7 @@ if(consoleLog===true){console.log(consoleTrace(),'\nLOADED:- index.mjs');}
                 }
             // project.env
                 try{
-                    const envPath = "./config/project.env";
+                    const envPath = "./config/projectServer.env";
                     if (fs.existsSync(envPath)) {
                         dotenv.config({ path: envPath });
                         if(consoleLog===true){console.log(consoleTrace(),`\nIMPORTED:- ${envPath}`);}
@@ -97,80 +97,32 @@ if(consoleLog===true){console.log(consoleTrace(),'\nLOADED:- index.mjs');}
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // EPXRESS
         // EXPRESS-SESSION
-            import session from "express-session";
-            app.use(session({
-                genid: function(req) {
-                    // return genuuid() // use UUIDs for session IDs
-                    return crypto.randomUUID(); // Generates a unique session ID
-                }, 
-                // name: "NO!", use data added to the session cookie later
-                secret: process.env.SESSION_KEY || sessionKey,
-                resave: false,   // Don't save unchanged sessions. Prevents unnecessary session saves if nothing has changed, improving efficiency.
-                saveUninitialized: true,  
-                    // Allows sessions without login.  Ensures sessions are stored even if uninitialized 
-                    // (useful for logging new visitors).  
-                    // Forces a session that is “uninitialized” to be saved to the store. 
-                    // A session is uninitialized when it is new but not modified. 
-                    // Choosing false is useful for implementing login sessions, 
-                    // reducing server storage usage, or complying with laws that require
-                    // permission before setting a cookie. Choosing false will also help with 
-                    // race conditions where a client makes multiple parallel requests without a session.
-                cookie: { 
-                    secure: false, // Means the session cookie is not restricted to HTTPS; set it to true in production for security.
-                    httpOnly: true, // Prevent client-side JavaScript access (mitigates XSS attacks)
-                    sameSite: "strict", // Helps prevent CSRF attacks
-                    maxAge: 15 * 60 * 1000 // ✅ Expires after 15 minutes (in milliseconds)
-                } // ❗❗❗Set "secure: false" to true for HTTPS
-            }));
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// catch-all START 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 
-app.use((req, res, next) => {
-
-    console.log("\n",("↓ ").repeat(55));
-    console.log(("  🛜").repeat(27));
-
-    const myDate = new Date();
-    // if(consoleLog===true){console.log(`\n${consoleTrace()}\n${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}\n${req.method}\n${req.url}`);}
-    console.log(`${consoleTrace()}\n${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}\n${req.method}\n${req.url}`);
-
-    // session exists ?
-        if(typeof req.session === "undefined"){
-        }else{
-            if (!req.session.visitCount) {
-                req.session.visitCount = 1;
-            } else {
-                req.session.visitCount++;
-            }
-            // res.send(`You have visited ${req.session.visitCount} times.`);
-            // if(consoleLog===true){console.log(consoleTrace(),`\nVisit # ${req.session.visitCount} times.`);}
-            if(consoleLog===true){console.log(consoleTrace(),`\n`,req.session);}
-            // console.log(consoleTrace(),'\nSession details:', JSON.stringify(req.session, null, 2));
-            console.log(consoleTrace(),'\nSession details id:', req.session.id);
-            console.log(consoleTrace(),'\nSession details name:', req.session.name);
-        }
-
-    console.log(("  🛜").repeat(27));
-    console.log(("↑ ").repeat(55));
-
-    next();
-
-});
-// catch-all END 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    // os - operatingSystem
-        import os from 'os';
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    // PATH
-        import path from 'path';
-        import { fileURLToPath } from 'url';
-        // Get the current file path
-            const __filename = fileURLToPath(import.meta.url);
-        // Get the directory name
-            const __dirname = path.dirname(__filename);
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-myDate = new Date();
-if(consoleLog===true){console.log(`${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);}
-if(consoleLog===true){console.log(("<>").repeat(55));}
+            // LAUNCH SESSION MANAGEMENT
+                import session from "express-session";
+                app.use(session({
+                    genid: function(req) {
+                        // return genuuid() // use UUIDs for session IDs
+                        return crypto.randomUUID(); // Generates a unique session ID
+                    }, 
+                    // name: "NO!", use data added to the session cookie later
+                    secret: process.env.SESSION_KEY || sessionKey,
+                    resave: false,   // Don't save unchanged sessions. Prevents unnecessary session saves if nothing has changed, improving efficiency.
+                    saveUninitialized: true,  
+                        // Allows sessions without login.  Ensures sessions are stored even if uninitialized 
+                        // (useful for logging new visitors).  
+                        // Forces a session that is “uninitialized” to be saved to the store. 
+                        // A session is uninitialized when it is new but not modified. 
+                        // Choosing false is useful for implementing login sessions, 
+                        // reducing server storage usage, or complying with laws that require
+                        // permission before setting a cookie. Choosing false will also help with 
+                        // race conditions where a client makes multiple parallel requests without a session.
+                    cookie: { 
+                        secure: false, // Means the session cookie is not restricted to HTTPS; set it to true in production for security.
+                        httpOnly: true, // Prevent client-side JavaScript access (mitigates XSS attacks)
+                        sameSite: "strict", // Helps prevent CSRF attacks
+                        maxAge: 15 * 60 * 1000 // ✅ Expires after 15 minutes (in milliseconds)
+                    } // ❗❗❗Set "secure: false" to true for HTTPS
+                }));
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // ROUTERS
         let routerMounted = false;
@@ -256,7 +208,96 @@ if(consoleLog===true){console.log(("<>").repeat(55));}
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 myDate = new Date();
 if(consoleLog===true){console.log(`${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);}
-if(consoleLog===true){console.log(("<>").repeat(55));}
+if(consoleLog===true){console.log(("<>").repeat(64));}
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    // CORS handling START
+        import cors from 'cors';
+        app.use(cors({
+            origin: '*',
+            methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+            allowedHeaders: ['Content-Type', 'Authorization'],
+            optionsSuccessStatus: 204 // Avoids extra response headers in preflight requests
+        }));
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// catch-all START 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 
+app.use((req, res, next) => {
+
+    console.log("\n",("↓ ").repeat(64));
+    console.log(("  🛜").repeat(32));
+
+    const myDate = new Date();
+    console.log(`${consoleTrace()}\n${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}\n${req.method}\n${req.url}`);
+
+    // slient session regen START
+        const MAX_SESSION_AGE = 15 * 60 * 1000; // 15 minutes
+        const now = Date.now();
+        if (!req.session.createdAt) {
+            req.session.createdAt = now; // Store creation timestamp
+        }
+        if ((now - req.session.createdAt > MAX_SESSION_AGE)) {
+            const oldSecurityCode = req.session.securityCode; // Retrieve existing code
+            const newSecurityCode = crypto.randomBytes(4).toString("hex"); // Initial securityCode
+            req.session.regenerate((err) => {
+                if (err) {
+                    console.error("🔴 Session regeneration error:", err);
+                    return next(err); // Passes error forward if regeneration fails
+                }
+                req.session.createdAt = Date.now(); // Reset session timestamp to now
+                req.session.securityCode = newSecurityCode; // Assign new securityCode
+                console.log(`🟢 Session refreshed. Old Code: ${oldSecurityCode}, New Code: ${req.session.securityCode}`)
+                console.log(consoleTrace(),`\nSession details:- `,req.session);
+                console.log(consoleTrace(),'\nSession details JSON:- ', JSON.stringify(req.session, null, 2));
+                next(); // Move to next middleware after successful regeneration
+            });
+        } else {
+            if(req.url===`/heartbeat-session-extension`){
+                if (req.session) {
+                    req.session.createdAt = Date.now(); // Reset session timestamp to now
+                    console.log(consoleTrace(),`\n🟢 Heartbeat session extension success:-\n`,req.session);
+                    res.json({ message: "Heartbeat session extension success.",status: true });
+                } else {
+                    console.log(consoleTrace(),`\n🔴 Heartbeat session extension error:-\n`,error);
+                    res.status(403).json({ message: `Heartbeat session extension error:- No active session detected. ${error}`,status:false });
+                }
+                }
+            next();
+        }
+    // slient session regen END
+
+    console.log(("  🛜").repeat(32));
+    console.log(("↑ ").repeat(64));
+
+    next();
+
+});
+// catch-all END 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    // // heartbeat - rfresh session
+    //     app.post('/heartbeat-session-extension', (req, res) => {
+    //         if (req.session) {
+    //             req.session.createdAt = Date.now(); // Reset session timestamp to now
+    //             console.log(consoleTrace(),`\n🟢 Heartbeat session extension success:-\n`,req.session);
+    //             res.json({ message: "Heartbeat session extension success.",status: true });
+    //         } else {
+    //             console.log(consoleTrace(),`\n🔴 Heartbeat session extension error:-\n`,error);
+    //             res.status(403).json({ message: `Heartbeat session extension error:- No active session detected. ${error}`,status:false });
+    //         }
+    //     });
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    // os - operatingSystem
+        import os from 'os';
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    // PATH
+        import path from 'path';
+        import { fileURLToPath } from 'url';
+        // Get the current file path
+            const __filename = fileURLToPath(import.meta.url);
+        // Get the directory name
+            const __dirname = path.dirname(__filename);
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+myDate = new Date();
+if(consoleLog===true){console.log(`${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);}
+if(consoleLog===true){console.log(("<>").repeat(64));}
 // // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //     // SQLITE
 //         // // const sqlite3 = require("sqlite3").verbose();
@@ -276,17 +317,6 @@ if(consoleLog===true){console.log(("<>").repeat(55));}
 //         // }
 //         import {accessDb} from './src/SQLite_ServerSide.mjs';
 //         accessDb("project");
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    // CORS handling START
-        import cors from 'cors';
-        app.use(cors());
-        // fixes LOCAL CORS [start]
-            app.use((req, res, next) => {
-                res.header('Access-Control-Allow-Origin', '*'); // Adjust the '*' to your specific domain
-                res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-                res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-                next();
-            });
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 // monitor memory usage

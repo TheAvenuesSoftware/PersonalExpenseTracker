@@ -1,4 +1,4 @@
-const consoleLog = true
+const consoleLog = false
 
 if(consoleLog===true){console.log("LOADED:- globalClient.mjs is loaded",new Date().toLocaleString());}
 export function globalClientJSisLoaded(){
@@ -9,16 +9,21 @@ export function globalClientJSisLoaded(){
 //  ONLY IMPORT CLIENT SIDE MODULES TO HERE
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 
-// universal fetch
+// universal fetch I
     export async function universalFetch(url, method = 'GET', data = null) {
         if(consoleLog===true){console.log("\n",url,'\n',method,'\n',data);}
         try {
             // Ensure data is correctly formatted before using it in the request
-                const body = isValidJSONString(data)
+                const body = await isValidJSONString(data)
                     ? data // Data is already stringified
                     : typeof data === 'object' 
                         ? JSON.stringify(data) // Convert object to JSON string
                         : null; // No valid data, avoid sending an incorrect body
+                if(typeof body === "undefined"){
+                    if(consoleLog===true){console.log(`🔴 This is not valid JSON:-\n${data}`);}
+                }else{
+                    if(consoleLog===true){console.log(`🟢 Valid JSON:-\n${data}`);}
+                }
             // 
                 const options = {
                     method,
@@ -26,6 +31,7 @@ export function globalClientJSisLoaded(){
                     body
                 };
             // 
+                if(consoleLog===true){console.log(url,'\n',options,'\n',options.body);}
                 const response = await fetch(url, options);
                     if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
                     return await response.json();
@@ -33,6 +39,45 @@ export function globalClientJSisLoaded(){
             console.error('Fetch error:', error);
         }
     }
+
+// universal fetch II
+export async function universalFetchII(url,options){
+    try {
+        const response = await fetch(url,options);
+        // example code START
+            // const response = await fetch('https://example.com/api/resource', {
+            //     method: 'POST',                // Specifies a POST request
+            //     mode: 'cors',                  // Ensures cross-origin requests are handled
+            //     cache: 'no-cache',             // Prevents caching issues
+            //     credentials: 'include',        // Includes cookies/session info
+            //     headers: {
+            //         'Content-Type': 'application/json',  // Sets content type
+            //         'Authorization': `Bearer ${yourAccessToken}`, // Uses token-based auth (if applicable)
+            //         'Accept': 'application/json',        // Expect JSON response
+            //     },
+            //     body: JSON.stringify({          // Converts object to JSON for request
+            //         userId: 12345,
+            //         action: 'update',
+            //         data: {
+            //             name: "Donald",
+            //             preferences: ["dark mode", "compact view"],
+            //             securityCode: crypto.randomBytes(4).toString("hex")  // Example secure random code
+            //         }
+            //     })
+            // });
+        // example code END
+        // **Handle response & errors properly**
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const result = await response.json();
+        console.log('🟢 Request Success:', result);
+        return result;  // Return response data
+    } catch (error) {
+        console.error('🔴 Request Failed:', error);
+        return null;
+    }
+}
 
 // check if JSONstring is valid
     export function isValidJSONString(data) {

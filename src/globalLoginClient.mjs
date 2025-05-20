@@ -1,4 +1,4 @@
-const consoleLog = true;
+const consoleLog = false;
 
 if(consoleLog===true){console.log("LOADED:- globalLoginClient.mjs is loaded",new Date().toLocaleString());}
 export function globalLoginClientJSisLoaded(){
@@ -8,7 +8,7 @@ export function globalLoginClientJSisLoaded(){
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 //  ONLY IMPORT CLIENT SIDE MODULES TO HERE
 //     // import * as globalClientMJS from './globalClient.mjs';
-    import {universalFetch} from './globalClient.mjs';
+    import {universalFetchII} from './globalClient.mjs';
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 
         // document.addEventListener("DOMContentLoaded", () => {
@@ -35,6 +35,51 @@ export function globalLoginClientJSisLoaded(){
                     }
                 });
             }
+
+// logout
+    async function logout_step1(){
+        try {
+            const fetchUrl = `/sessionsRouter/logout`;
+            const fetchType = `POST`;
+            const fetchPayload = {logUserOut:true};
+            if(consoleLog===true){console.log(fetchPayload);}
+            if(consoleLog===true){console.log(JSON.stringify(fetchPayload));}
+            const data = await universalFetch(fetchUrl,fetchType,JSON.stringify(fetchPayload));
+            if(consoleLog===true){console.log(data);}
+            if(consoleLog===true){console.log(data.message,data.logoutConfirmed);}
+
+            if(data.logoutConfirmed===true){
+                document.querySelectorAll('.overlay').forEach(el => {
+                    el.style.transition = "opacity 0.5s";
+                    el.style.opacity = "0";
+                    setTimeout(() => el.remove(), 500);
+                });
+                alert("🟢 logout successful.");
+                document.getElementById("sign-in-out-button").innerHTML = "Sign In";
+                document.getElementById("sign-in-out-button").classList.remove("sign-out-button");
+                document.getElementById("sign-in-out-button").classList.add("sign-in-button");
+                // remove idle tracking event listeners START
+                    document.getElementById("sign-in-out-button").innerHTML = "Sign In";
+                    document.getElementById("sign-in-out-button").classList.add("sign-in-button");
+                    document.getElementById("sign-in-out-button").classList.remove("sign-out-button");
+                // remove idle tracking event listeners END
+            }else{
+                document.querySelectorAll('.overlay').forEach(el => {
+                    el.style.transition = "opacity 0.5s";
+                    el.style.opacity = "0";
+                    setTimeout(() => el.remove(), 500);
+                });
+                alert("🔴 logout failed, please try again");
+                document.getElementById("sign-in-out-button").innerHTML = "Sign Out";
+                document.getElementById("sign-in-out-button").classList.remove("sign-in-button");
+                document.getElementById("sign-in-out-button").classList.add("sign-out-button");
+            }
+        }
+        catch{
+            alert("🔴 Fatal error logging out!");
+            console.log("🔴 ERROR");
+        }
+    }
 
 // check email address
     function isValidEmailFormat(email) {
@@ -64,7 +109,7 @@ export function globalLoginClientJSisLoaded(){
                 return false;
             }
             if(data.Question[0].type!=15){return false;}
-            if(typeof data.Answer === undefined){return false;}
+            if(typeof data.Answer === "undefined"){return false;}
             return true;
             // Common Response Keys
                 // | Key        | Example Value                 | Explanation | 
@@ -106,66 +151,156 @@ async function isLoginRequired() {
 }
 async function login_step4(userEmailAddress,createNewAccount,userLoginCode){
     if(consoleLog===true){console.log('login_step4(✅)');}
-    const fetchUrl = `/loginRouter/login_step4`;
-    const fetchType = `POST`;
+    // const fetchUrl = `/loginRouter/login_step4`;
+    // const fetchType = `POST`;
     // const fetchPayload = {userEmailAddress:userEmailAddress,createNewAccount:createNewAccount,userLoginCode:userLoginCode};
-    const fetchPayload = {userEmailAddress:userEmailAddress,createNewAccount:createNewAccount,userLoginCode:userLoginCode};
-    if(consoleLog===true){console.log(fetchPayload);}
-    if(consoleLog===true){console.log(JSON.stringify(fetchPayload));}
-    const data = await universalFetch(fetchUrl,fetchType,JSON.stringify(fetchPayload));
-    if(consoleLog===true){console.log(data);}
-    if(consoleLog===true){console.log(data.message,data.loginApproved);}
+    // if(consoleLog===true){console.log(fetchPayload);}
+    // if(consoleLog===true){console.log(JSON.stringify(fetchPayload));}
+    // const data = await universalFetch(fetchUrl,fetchType,JSON.stringify(fetchPayload));
+    try{
+        const fetchUrl = `/loginRouter/login_step4`;
+        const fetchOptions = {
+                method: 'POST',                // Specifies a POST request
+                mode: 'cors',                  // Ensures cross-origin requests are handled
+                cache: 'no-cache',             // Prevents caching issues
+                credentials: 'include',        // Includes cookies/session info
+                headers: {
+                    'Content-Type': 'application/json',  // Sets content type
+                    // 'Authorization': `Bearer ${yourAccessToken}`, // Uses token-based auth (if applicable)
+                    'Accept': 'application/json',        // Expect JSON response
+                },
+                body: JSON.stringify({          // Converts object to JSON for request
+                    userEmailAddress:userEmailAddress,
+                    createNewAccount: createNewAccount,
+                    userLoginCode:userLoginCode
+                })
+            }
+        if(consoleLog===true){console.log(JSON.stringify(fetchOptions));}
+        // const data = await universalFetchII(fetchUrl,fetchOptions);
+        const response = await fetch(fetchUrl,fetchOptions);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const jso = await response.json(); // converts fetch response from JSON to a JSO
+        console.log('🟢 Request Success:', jso);
 
-    if(data.loginApproved===true){
-        document.querySelectorAll('.overlay').forEach(el => {
-            el.style.transition = "opacity 0.5s";
-            el.style.opacity = "0";
-            setTimeout(() => el.remove(), 500);
-        });
-        alert("🟢 Secure login is successful.");
-        document.getElementById("sign-in-out-button").innerHTML = "Sign Out";
-        document.getElementById("sign-in-out-button").classList.add("sign-out-button");
-        document.getElementById("sign-in-out-button").classList.remove("sign-in-button");
-    }else{
-        document.querySelectorAll('.overlay').forEach(el => {
-            el.style.transition = "opacity 0.5s";
-            el.style.opacity = "0";
-            setTimeout(() => el.remove(), 500);
-        });
-        alert("login failed, please try again");
-        document.getElementById("sign-in-out-button").innerHTML = "Sign In";
-        document.getElementById("sign-in-out-button").classList.add("sign-in-button");
-        document.getElementById("sign-in-out-button").classList.remove("sign-out-button");
+
+        if(consoleLog===true){console.log(jso);}
+        if(consoleLog===true){console.log(jso.message,jso.loginApproved);}
+
+        if(jso.loginApproved===true){
+            document.querySelectorAll('.overlay').forEach(el => {
+                el.style.transition = "opacity 0.5s";
+                el.style.opacity = "0";
+                setTimeout(() => el.remove(), 500);
+            });
+            alert("🟢 Secure login is successful.");
+            document.getElementById("sign-in-out-button").innerHTML = "Sign Out";
+            document.getElementById("sign-in-out-button").classList.add("sign-out-button");
+            document.getElementById("sign-in-out-button").classList.remove("sign-in-button");
+        }else{
+            document.querySelectorAll('.overlay').forEach(el => {
+                el.style.transition = "opacity 0.5s";
+                el.style.opacity = "0";
+                setTimeout(() => el.remove(), 500);
+            });
+            alert("login failed, please try again");
+            document.getElementById("sign-in-out-button").innerHTML = "Sign In";
+            document.getElementById("sign-in-out-button").classList.add("sign-in-button");
+            document.getElementById("sign-in-out-button").classList.remove("sign-out-button");
+        }
+    }
+    catch (error) {
+        console.error('🔴 Request Failed:', error);
+        return null;
     }
 }
 async function login_step3(userEmailAddress,createNewAccount=false){
     if(consoleLog===true){console.log('login_step3(✅)');}
-    const fetchUrl = `/loginRouter/login_step3`;
-    const fetchType = `POST`;
-    const fetchPayload = {userEmailAddress:userEmailAddress,createNewAccount:createNewAccount};
-    if(consoleLog===true){console.log(fetchPayload);}
-    if(consoleLog===true){console.log(JSON.stringify(fetchPayload));}
-    const data = await universalFetch(fetchUrl,fetchType,JSON.stringify(fetchPayload));
-    if(consoleLog===true){console.log(data);}
-    if(consoleLog===true){console.log(data.message,data.userLoginCodeSent);}
-    if(data.userLoginCodeSent===true){
-        // login_step1:- emailAddress, createNewAccount, userLoginCodeSent, loginApproved
-        login_step1(userEmailAddress,false,data.userLoginCodeSent,false);
+    if(consoleLog===true){console.log(userEmailAddress,createNewAccount);}
+    try{
+        const fetchUrl = `/loginRouter/login_step3`;
+        const fetchOptions = {
+                method: 'POST',                // Specifies a POST request
+                mode: 'cors',                  // Ensures cross-origin requests are handled
+                cache: 'no-cache',             // Prevents caching issues
+                credentials: 'include',        // Includes cookies/session info
+                headers: {
+                    'Content-Type': 'application/json',  // Sets content type
+                    // 'Authorization': `Bearer ${yourAccessToken}`, // Uses token-based auth (if applicable)
+                    'Accept': 'application/json',        // Expect JSON response
+                },
+                body: JSON.stringify({          // Converts object to JSON for request
+                    userEmailAddress:userEmailAddress,
+                    createNewAccount: createNewAccount
+                })
+            }
+        if(consoleLog===true){console.log(JSON.stringify(fetchOptions));}
+        // const data = await universalFetchII(fetchUrl,fetchOptions);
+        const response = await fetch(fetchUrl,fetchOptions);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const jso = await response.json(); // converts fetch response from JSON to a JSO
+        console.log('🟢 Request Success:', jso);
+        if(jso.userLoginCodeSent===true){
+            login_step1(userEmailAddress,false,jso.userLoginCodeSent,false);
+        }
     }
+    catch (error) {
+        console.error('🔴 Request Failed:', error);
+        return null;
+    }
+    // const fetchUrl = `/loginRouter/login_step3`;
+    // const fetchType = `POST`;
+    // const fetchPayload = {userEmailAddress:userEmailAddress,createNewAccount:createNewAccount};
+    // if(consoleLog===true){console.log(fetchPayload);}
+    // if(consoleLog===true){console.log(JSON.stringify(fetchPayload));}
+    //         await new Promise(resolve => setTimeout(resolve, 500)); // Simulated async process
+    // const data = await universalFetch(fetchUrl,fetchType,JSON.stringify(fetchPayload));
+    //         await new Promise(resolve => setTimeout(resolve, 500)); // Simulated async process
+    // if(consoleLog===true){console.log(data);}
+    // if(consoleLog===true){console.log(data.message,data.userLoginCodeSent);}
+    //     // login_step1:- emailAddress, createNewAccount, userLoginCodeSent, loginApproved
+    // }
 }
 async function login_step2(userEmailAddress){ // send userEmailAddress to server; receive login code || create new user
     if(consoleLog===true){console.log('login_step2(✅)');}
-    const fetchUrl = `/loginRouter/login_step2`;
-    const fetchType = `POST`;
-    const fetchPayload = {userEmailAddress:userEmailAddress};
-    if(consoleLog===true){console.log(fetchPayload);}
-    if(consoleLog===true){console.log(JSON.stringify(fetchPayload));}
-    const data = await universalFetch(fetchUrl,fetchType,JSON.stringify(fetchPayload));
-    if(consoleLog===true){console.log(data);}
-    if(consoleLog===true){console.log(data.message);}
-    if(consoleLog===true){console.log(data.createNewAccount);}
-    // login_step1:- emailAddress, createNewAccount, userLoginCodeSent, loginApproved
-    login_step1(userEmailAddress,data.createNewAccount,false,false);
+    if(consoleLog===true){console.log(userEmailAddress);}
+    try{
+        const fetchUrl = `/loginRouter/login_step2`;
+        const fetchOptions = {
+                method: 'POST',                // Specifies a POST request
+                mode: 'cors',                  // Ensures cross-origin requests are handled
+                cache: 'no-cache',             // Prevents caching issues
+                credentials: 'include',        // Includes cookies/session info
+                headers: {
+                    'Content-Type': 'application/json',  // Sets content type
+                    // 'Authorization': `Bearer ${yourAccessToken}`, // Uses token-based auth (if applicable)
+                    'Accept': 'application/json',        // Expect JSON response
+                },
+                body: JSON.stringify({          // Converts object to JSON for request
+                    userEmailAddress:userEmailAddress
+                })
+            }
+        if(consoleLog===true){console.log(JSON.stringify(fetchOptions));}
+        // const data = await universalFetchII(fetchUrl,fetchOptions);
+        const response = await fetch(fetchUrl,fetchOptions);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const jso = await response.json();
+        console.log('🟢 Request Success:', jso);
+
+        if(consoleLog===true){console.log(jso);}
+        if(consoleLog===true){console.log(jso.message);}
+        if(consoleLog===true){console.log(jso.createNewAccount);}
+        login_step1(userEmailAddress,jso.createNewAccount,false,false);
+    }
+    catch (error) {
+        console.error('🔴 Request Failed:', error);
+        return null;
+    }
 }
 // ⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨⌨
 function login_step1(
@@ -184,8 +319,8 @@ function login_step1(
 
     const overlay = document.createElement("div");
     const dialog = document.createElement("div");
-    const userEmailAddress = document.createElement("input");
-    const userLoginCode = document.createElement("input");
+    const emailAddressInput = document.createElement("input");
+    const loginCodeInput = document.createElement("input");
     const submitButton = document.createElement("button");
     const cancelButton = document.createElement("button");
     const p1 = document.createElement("p");
@@ -219,30 +354,30 @@ function login_step1(
         }
 
     // 
-        userEmailAddress.id = "user-email-address";
+        emailAddressInput.id = "user-email-address";
         if(createNewAccount===true || userLoginCodeSent===true){
             if(consoleLog===true){console.log('createNewAccount:- ',createNewAccount,'userLoginCodeSent:- ',userLoginCodeSent);}
-            userEmailAddress.value = emailAddress;
-            userEmailAddress.disabled = true;
-            userEmailAddress.readOnly = true;
-            userEmailAddress.style.background = "rgba(255,255,255,1)";
+            emailAddressInput.value = emailAddress;
+            emailAddressInput.disabled = true;
+            emailAddressInput.readOnly = true;
+            emailAddressInput.style.background = "rgba(255,255,255,1)";
             setTimeout(() => {
-                userEmailAddress.blur();
+                emailAddressInput.blur();
                 focusOnMe.focus();
                 focusOnMe.select();
             }, 100); // 50ms delay
         }
 
     // 
-        userLoginCode.id = "user-login-code";
-        userLoginCode.style.display = "none";
+        loginCodeInput.id = "user-login-code";
+        loginCodeInput.style.display = "none";
         if(userLoginCodeSent===true){
             if(consoleLog===true){console.log('userLoginCodeSent:- ',userLoginCodeSent);}
             setTimeout(() => {
-                userLoginCode.style.display = "block";
+                loginCodeInput.style.display = "block";
                 // br1.style.display = "block";
                 // br2.style.display = "block";
-                userEmailAddress.style.display = "none";
+                emailAddressInput.style.display = "none";
             }, 100); // 50ms delay
         }
 
@@ -265,10 +400,10 @@ function login_step1(
 
     // Append elements together
         dialog.appendChild(p1);
-        dialog.appendChild(userEmailAddress );
+        dialog.appendChild(emailAddressInput );
         dialog.appendChild(br1);
         dialog.appendChild(br2);
-        dialog.appendChild(userLoginCode);
+        dialog.appendChild(loginCodeInput);
         dialog.appendChild(br3);
         dialog.appendChild(submitButton);
         dialog.appendChild(cancelButton);
@@ -277,19 +412,19 @@ function login_step1(
         dialog.appendChild(focusOnMe);
         overlay.appendChild(dialog);
         document.body.appendChild(overlay);
-        userEmailAddress.focus();
-        userEmailAddress.select();
+        emailAddressInput.focus();
+        emailAddressInput.select();
 
     // add event listeners
-        // userEmailAddress
-            userEmailAddress.addEventListener("focus", () => {
+        // emailAddressInput
+            emailAddressInput.addEventListener("focus", () => {
                 setTimeout(() => {
                     // p2.innerHTML = "&nbsp";
                     p2.classList.add("fade-out");
                 }, 500); // 500ms delay
-                userEmailAddress.select();
+                emailAddressInput.select();
                 if(createNewAccount===true || userLoginCodeSent===true){
-                    userEmailAddress.blur();
+                    emailAddressInput.blur();
                     focusOnMe.focus();
                     focusOnMe.select();
                 }
@@ -304,7 +439,7 @@ function login_step1(
             submitButton.addEventListener("click", async () => {
                 if(createNewAccount===true){
                     setTimeout(() =>{
-                        login_step3(userEmailAddress.value,createNewAccount); // generate login code and email to user
+                        login_step3(emailAddressInput.value,createNewAccount); // generate login code and email to user
                     },1000); // used in development to mimic delayed response from server, maybe not necessary in production
                     popupBusyAnimation();
                     document.body.removeChild(overlay);
@@ -312,22 +447,22 @@ function login_step1(
                 }
                 if(userLoginCodeSent===true){
                     setTimeout(() =>{
-                        login_step4(userEmailAddress.value,createNewAccount,userLoginCode.value); // submite login code for validation at server
+                        login_step4(emailAddressInput.value,createNewAccount,loginCodeInput.value); // submite login code for validation at server
                     },1000); // used in development to mimic delayed response from server, maybe not necessary in production
                     popupBusyAnimation();
                     document.body.removeChild(overlay);
                     return;
                 }
-                if(userEmailAddress.value.length > 0){
-                    const validEmailFormat = await isValidEmailFormat(userEmailAddress.value);
+                if(emailAddressInput.value.length > 0){
+                    const validEmailFormat = await isValidEmailFormat(emailAddressInput.value);
                     if(validEmailFormat===true){
                         if(consoleLog===true){console.log('validEmailFormat:- ',validEmailFormat);}
-                        const validDomain = await isDomainValid(userEmailAddress.value);
+                        const validDomain = await isDomainValid(emailAddressInput.value);
                         if(consoleLog===true){console.log('validDomain:- ',validDomain);}
                         if(validDomain===true){
-                            if(consoleLog===true){console.log(`userEmailAddress.value: ${userEmailAddress.value}`);}
+                            if(consoleLog===true){console.log(`emailAddressInput.value: ${emailAddressInput.value}`);}
                             setTimeout(() =>{
-                                login_step2(userEmailAddress.value); // send userEmailAddress to server; receive login code || create new user
+                                login_step2(emailAddressInput.value); // send emailAddressInput to server; receive login code || create new user
                             },1000); // used in development to mimic delayed response from server, maybe not necessary in production
                             popupBusyAnimation();
                             document.body.removeChild(overlay);

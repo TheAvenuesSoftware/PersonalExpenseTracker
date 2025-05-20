@@ -24,6 +24,11 @@ header {
     background-color: #f4f4f4;
     padding: 1rem;
 }
+
+body{
+    user-select: none;
+    // background-color: #af1414;
+}
   
 // footer position fixed <<<--- scss scss scss scss scss scss scss scss scss scss
 .footer-position-fixed {

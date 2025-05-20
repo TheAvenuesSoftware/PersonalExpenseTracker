@@ -1,4 +1,4 @@
-const consoleLog = true;
+const consoleLog = false;
 
 if(consoleLog===true){console.log("\nLOADED:- projectClient.mjs is loaded",new Date().toLocaleString());}
 export function projectMJSisLoaded(){
@@ -20,6 +20,40 @@ export function projectMJSisLoaded(){
             await doAfterDOMandWindowLoad_projectClient();
             await new Promise(resolve => setTimeout(resolve, 500)); // Simulated async process
             await doAfterDOMandWindowLoad_globalLoginClient();
+
+            // setInterval(() => {
+            //     fetch('/heartbeat-session-extension', { method: 'POST', credentials: 'include' })
+            //         .then(response => response.json())
+            //         .then(data => console.log('🟢 Heartbeat:', data))
+            //         .catch(error => console.error('🔴 Heartbeat error:', error));
+            // }, 5 * 60 * 1000); // Every 5 minutes
+            // idle tracking START
+                let lastActivity = Date.now();
+                const updateActivity = () => {
+                    lastActivity = Date.now();
+                    console.log('🟢 User activety detected.',Date.now());
+                };
+                document.addEventListener("mousemove", updateActivity);
+                document.addEventListener("keydown", updateActivity);
+                document.addEventListener("click", updateActivity);
+                const intervalId = setInterval(() => {
+                    if (Date.now() - lastActivity < 5 * 60 * 1000) { // Active in last 15 min?
+                        fetch('/heartbeat-session-extension', { method: 'POST', credentials: 'include' })
+                            .then(response => response.json())
+                            .then(data => console.log('🟢 Heartbeat:', data))
+                            .catch(error => console.error('🔴 Heartbeat error:', error));
+                    } else {
+                        console.log('🔴 User inactive, consider logging out.');
+                        // Trigger logout function here
+                        const signInOutButton = document.getElementById("sign-in-out-button");
+                        logout_step1();
+                        document.removeEventListener("mousemove", updateActivity);
+                        document.removeEventListener("keydown", updateActivity);
+                        document.removeEventListener("click", updateActivity);
+                        clearInterval("intervalId");
+                    }
+                }, 5 * 60 * 1000); // Runs every 5 min
+            // idle tracking END
         });
     });
 

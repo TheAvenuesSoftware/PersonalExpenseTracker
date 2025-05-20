@@ -1,4 +1,4 @@
-const consoleLog = true
+const consoleLog = false
 
 if(consoleLog===true){console.log(consoleTrace(),"\nLOADED:- globalRoutes.mjs is loaded",new Date().toLocaleString());}
 export function globalRoutesMJSisLoaded(){
@@ -10,16 +10,16 @@ export function globalRoutesMJSisLoaded(){
     import { Router } from "express";
     const globalRouter = Router();
     // import * as globalClientJS from "./globalClient.mjs";
-    import {newDateAttributes} from "./globalClient.mjs";
+    // import {newDateAttributes} from "./globalClient.mjs";
     import {consoleTrace} from "./globalServer.mjs";
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 
 globalRouter.get("/getGlobalFooter", (req, res) => {
-    if(consoleLog===true){console.log("router.get('/getGlobalFooter...");}
-    const moment = newDateAttributes();
+    // if(consoleLog===true){console.log("globalRouter.get('/getGlobalFooter...");}
+    const moment = new Date();
     const myHtml = `
         <div class=global-footer-content>
-            <p>&copy; ${moment.year} The Avenues Software. All rights reserved.</p>
+            <p>&copy; ${moment.getFullYear()} The Avenues Software. All rights reserved.</p>
             <nav>
                 <ul>
                     <li><a href="/about">About Us</a></li>
@@ -29,9 +29,6 @@ globalRouter.get("/getGlobalFooter", (req, res) => {
             </nav>
         </div>
     `
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     res.send(myHtml);
     // const myHtml = `<div>...footer</div>`;
     // res.send(myHtml);

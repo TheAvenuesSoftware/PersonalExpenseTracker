@@ -1,4 +1,4 @@
-const consoleLog = true
+const consoleLog = false
 
 function consoleTrace() {
     try {
@@ -56,7 +56,7 @@ if(consoleLog===true){console.log('Project server configuration variables, from 
                                         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
                                     }
                                     .header {
-                                        background-color: #4CAF50;
+                                        background: linear-gradient(135deg, #4A90E2, #1440AF);
                                         color: #ffffff;
                                         padding: 10px 0;
                                         text-align: center;
@@ -76,7 +76,7 @@ if(consoleLog===true){console.log('Project server configuration variables, from 
                                         display: inline-block;
                                         padding: 10px 20px;
                                         margin: 20px 0;
-                                        background-color: #4CAF50;
+                                        background: linear-gradient(135deg, #4A90E2, #1440AF);
                                         color: #ffffff;
                                         text-decoration: none;
                                         border-radius: 5px;
@@ -86,19 +86,18 @@ if(consoleLog===true){console.log('Project server configuration variables, from 
                             <body>
                                 <div class="container">
                                     <div class="header">
-                                        <p>Ride Share Driver Access Code</p>
+                                        <p>Personal Expense Tracker Access Code</p>
                                     </div>
                                     <div class="content">
                                         <p>Dear User,</p>
-                                        <p>Your access code is: <strong>${loginCode}</strong></p>
-                                        <p>Use this code to access your Ride Share Driver account.  (You can copy and paste it.)</p>
-                                        // <p>Click the "Remember me" checkbox at the website/app to save re-typing your email address each time you sign in.</p>
+                                        <p><strong>${loginCode}</strong> is your access code.</p>
+                                        <p>Use this code to access your Personal Expense Tracker account.</p>
                                         <p style="color:red"><b>DELETE THIS EMAIL WHEN DONE. A code will be issued each time you log in.</b></p>
                                         <p>This method of sign-in is secure so long as your email account is secure, a password is not necessary.</p>
-                                        <p>If you believe your email account is insecure or if you believe your emails are being intercepted, DO NOT use your Ride Share Driver account untill your email account is secure.</p>
+                                        <p>If you believe your email account is insecure or if you believe your emails are being intercepted, DO NOT use your Personal Expense Tracker account untill your email account is secure.</p>
                                     </div>
                                     <div class="footer">
-                                        <p>&copy; 2025 Ride Share Driver. All rights reserved.</p>
+                                        <p>&copy; 2025 The Avenues Software. All rights reserved.</p>
                                     </div>
                                 </div>
                             </body>

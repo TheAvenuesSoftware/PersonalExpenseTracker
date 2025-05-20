@@ -3,6 +3,10 @@ header {
   padding: 1rem;
 }
 
+body {
+  user-select: none;
+}
+
 .footer-position-fixed footer {
   position: fixed;
   bottom: 0;

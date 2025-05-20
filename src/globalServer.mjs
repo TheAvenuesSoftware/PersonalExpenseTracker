@@ -1,4 +1,4 @@
-const consoleLog = true
+const consoleLog = false
 
 export function consoleTrace() {
     try {
@@ -17,6 +17,7 @@ export function globalServerMJSisLoaded(){
 
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 //  SERVER SIDE IMPORTS ONLY
+    import nodemailer from 'nodemailer'; // MUST BE DONE IN Node.mjs environment
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 
 
@@ -24,21 +25,18 @@ export function globalServerMJSisLoaded(){
 
 
 // nodemailer sendMail START
-    import nodemailer from 'nodemailer'; // MUST BE DONE IN Node.mjs environment
     export async function sendMail(from="",to="",subject="",html="",text=""){
-        if(consoleLog===true){console.log(`${consoleTrace()}\nfrom:- ${from}\nto:-${to}\nsubject:- ${subject}\nhtml:- ${html.replace(" ","")}\ntext:- ${text}\n`);}
-        if(from === "" || to === "" || subject === "" || html === "" || text === ""){
-            if(consoleLog===true){console.log(consoleTrace(),`\nSomething went wrong. ""`);}
-            return false;
-        }
-        if(typeof from === undefined || typeof to === undefined || typeof subject === undefined || typeof html === undefined || typeof text === undefined){
-            if(consoleLog===true){console.log(consoleTrace(),`\nSomething went wrong. Undefined`);}
-            return false;
-        }
-        if(!from || !to || !subject || !html || !text){
-            if(consoleLog===true){console.log(consoleTrace(),`\nSomething went wrong.  Something missing`);}
-            return false;
-        }
+        // if(consoleLog===true){console.log(`${consoleTrace()}\nfrom:- ${from}\nto:-${to}\nsubject:- ${subject}\nhtml:- ${html.replace(" ","")}\ntext:- ${text}\n`);}
+        // data validation START
+                if ([from, to, subject, html, text].some(val => !val)) {
+                    console.error(consoleTrace(), `\n🔴 Something went wrong. Missing or undefined values`);
+                    return false;
+                }
+                if (!process.env.GLOBAL_SMTP_HOST || !process.env.GLOBAL_SMTP_USER || !process.env.GLOBAL_SMTP_PASS) {
+                    console.error(consoleTrace(), `\n🔴 SMTP credentials are missing`);
+                    return false;
+                }
+        // // data validation END
         // Create a transporter object using SMTP transport START
             const transporter = nodemailer.createTransport({
                 host: process.env.GLOBAL_SMTP_HOST,
@@ -58,56 +56,31 @@ export function globalServerMJSisLoaded(){
                     rejectUnauthorized: true // set to true for better security
                 }
             });
-            if(consoleLog===true){console.log(consoleTrace());}
-            if(consoleLog===true){console.log(`${process.env.GLOBAL_SMTP_HOST}\n${process.env.GLOBAL_SMTP_USER}\n${process.env.GLOBAL_SMTP_PASS}\n`);}
+            // 🔴🔴🔴 KEEP PRIVATE 🔴🔴🔴 
+                // console.log(`log(consoleTrace()\nGLOBAL_SMTP_HOST:- ${process.env.GLOBAL_SMTP_HOST}\nGLOBAL_SMTP_USER:- ${process.env.GLOBAL_SMTP_USER}\nGLOBAL_SMTP_PASS:- ${process.env.GLOBAL_SMTP_PASS}\n`);}
+            // 🔴🔴🔴 KEEP PRIVATE 🔴🔴🔴 
         // Create a transporter object using SMTP transport END
-
-        try {
-            // const { name, subject, email, message } = req.body;
-            const mailOptions = {
-                from: from,
-                to: to,
-                subject: subject,
-                html: html,
-                text: text
+        // send mail START
+            try {
+                const mailOptions = {
+                    from: from,
+                    to: to,
+                    subject: subject,
+                    html: html,
+                    text: text
+                }
+                const info = await transporter.sendMail(mailOptions)
+                // .then(info =>{
+                    console.log(`${consoleTrace()}\n🟢 info.response:-\n${info.response}`);
+                // });
+                console.log(`${consoleTrace()}\n🟢 Nodemailer success.`);
+                return true;
+            } catch (error) {
+                console.error(consoleTrace(),'\n🔴 Error sending email:- ',error);
+                return false;
             }
-            // ALL "mailOptions" START
-                // from: The sender's email address.
-                // to: The recipient's email address or a list of recipients.
-                // cc: Carbon copy recipients.
-                // bcc: Blind carbon copy recipients.
-                // subject: The subject of the email.
-                // text: The plain text body of the email.
-                // html: The HTML body of the email.
-                // attachments: An array of attachment objects.
-                // replyTo: An email address to which replies should be sent.
-                // headers: Custom headers for the email.
-                // priority: Priority of the email ('high', 'normal', 'low').
-                // alternatives: An array of alternative text contents (e.g., plain text and HTML versions).
-                // envelope: SMTP envelope, if different from the from and to fields.
-                // messageId: Custom message ID.
-                // date: Custom date header.
-                // encoding: Content transfer encoding.
-                // raw: Raw email content.
-            // ALL "mailOptions" END
-            // if(consoleLog===true){console.log(consoleTrace());}
-            // if(consoleLog===true){console.log(mailOptions);}
-            await transporter.sendMail(mailOptions)
-            .then(info =>{
-                // res.status(200).send('Email sent successfully');
-                // if(consoleLog===true){console.log(consoleTrace());}
-                if(consoleLog===true){console.log(`Nodemailer success:- ${info.response}`);}
-            })
-            .catch(error =>{
-                console.error('Nodemailer Error:- ',error.response);
-            })
-        } catch (error) {
-            // res.status(500).send('Error sending email');
-            // if(consoleLog===true){console.log(consoleTrace());}
-            if(consoleLog===true){console.error('Error sending email');}
-        }
+        // send mail END
     }
-    // nodemailerSendMail(process.env.GLOBAL_SMTP_USER,"donald.garton@outlook.com","subject","html","text");
 // nodemailer sendMail END
 
 // convert image data to image file START
