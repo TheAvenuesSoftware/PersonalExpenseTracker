@@ -9,7 +9,7 @@
 // - Event & Callback Handlers: Prefix with on (e.g., onClick, onDataReceived)
 // - Private Variables: Some use leading _ to indicate private properties (_hiddenProperty)
 
-const consoleLog = false
+const consoleLog = true
 
 let myDate;
 myDate = new Date();
@@ -18,11 +18,22 @@ console.log("🎾",("SERVER STARTED 🎾 ").repeat(7));
 console.log(`🎾 ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}${(" ").repeat(128-(`🎾 ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}  `).length)}🎾`);
 console.log(("🎾").repeat(64));
 
-if(consoleLog===true){console.log(consoleTrace(),'\nLOADED:- index.mjs');}
+if(consoleLog===true){console.log(trace(),'\nLOADED:- index.mjs');}
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    // CONSOLETRACE()
-        function consoleTrace() {
+    // os - operatingSystem
+        import os from 'os';
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    // PATH
+        import path from 'path';
+        import { fileURLToPath } from 'url';
+        // Get the current file path
+            const __filename = fileURLToPath(import.meta.url);
+        // Get the directory name
+            const __dirname = path.dirname(__filename);
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    // trace()
+        function trace() {
             try {
                 const stack = new Error().stack;
                 const firstLine = stack.split('\n')[2].trim();
@@ -43,33 +54,43 @@ if(consoleLog===true){console.log(consoleTrace(),'\nLOADED:- index.mjs');}
                     const envPath = "./config/globalServer.env";
                     if (fs.existsSync(envPath)) {
                         dotenv.config({ path: envPath });
-                        if(consoleLog===true){console.log(consoleTrace(),`\nIMPORTED:- ${envPath}`);}
+                        if(consoleLog===true){console.log(trace(),`\nIMPORTED:- ${envPath}`);}
                         const result = dotenv.config({ path: envPath });
-                        if(consoleLog===true){console.log(consoleTrace(),`\n${envPath}:`, result);}                
+                        // if(consoleLog===true){console.log(trace(),`\n${envPath}:-\n`, result.parsed);}  
+                        const envVar = result.parsed;
+                        Object.keys(envVar).forEach(key => {
+                            // console.log(`key:- ${key} :- ${envVar[key]}`);
+                            console.log(`key:- ${key}`);
+                        }); 
                     } else {
-                        console.log(consoleTrace(),`\n🔴 ERROR:- ${envPath} not found!`);
+                        console.log(trace(),`\n🔴 ERROR:- ${envPath} not found!`);
                     }
                 } catch (error) {
-                    console.log(consoleTrace(),`\n🔴 ERROR:- ${envPath} not found!`);
+                    console.log(trace(),`\n🔴 ERROR:- ${envPath} not found!`);
                 }
             // project.env
                 try{
                     const envPath = "./config/projectServer.env";
                     if (fs.existsSync(envPath)) {
                         dotenv.config({ path: envPath });
-                        if(consoleLog===true){console.log(consoleTrace(),`\nIMPORTED:- ${envPath}`);}
+                        if(consoleLog===true){console.log(trace(),`\nIMPORTED:- ${envPath}`);}
                         const result = dotenv.config({ path: envPath });
-                        if(consoleLog===true){console.log(consoleTrace(),`\n${envPath}:`, result);}                
+                        // if(consoleLog===true){console.log(trace(),`\n${envPath}:`, result);}                
+                        const envVar = result.parsed;
+                        Object.keys(envVar).forEach(key => {
+                            // console.log(`key:- ${key} :- ${envVar[key]}`);
+                            console.log(`key:- ${key}`);
+                        }); 
                     } else {
-                        if(consoleLog===true){console.log(consoleTrace(),`\n🔴 ERROR:- ${envPath} not found!`);}
+                        if(consoleLog===true){console.log(trace(),`\n🔴 ERROR:- ${envPath} not found!`);}
                     }
                 } catch (error) {
-                    if(consoleLog===true){console.log(consoleTrace(),`\n🔴 ERROR:- ${envPath} not found!`);}
+                    if(consoleLog===true){console.log(trace(),`\n🔴 ERROR:- ${envPath} not found!`);}
                 }
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // EPXRESS
         // const express = require("express");
-        if(consoleLog===true){console.log(consoleTrace());}
+        if(consoleLog===true){console.log(trace());}
         import express from "express";
         const app = express();
         app.set('trust proxy', 1) // trust first proxy
@@ -87,13 +108,19 @@ if(consoleLog===true){console.log(consoleTrace(),'\nLOADED:- index.mjs');}
             }
         });
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    // COOKIE PARSER
+        import cookieParser from 'cookie-parser';
+        app.use(cookieParser()); // Enables reading of cookies
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    // // JSONWEBTOKE for user authentication
+    //     import jwt from 'jsonwebtoken';
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // retrieve the session key OR create one if can't be retrieved
         // const crypto = require("crypto");
             import crypto from 'crypto'
             // const sessionKey = crypto.randomBytes(32).toString("hex");
             const sessionKey = process.env.SESSION_KEY || crypto.randomBytes(32).toString("hex");
-            // if(consoleLog===true){console.log(consoleTrace());} // DON'T LOG THIS!!!  KEEP IT SECURE!!!
-            // if(consoleLog===true){console.log('sessionKey:- ',sessionKey);} // DON'T LOG THIS!!!  KEEP IT SECURE!!!
+            if(consoleLog===true){console.log(trace(),'\n🟢 sessionKey created.');} // DON'T LOG THIS!!!  KEEP IT SECURE!!!
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // EPXRESS
         // EXPRESS-SESSION
@@ -124,90 +151,20 @@ if(consoleLog===true){console.log(consoleTrace(),'\nLOADED:- index.mjs');}
                     } // ❗❗❗Set "secure: false" to true for HTTPS
                 }));
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    // ROUTERS
-        let routerMounted = false;
-        import dbRouter, * as dbFunctions from './src/SQLite_ServerSide.mjs';
-            app.use("/dbRouter", dbRouter);
-            if(dbFunctions.SQLite_ServerSideMJSisLoaded() === true){
-                if(consoleLog===true){console.log(consoleTrace(),'\nIMPORTED:- router & all functions from ./src/SQLite_ServerSide.mjs');}
-            }else{
-                console.log(`🔴 ${consoleTrace()}\nError.`);
-            }
-            dbRouter.stack.forEach((route) => {
-                if (route.route) {
-                    routerMounted = true;
-                    if(consoleLog===true){console.log(`${(" ").repeat(5)} Path: ${route.route.path}, Method: ${Object.keys(route.route.methods).join(", ")}`);}
-                }
-            });
-            if(routerMounted===false){console.log(`${consoleTrace()}\n🔴 Errorin router!\n`,dbRouter.stack);}
+    // AUTHENTICATE USER. AUTHENTICATION MIDDLEWARE
 
-        routerMounted = false;
-        import loginRouter, * as loginFunctions from './src/globalLoginServer.mjs';
-            app.use("/loginRouter", loginRouter);
-            if(loginFunctions.globalLoginServerMJSisLoaded() === true){
-                if(consoleLog===true){console.log(consoleTrace(),'\nIMPORTED:- router & all functions from ./src/globalLoginServer.mjs');}
-            }else{
-                console.log(`🔴 ${consoleTrace()}\nError.`);
-            }
-            loginRouter.stack.forEach((route) => {
-                if (route.route) {
-                    routerMounted = true;
-                    if(consoleLog===true){console.log(`${(" ").repeat(5)} Path: ${route.route.path}, Method: ${Object.keys(route.route.methods).join(", ")}`);}
-                }
-            });            
-            if(routerMounted===false){console.log(`${consoleTrace()}\n🔴 Errorin router!\n`,dbRouter.stack);}
-
-        routerMounted = false;
-        import globalRouter, * as globalFunctions from './src/globalRouter.mjs'; 
-            app.use("/globalRouter", globalRouter);
-            if(globalFunctions.globalRoutesMJSisLoaded() === true){
-                if(consoleLog===true){console.log(consoleTrace(),'\nIMPORTED:- router & all functions from ./src/globalRoutes.mjs');}
-            }else{
-                console.log(`🔴 ${consoleTrace()}\nError.`);
-            }
-            globalRouter.stack.forEach((route) => {
-                if (route.route) {
-                    routerMounted = true;
-                    if(consoleLog===true){console.log(`${(" ").repeat(5)} Path: ${route.route.path}, Method: ${Object.keys(route.route.methods).join(", ")}`);}
-                }
-            });            
-            if(routerMounted===false){console.log(`${consoleTrace()}\n🔴 Errorin router!\n`,dbRouter.stack);}
-
-        routerMounted = false;
-        import projectRouter, * as projectFunctions from './src/projectRouter.mjs';
-            app.use("/projectRouter", projectRouter);
-            if(projectFunctions.projectRoutesMJSisLoaded() === true){
-                if(consoleLog===true){console.log(consoleTrace(),'\nIMPORTED:- router & all functions from projectRoutes.mjs');}
-            }else{
-                console.log(`🔴 ${consoleTrace()}\nError.`);
-            }
-            projectRouter.stack.forEach((route) => {
-                if (route.route) {
-                    routerMounted = true;
-                    if(consoleLog===true){console.log(`${(" ").repeat(5)} Path: ${route.route.path}, Method: ${Object.keys(route.route.methods).join(", ")}`);}
-                }
-            });            
-            if(routerMounted===false){console.log(`${consoleTrace()}\n🔴 Errorin router!\n`,dbRouter.stack);}
-
-        routerMounted = false;
-        import sessionsRouter, * as sessionsFunctions from './src/globalSessionsServer.mjs';
-            app.use("/sessionsRouter", sessionsRouter);
-            if(sessionsFunctions.globalSessionsServerMJSisLoaded() === true){
-                if(consoleLog===true){console.log(consoleTrace(),'\nIMPORTED:- router & all functions from globalSessionsServer.mjs');}
-            }else{
-                console.log(`🔴 ${consoleTrace()}\nError.`);
-            }
-            sessionsRouter.stack.forEach((route) => {
-                if (route.route) {
-                    routerMounted = true;
-                    if(consoleLog===true){console.log(`${(" ").repeat(5)} Path: ${route.route.path}, Method: ${Object.keys(route.route.methods).join(", ")}`);}
-                }
-            });            
-            if(routerMounted===false){console.log(`${consoleTrace()}\n🔴 Errorin router!\n`,dbRouter.stack);}
-
+        if(consoleLog===true){console.log(`${trace()}\n🟢 JWT authentication is set up.`);}
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    // // AUTHENTICATE USER BEFORE 
+    //     // 1   mounting routers
+    //     // 2   app.all
+    // // AUTHENTICATE USER AFTER
+    //     // 1   express-sessions
+    //     // 2   jwt
+        // app.use(authenticateUser);
+// // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 myDate = new Date();
-if(consoleLog===true){console.log(`${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);}
+if(consoleLog===true){console.log(`${trace()}\n${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);}
 if(consoleLog===true){console.log(("<>").repeat(64));}
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // CORS handling START
@@ -218,82 +175,176 @@ if(consoleLog===true){console.log(("<>").repeat(64));}
             allowedHeaders: ['Content-Type', 'Authorization'],
             optionsSuccessStatus: 204 // Avoids extra response headers in preflight requests
         }));
+        if(consoleLog===true){console.log(`${trace()}\n🟢 CORS headers are set.`);}
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // catch-all START 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 
 app.use((req, res, next) => {
 
-    console.log("\n",("↓ ").repeat(64));
-    console.log(("  🛜").repeat(32));
+    // // ensure invalid end-points are rejected
+    //     app.use((req, res) => {
+    //         res.status(404).json({ error: "Endpoint not found" });
+    //     });
+
+    console.log("\n");
+    console.log(("🟨").repeat(64));
+
+    // app.use(authenticateUser);
 
     const myDate = new Date();
-    console.log(`${consoleTrace()}\n${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}\n${req.method}\n${req.url}`);
+    console.log(`🟨 ${trace()}\n🟨 ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}\n🟨 ${req.method}\n🟨 ${req.url}`);
 
-    // slient session regen START
-        const MAX_SESSION_AGE = 15 * 60 * 1000; // 15 minutes
-        const now = Date.now();
-        if (!req.session.createdAt) {
-            req.session.createdAt = now; // Store creation timestamp
-        }
-        if ((now - req.session.createdAt > MAX_SESSION_AGE)) {
-            const oldSecurityCode = req.session.securityCode; // Retrieve existing code
-            const newSecurityCode = crypto.randomBytes(4).toString("hex"); // Initial securityCode
-            req.session.regenerate((err) => {
-                if (err) {
-                    console.error("🔴 Session regeneration error:", err);
-                    return next(err); // Passes error forward if regeneration fails
-                }
-                req.session.createdAt = Date.now(); // Reset session timestamp to now
-                req.session.securityCode = newSecurityCode; // Assign new securityCode
-                console.log(`🟢 Session refreshed. Old Code: ${oldSecurityCode}, New Code: ${req.session.securityCode}`)
-                console.log(consoleTrace(),`\nSession details:- `,req.session);
-                console.log(consoleTrace(),'\nSession details JSON:- ', JSON.stringify(req.session, null, 2));
-                next(); // Move to next middleware after successful regeneration
-            });
-        } else {
-            if(req.url===`/heartbeat-session-extension`){
-                if (req.session) {
-                    req.session.createdAt = Date.now(); // Reset session timestamp to now
-                    console.log(consoleTrace(),`\n🟢 Heartbeat session extension success:-\n`,req.session);
-                    res.json({ message: "Heartbeat session extension success.",status: true });
-                } else {
-                    console.log(consoleTrace(),`\n🔴 Heartbeat session extension error:-\n`,error);
-                    res.status(403).json({ message: `Heartbeat session extension error:- No active session detected. ${error}`,status:false });
-                }
-                }
-            next();
-        }
+            // dbRouter.stack.forEach((route) => {
+            //     if (route.route) {
+            //         // routerMounted = true;
+            //         if(consoleLog===true){console.log(`${(" ").repeat(5)} Path: ${route.route.path}, Method: ${Object.keys(route.route.methods).join(", ")}`);}
+            //     }
+            // });
+
+    // // silent session regen START
+    //     const MAX_SESSION_AGE = 15 * 60 * 1000; // 15 minutes
+    //     const now = Date.now();
+    //     if (!req.session.createdAt) {
+    //         req.session.createdAt = now; // Store creation timestamp
+    //     }
+    //     if ((now - req.session.createdAt > MAX_SESSION_AGE)) {
+    //         const oldSecurityCode = req.session.securityCode; // Retrieve existing code
+    //         const newSecurityCode = crypto.randomBytes(4).toString("hex"); // Initial securityCode
+    //         req.session.regenerate((err) => {
+    //             if (err) {
+    //                 console.error("🔴 Session regeneration error:", err);
+    //                 return next(err); // Passes error forward if regeneration fails
+    //             }
+    //             req.session.createdAt = Date.now(); // Reset session timestamp to now
+    //             req.session.securityCode = newSecurityCode; // Assign new securityCode
+    //             console.log(`🟢 Session refreshed. Old Code: ${oldSecurityCode}, New Code: ${req.session.securityCode}`)
+    //             console.log(trace(),`\nSession details:- `,req.session);
+    //             console.log(trace(),'\nSession details JSON:- ', JSON.stringify(req.session, null, 2));
+    //             next(); // Move to next middleware after successful regeneration
+    //         });
+    //     } else {
+    //         next();
+    //     }
     // slient session regen END
 
-    console.log(("  🛜").repeat(32));
-    console.log(("↑ ").repeat(64));
+    console.log(("🟨").repeat(64));
+    // console.log(("⌨ ").repeat(64));
+    // console.log(("↑ ").repeat(64));
 
     next();
 
 });
 // catch-all END 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    // heartbeat detected
+        app.post("/heartbeat-session-extension", (req, res) => {
+            if (req.session) {
+                req.session.createdAt = Date.now(); // Reset session timestamp to now
+                if(consoleLog===true){console.log(`${trace()}\n🟢 Heartbeat session extension success at ${new Date().toLocaleString()}:-\n`,req.session);}
+                if(consoleLog!=true){console.log(`${trace()}\n🟢 Heartbeat session extension success at ${new Date().toLocaleString()}`);}
+                res.send({ message: `Heartbeat session extension success at ${new Date().toLocaleString()}.`,status: true });
+            } else {
+                if(consoleLog===true){console.log(`${trace()}\n🔴 Heartbeat session extension error:-\n`,error);}
+                if(consoleLog!=true){console.log(`${trace()}\n🔴 Heartbeat session extension error:-\n`);}
+                res.status(403).json({ message: `Heartbeat session extension error:- No active session detected. ${error}`,status:false });
+            }
+        });
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    // MOUNT EXTERNAL ROUTERS
+        if(consoleLog===true){console.log(`${trace()}\nMounting routers.`);}
+
+        let routerMounted = false;
+        import dbRouter, * as dbFunctions from "./src/SQLite_ServerSide.mjs";
+            app.use("/dbRouter", dbRouter);
+            if(dbFunctions.SQLite_ServerSideMJSisLoaded() === true){
+                // if(consoleLog===true){console.log(trace(),'\nIMPORTED:- router & all functions from ./src/SQLite_ServerSide.mjs');}
+            }else{
+                console.log(`🔴 ${trace()}\nError.`);
+            }
+            dbRouter.stack.forEach((route) => {
+                if (route.route) {
+                    routerMounted = true;
+                    // if(consoleLog===true){console.log(`${(" ").repeat(5)} Path: ${route.route.path}, Method: ${Object.keys(route.route.methods).join(", ")}`);}
+                }
+            });
+            if(routerMounted===false){console.log(`${trace()}\n🔴 Errorin router!\n`,dbRouter.stack);}
+
+        routerMounted = false;
+        import loginRouter, * as loginFunctions from './src/globalLoginServer.mjs';
+            app.use("/loginRouter", loginRouter);
+            if(loginFunctions.globalLoginServerMJSisLoaded() === true){
+                // if(consoleLog===true){console.log(trace(),'\nIMPORTED:- router & all functions from ./src/globalLoginServer.mjs');}
+            }else{
+                console.log(`🔴 ${trace()}\nError.`);
+            }
+            loginRouter.stack.forEach((route) => {
+                if (route.route) {
+                    routerMounted = true;
+                    // if(consoleLog===true){console.log(`${(" ").repeat(5)} Path: ${route.route.path}, Method: ${Object.keys(route.route.methods).join(", ")}`);}
+                }
+            });            
+            if(routerMounted===false){console.log(`${trace()}\n🔴 Errorin router!\n`,dbRouter.stack);}
+
+        routerMounted = false;
+        import globalRouter, * as globalFunctions from './src/globalRouter.mjs'; 
+            app.use("/globalRouter", globalRouter);
+            if(globalFunctions.globalRoutesMJSisLoaded() === true){
+                // if(consoleLog===true){console.log(trace(),'\nIMPORTED:- router & all functions from ./src/globalRoutes.mjs');}
+            }else{
+                console.log(`🔴 ${trace()}\nError.`);
+            }
+            globalRouter.stack.forEach((route) => {
+                if (route.route) {
+                    routerMounted = true;
+                    // if(consoleLog===true){console.log(`${(" ").repeat(5)} Path: ${route.route.path}, Method: ${Object.keys(route.route.methods).join(", ")}`);}
+                }
+            });            
+            if(routerMounted===false){console.log(`${trace()}\n🔴 Errorin router!\n`,dbRouter.stack);}
+
+        routerMounted = false;
+        import projectRouter, * as projectFunctions from './src/projectRouter.mjs';
+            app.use("/projectRouter", projectRouter);
+            if(projectFunctions.projectRoutesMJSisLoaded() === true){
+                // if(consoleLog===true){console.log(trace(),'\nIMPORTED:- router & all functions from projectRoutes.mjs');}
+            }else{
+                console.log(`🔴 ${trace()}\nError.`);
+            }
+            projectRouter.stack.forEach((route) => {
+                if (route.route) {
+                    routerMounted = true;
+                    // if(consoleLog===true){console.log(`${(" ").repeat(5)} Path: ${route.route.path}, Method: ${Object.keys(route.route.methods).join(", ")}`);}
+                }
+            });            
+            if(routerMounted===false){console.log(`${trace()}\n🔴 Errorin router!\n`,dbRouter.stack);}
+
+        routerMounted = false;
+        import sessionsRouter, * as sessionsFunctions from './src/globalSessionsServer.mjs';
+            app.use("/sessionsRouter", sessionsRouter);
+            if(sessionsFunctions.globalSessionsServerMJSisLoaded() === true){
+                // if(consoleLog===true){console.log(trace(),'\nIMPORTED:- router & all functions from globalSessionsServer.mjs');}
+            }else{
+                console.log(`🔴 ${trace()}\nError.`);
+            }
+            sessionsRouter.stack.forEach((route) => {
+                if (route.route) {
+                    routerMounted = true;
+                    // if(consoleLog===true){console.log(`${(" ").repeat(5)} Path: ${route.route.path}, Method: ${Object.keys(route.route.methods).join(", ")}`);}
+                }
+            });            
+            if(routerMounted===false){console.log(`${trace()}\n🔴 Errorin router!\n`,dbRouter.stack);}
+
+        if(consoleLog===true){console.log(`${trace()}\n🟢 Routers mounted.`);}
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // // heartbeat - rfresh session
     //     app.post('/heartbeat-session-extension', (req, res) => {
     //         if (req.session) {
     //             req.session.createdAt = Date.now(); // Reset session timestamp to now
-    //             console.log(consoleTrace(),`\n🟢 Heartbeat session extension success:-\n`,req.session);
-    //             res.json({ message: "Heartbeat session extension success.",status: true });
+    //             console.log(trace(),`\n🟢 Heartbeat session extension success:-\n`,req.session);
+    //             res.send({ message: "Heartbeat session extension success.",status: true });
     //         } else {
-    //             console.log(consoleTrace(),`\n🔴 Heartbeat session extension error:-\n`,error);
+    //             console.log(trace(),`\n🔴 Heartbeat session extension error:-\n`,error);
     //             res.status(403).json({ message: `Heartbeat session extension error:- No active session detected. ${error}`,status:false });
     //         }
     //     });
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    // os - operatingSystem
-        import os from 'os';
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    // PATH
-        import path from 'path';
-        import { fileURLToPath } from 'url';
-        // Get the current file path
-            const __filename = fileURLToPath(import.meta.url);
-        // Get the directory name
-            const __dirname = path.dirname(__filename);
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 myDate = new Date();
 if(consoleLog===true){console.log(`${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);}
@@ -306,9 +357,9 @@ if(consoleLog===true){console.log(("<>").repeat(64));}
 //         // export function accessDb(fileName){
 //         //     const db = new sqlite3.Database(`${process.env.PATH_TO_DATABASE}${fileName}.db`, (err) => {
 //         //         if (err) {
-//         //             console.error(`${consoleTrace()}\n🔴 Error connecting to database:\n`,fileName, err);
+//         //             console.error(`${trace()}\n🔴 Error connecting to database:\n`,fileName, err);
 //         //         } else {
-//         //             console.log(`${consoleTrace()}\n🟢 Connected to ${fileName}.db`);
+//         //             console.log(`${trace()}\n🟢 Connected to ${fileName}.db`);
 //         //         }
 //         //         myDate = new Date();
 //         //         if(consoleLog===true){console.log(`${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);}
@@ -365,8 +416,8 @@ setInterval(() => {
     const DEV_IP_ADDRESS = process.env.DEV_IP_ADDRESS;
     app.listen(PORT,'0.0.0.0', () => {
         console.log(("🏁").repeat(64));
-        // console.log(`${consoleTrace()}\nServer is running on port:${PORT}\nAccessible on the server at either http://localhost:${PORT} or http://${DEV_IP_ADDRESS}:${PORT}.\nAccessible on the LAN at http://${DEV_IP_ADDRESS}:${PORT}.`);
-        console.log(`${consoleTrace()}\nServer is running on port:${PORT}.`);
+        // console.log(`${trace()}\nServer is running on port:${PORT}\nAccessible on the server at either http://localhost:${PORT} or http://${DEV_IP_ADDRESS}:${PORT}.\nAccessible on the LAN at http://${DEV_IP_ADDRESS}:${PORT}.`);
+        console.log(`${trace()}\nServer is running on port:${PORT}.`);
         myDate = new Date();
         console.log(`${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);
         console.log(("🏁").repeat(64));

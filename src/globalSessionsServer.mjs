@@ -1,6 +1,6 @@
 const consoleLog = false
 
-if(consoleLog===true){console.log(consoleTrace(),"\nLOADED:- globalSessionsServer.mjs is loaded",new Date().toLocaleString());}
+if(consoleLog===true){console.log(trace(),"\nLOADED:- globalSessionsServer.mjs is loaded",new Date().toLocaleString());}
 export function globalSessionsServerMJSisLoaded(){
     return true;
 }
@@ -9,16 +9,16 @@ export function globalSessionsServerMJSisLoaded(){
 //  SERVER SIDE IMPORTS ONLY
     import { Router } from "express";
     const sessionsRouter = Router();
-    import {consoleTrace} from "./globalServer.mjs";
+    import {trace} from "./globalServer.mjs";
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 
     // SET-UP Store user data in the session
         sessionsRouter.post("/store-session", (req, res) => {
-            if(consoleLog===true){console.log(consoleTrace());}
+            if(consoleLog===true){console.log(trace());}
             if(consoleLog===true){console.log("/store-session:-",req.body);}
             req.session.userData = req.body; 
             if(consoleLog===true){console.log("req.session.userData:-",req.session.userData);}
-            // if(consoleLog===true){console.log(consoleTrace());}
+            // if(consoleLog===true){console.log(trace());}
             // if(consoleLog===true){console.log("req.session:-",req.session);}
             res.json({ message: "User data stored in session OK!" });
         });
@@ -42,21 +42,21 @@ export function globalSessionsServerMJSisLoaded(){
     // REFRESH session timeout cookie
         sessionsRouter.post("/refresh-session", (req, res) => {
             // if(consoleLog===true){console.log(("99").repeat(55));}
-            // if(consoleLog===true){console.log(consoleTrace());}
+            // if(consoleLog===true){console.log(trace());}
             // if(consoleLog===true){console.log(req.session);}
             if (!req.session.userData.userRole) {
                 return res.status(401).json({ error: "Session has already expired..." });
             }
             req.session.cookie.maxAge = 15 * 60 * 1000; // ✅ Reset session expiration
             res.json({ message: "Session refreshed!" });
-            if(consoleLog===true){console.log(consoleTrace(),`\n${message}`);}
+            if(consoleLog===true){console.log(trace(),`\n${message}`);}
         });
     // LOGOUT
-        sessionsRouter.post("/logout", (req, res) => {
+        sessionsRouter.post("/sessionLogout", (req, res) => {
             req.session.destroy((err) => {
                 if (err){
                     if(consoleLog===true){console.log(("99").repeat(55));}
-                    if(consoleLog===true){console.log(consoleTrace());}
+                    if(consoleLog===true){console.log(trace());}
                     if(consoleLog===true){console.log(err);}
                     return res.status(500).send("Error ending session");
                 }

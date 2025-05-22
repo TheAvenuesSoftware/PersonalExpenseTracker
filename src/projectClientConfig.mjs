@@ -19,6 +19,8 @@ export const clientConfigSettings = {
     CLIENT_DATES_ALLOW_ANY_PAST: false,
     CLIENT_SESSION_WARNING_DELAY: clientSessionWarningDelay,
     CLIENT_SESSION_EXPIRED_DELAY: clientSessionExpiredDelay,
+    CLIENT_SESSION_HEARTBEAT_INTERVAL: 2, // minutes
+    CLIENT_SESSION_IDLE_LOGOUT_AFTER: 4 // minutes
 };
 if(consoleLog===true){console.log('Project client configuration variables, from projectClientConfig.mjs:-\n',clientConfigSettings);}
 if(consoleLog===true){console.log('Project client configuration variables, from projectClientConfig.mjs CLIENT_APP_NAME:-\n',clientConfigSettings.CLIENT_APP_NAME);}

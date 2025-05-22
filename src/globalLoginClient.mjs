@@ -9,6 +9,7 @@ export function globalLoginClientJSisLoaded(){
 //  ONLY IMPORT CLIENT SIDE MODULES TO HERE
 //     // import * as globalClientMJS from './globalClient.mjs';
     import {universalFetchII} from './globalClient.mjs';
+    import {sessionLogout} from './globalSessionsClient.mjs';
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 
         // document.addEventListener("DOMContentLoaded", () => {
@@ -31,55 +32,10 @@ export function globalLoginClientJSisLoaded(){
                         login_step1();
                     }
                     if(e.target.textContent.toLowerCase()==="sign out"){
-                        logout_step1();
+                        sessionLogout();
                     }
                 });
             }
-
-// logout
-    async function logout_step1(){
-        try {
-            const fetchUrl = `/sessionsRouter/logout`;
-            const fetchType = `POST`;
-            const fetchPayload = {logUserOut:true};
-            if(consoleLog===true){console.log(fetchPayload);}
-            if(consoleLog===true){console.log(JSON.stringify(fetchPayload));}
-            const data = await universalFetch(fetchUrl,fetchType,JSON.stringify(fetchPayload));
-            if(consoleLog===true){console.log(data);}
-            if(consoleLog===true){console.log(data.message,data.logoutConfirmed);}
-
-            if(data.logoutConfirmed===true){
-                document.querySelectorAll('.overlay').forEach(el => {
-                    el.style.transition = "opacity 0.5s";
-                    el.style.opacity = "0";
-                    setTimeout(() => el.remove(), 500);
-                });
-                alert("🟢 logout successful.");
-                document.getElementById("sign-in-out-button").innerHTML = "Sign In";
-                document.getElementById("sign-in-out-button").classList.remove("sign-out-button");
-                document.getElementById("sign-in-out-button").classList.add("sign-in-button");
-                // remove idle tracking event listeners START
-                    document.getElementById("sign-in-out-button").innerHTML = "Sign In";
-                    document.getElementById("sign-in-out-button").classList.add("sign-in-button");
-                    document.getElementById("sign-in-out-button").classList.remove("sign-out-button");
-                // remove idle tracking event listeners END
-            }else{
-                document.querySelectorAll('.overlay').forEach(el => {
-                    el.style.transition = "opacity 0.5s";
-                    el.style.opacity = "0";
-                    setTimeout(() => el.remove(), 500);
-                });
-                alert("🔴 logout failed, please try again");
-                document.getElementById("sign-in-out-button").innerHTML = "Sign Out";
-                document.getElementById("sign-in-out-button").classList.remove("sign-in-button");
-                document.getElementById("sign-in-out-button").classList.add("sign-out-button");
-            }
-        }
-        catch{
-            alert("🔴 Fatal error logging out!");
-            console.log("🔴 ERROR");
-        }
-    }
 
 // check email address
     function isValidEmailFormat(email) {
@@ -158,7 +114,7 @@ async function login_step4(userEmailAddress,createNewAccount,userLoginCode){
     // if(consoleLog===true){console.log(JSON.stringify(fetchPayload));}
     // const data = await universalFetch(fetchUrl,fetchType,JSON.stringify(fetchPayload));
     try{
-        const fetchUrl = `/loginRouter/login_step4`;
+        const fetchUrl = "/loginRouter/login_step4";
         const fetchOptions = {
                 method: 'POST',                // Specifies a POST request
                 mode: 'cors',                  // Ensures cross-origin requests are handled
@@ -167,7 +123,7 @@ async function login_step4(userEmailAddress,createNewAccount,userLoginCode){
                 headers: {
                     'Content-Type': 'application/json',  // Sets content type
                     // 'Authorization': `Bearer ${yourAccessToken}`, // Uses token-based auth (if applicable)
-                    'Accept': 'application/json',        // Expect JSON response
+                    // 'Accept': 'application/json',        // Sets content type for res. If not json, server may return error. Use response.json() to parse the response.
                 },
                 body: JSON.stringify({          // Converts object to JSON for request
                     userEmailAddress:userEmailAddress,
@@ -219,28 +175,54 @@ async function login_step3(userEmailAddress,createNewAccount=false){
     if(consoleLog===true){console.log('login_step3(✅)');}
     if(consoleLog===true){console.log(userEmailAddress,createNewAccount);}
     try{
-        const fetchUrl = `/loginRouter/login_step3`;
+        const fetchUrl = "/loginRouter/login_step3";
         const fetchOptions = {
                 method: 'POST',                // Specifies a POST request
                 mode: 'cors',                  // Ensures cross-origin requests are handled
                 cache: 'no-cache',             // Prevents caching issues
-                credentials: 'include',        // Includes cookies/session info
+                // credentials: 'include',        // Includes cookies/session info
                 headers: {
-                    'Content-Type': 'application/json',  // Sets content type
+                    'Content-Type': 'application/json',  // Sets content type for req.
                     // 'Authorization': `Bearer ${yourAccessToken}`, // Uses token-based auth (if applicable)
-                    'Accept': 'application/json',        // Expect JSON response
+                    // 'Accept': 'application/json',        // Sets content type for res. If not json, server may return error. Use response.json() to parse the response.
                 },
-                body: JSON.stringify({          // Converts object to JSON for request
+                body: JSON.stringify({          // Converts js object to JSON for request
                     userEmailAddress:userEmailAddress,
-                    createNewAccount: createNewAccount
+                    createNewAccount:createNewAccount
                 })
             }
         if(consoleLog===true){console.log(JSON.stringify(fetchOptions));}
-        // const data = await universalFetchII(fetchUrl,fetchOptions);
         const response = await fetch(fetchUrl,fetchOptions);
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+        // await fetch(fetchUrl,fetchOptions)
+        // .then(response => response.text())
+        // .then(data => console.log(data))
+        // .catch(error => console.log(error));
+        // if (!response.ok) {
+        //     throw new Error(`HTTP error! Status: ${response.status}`);
+        // }
+// async function fetchWithRetry(url, options, retries = 3, delay = 1000) {
+//     console.log(url, options, retries, delay);
+//     for (let attempt = 1; attempt <= retries; attempt++) {
+//         let res;
+//         try {
+//             console.log(`🔹   fetch ${attempt} of ${retries} to url:-`, url);
+//             const response = await fetch(url, options);
+//             console.log(`🔹🔹  fetch ${attempt} of ${retries} response:-`, response);
+//             // if (!response.ok) throw new Error(`🔶 Attempt ${attempt} failed`);
+//             const jso = await response.json(); // converts fetch response from JSON to a JSO
+//             console.log('🔹🔹🔹 fetch returns:-', jso);
+//             clearTimeout(res);
+//             return jso; // Success
+//             // return response; // Success
+//         } catch (error) {
+//             // console.warn(`🔴 Fetch attempt ${attempt} failed: ${error.message}`);
+//             console.log(`🔴 Fetch attempt ${attempt} failed: ${error.message}`);
+//             if (attempt < retries) await new Promise(res => setTimeout(res, delay)); // Wait before retrying
+//         }
+//     }
+//     throw new Error(`All ${retries} attempts failed`);
+// }
+// const response = await fetchWithRetry(fetchUrl,fetchOptions,3,1000);
         const jso = await response.json(); // converts fetch response from JSON to a JSO
         console.log('🟢 Request Success:', jso);
         if(jso.userLoginCodeSent===true){
@@ -251,18 +233,6 @@ async function login_step3(userEmailAddress,createNewAccount=false){
         console.error('🔴 Request Failed:', error);
         return null;
     }
-    // const fetchUrl = `/loginRouter/login_step3`;
-    // const fetchType = `POST`;
-    // const fetchPayload = {userEmailAddress:userEmailAddress,createNewAccount:createNewAccount};
-    // if(consoleLog===true){console.log(fetchPayload);}
-    // if(consoleLog===true){console.log(JSON.stringify(fetchPayload));}
-    //         await new Promise(resolve => setTimeout(resolve, 500)); // Simulated async process
-    // const data = await universalFetch(fetchUrl,fetchType,JSON.stringify(fetchPayload));
-    //         await new Promise(resolve => setTimeout(resolve, 500)); // Simulated async process
-    // if(consoleLog===true){console.log(data);}
-    // if(consoleLog===true){console.log(data.message,data.userLoginCodeSent);}
-    //     // login_step1:- emailAddress, createNewAccount, userLoginCodeSent, loginApproved
-    // }
 }
 async function login_step2(userEmailAddress){ // send userEmailAddress to server; receive login code || create new user
     if(consoleLog===true){console.log('login_step2(✅)');}
@@ -277,7 +247,7 @@ async function login_step2(userEmailAddress){ // send userEmailAddress to server
                 headers: {
                     'Content-Type': 'application/json',  // Sets content type
                     // 'Authorization': `Bearer ${yourAccessToken}`, // Uses token-based auth (if applicable)
-                    'Accept': 'application/json',        // Expect JSON response
+                    // 'Accept': 'application/json',        // Sets content type for res. If not json, server may return error. Use response.json() to parse the response.
                 },
                 body: JSON.stringify({          // Converts object to JSON for request
                     userEmailAddress:userEmailAddress

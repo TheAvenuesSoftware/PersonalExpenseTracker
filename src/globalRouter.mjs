@@ -1,6 +1,6 @@
 const consoleLog = false
 
-if(consoleLog===true){console.log(consoleTrace(),"\nLOADED:- globalRoutes.mjs is loaded",new Date().toLocaleString());}
+if(consoleLog===true){console.log(trace(),"\nLOADED:- globalRoutes.mjs is loaded",new Date().toLocaleString());}
 export function globalRoutesMJSisLoaded(){
     return true;
 }
@@ -11,7 +11,7 @@ export function globalRoutesMJSisLoaded(){
     const globalRouter = Router();
     // import * as globalClientJS from "./globalClient.mjs";
     // import {newDateAttributes} from "./globalClient.mjs";
-    import {consoleTrace} from "./globalServer.mjs";
+    import {trace} from "./globalServer.mjs";
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 
 globalRouter.get("/getGlobalFooter", (req, res) => {

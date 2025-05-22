@@ -1,6 +1,6 @@
 const consoleLog = false
 
-if(consoleLog===true){console.log(consoleTrace(),"\nLOADED:- projectRoutes.mjs is loaded",new Date().toLocaleString());}
+if(consoleLog===true){console.log(trace(),"\nLOADED:- projectRoutes.mjs is loaded",new Date().toLocaleString());}
 export function projectRoutesMJSisLoaded(){
     return true;
 }
@@ -21,11 +21,11 @@ export function projectRoutesMJSisLoaded(){
     //         });    
     //     // fixes LOCAL CORS [end]
     // // CORS handling END
-    import {consoleTrace} from "./globalServer.mjs";
+    import {trace} from "./globalServer.mjs";
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 
 projectRouter.post('/validate_date', (req,res) => {
-    if(consoleLog===true){console.log(consoleTrace());}
+    if(consoleLog===true){console.log(trace());}
     if(consoleLog===true){console.log('req.body:- ',req.body);}
     const date = new Date(req.body.date);
     if(consoleLog===true){console.log('new Date(req.body.date):- ',date);}
@@ -43,7 +43,7 @@ projectRouter.post('/validate_date', (req,res) => {
 
     // Endpoint to get data from database
         projectRouter.get("/getExpenses", (req, res) => {
-            if(consoleLog===true){console.log(consoleTrace());}
+            if(consoleLog===true){console.log(trace());}
             if(consoleLog===true){console.log("app.get('/getExpenses', async (req, res)");}
             db.all("SELECT * FROM expenses", [], (err, rows) => {
                 if (err) {
@@ -56,10 +56,10 @@ projectRouter.post('/validate_date', (req,res) => {
 
     // Endpoint to get data from database
         projectRouter.post('/getAllExpenses', async (req, res) => {
-            if(consoleLog===true){console.log(consoleTrace());}
+            if(consoleLog===true){console.log(trace());}
             if(consoleLog===true){console.log("app.get('/getAllExpenses', async (req, res)");}
             try {
-                if(consoleLog===true){console.log(consoleTrace());}
+                if(consoleLog===true){console.log(trace());}
                 if(consoleLog===true){console.log(req.body);}
                 // Step 1: Fetch data from an external source (mocked for simplicity)
                     const externalData = [
@@ -83,11 +83,10 @@ projectRouter.post('/validate_date', (req,res) => {
                     res.status(200).json(validatedData);
 
             } catch (error) {
-                if(consoleLog===true){console.log(consoleTrace());}
+                if(consoleLog===true){console.log(trace());}
                 console.error('🔴 Error:', error.message);
                 res.status(500).json({ error: 'Failed to process expenses' });
             }
         });
-
 
 export default projectRouter;
