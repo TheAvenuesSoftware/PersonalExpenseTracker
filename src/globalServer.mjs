@@ -4,11 +4,15 @@ export function trace() {
     try {
         const stack = new Error().stack;
         const firstLine = stack.split('\n')[2].trim();
-        return `Trace line: ${firstLine}`;
+        const x = firstLine.lastIndexOf("/");
+        const y = firstLine.lastIndexOf("/",x - 1);
+        const fileName_rowNumber_position = firstLine.slice(y + 1,firstLine.length);
+        return `📌Trace: ${fileName_rowNumber_position}`;
     } catch (error) {
-        return 'Trace line: not available';
+        return '🔴 Trace line: not available';
     }
 };
+
 
 if(consoleLog===true){console.log(trace(),"\nLOADED:- globalServer.mjs is loaded",new Date().toLocaleString());}
 export function globalServerMJSisLoaded(){

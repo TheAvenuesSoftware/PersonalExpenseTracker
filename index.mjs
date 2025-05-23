@@ -9,21 +9,27 @@
 // - Event & Callback Handlers: Prefix with on (e.g., onClick, onDataReceived)
 // - Private Variables: Some use leading _ to indicate private properties (_hiddenProperty)
 
-const consoleLog = true
-
 let myDate;
 myDate = new Date();
 console.log(("🎾").repeat(64));
-console.log("🎾",("SERVER STARTED 🎾 ").repeat(7));
-console.log(`🎾 ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}${(" ").repeat(128-(`🎾 ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}  `).length)}🎾`);
+console.log(`🎾 ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}${(" ").repeat(128-2-(`🎾 ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`).length)}🎾`);
+myDate = new Date();
+console.log(`🎾 ${myDate}${(" ").repeat(128-2-(`🎾 ${myDate}`).length)}🎾`);
+process.env.TZ = "Australia/Sydney"; // 🌏 Sets the server timezone
+console.log(`🎾 Server running in timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}${(" ").repeat(128-2-(`🎾 Server running in timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`).length)}🎾`);
 console.log(("🎾").repeat(64));
+
+// process.env.TZ = "Australia/Sydney"; // 🌏 Sets the server timezone
+// console.log("Server running in timezone:", Intl.DateTimeFormat().resolvedOptions().timeZone);
+
+const consoleLog = true
 
 if(consoleLog===true){console.log(trace(),'\nLOADED:- index.mjs');}
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // os - operatingSystem
         import os from 'os';
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // PATH
         import path from 'path';
         import { fileURLToPath } from 'url';
@@ -31,21 +37,24 @@ if(consoleLog===true){console.log(trace(),'\nLOADED:- index.mjs');}
             const __filename = fileURLToPath(import.meta.url);
         // Get the directory name
             const __dirname = path.dirname(__filename);
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // trace()
         function trace() {
             try {
                 const stack = new Error().stack;
                 const firstLine = stack.split('\n')[2].trim();
-                return `Trace line: ${firstLine}`;
+                const x = firstLine.lastIndexOf("/");
+                const y = firstLine.lastIndexOf("/",x - 1);
+                const fileName_rowNumber_position = firstLine.slice(y + 1,firstLine.length);
+                return `📌Trace: ${fileName_rowNumber_position}`;
             } catch (error) {
                 return '🔴 Trace line: not available';
             }
         };
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // fs - fileSystem
         import fs from 'fs';
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // .ENV;  .MJS
     
         import dotenv from "dotenv";
@@ -87,7 +96,7 @@ if(consoleLog===true){console.log(trace(),'\nLOADED:- index.mjs');}
                 } catch (error) {
                     if(consoleLog===true){console.log(trace(),`\n🔴 ERROR:- ${envPath} not found!`);}
                 }
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // EPXRESS
         // const express = require("express");
         if(consoleLog===true){console.log(trace());}
@@ -107,21 +116,21 @@ if(consoleLog===true){console.log(trace(),'\nLOADED:- index.mjs');}
                 if(consoleLog===true){console.log(`🔴 map to folder failed:- ${folder}`);}
             }
         });
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // COOKIE PARSER
         import cookieParser from 'cookie-parser';
         app.use(cookieParser()); // Enables reading of cookies
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // // JSONWEBTOKE for user authentication
     //     import jwt from 'jsonwebtoken';
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // retrieve the session key OR create one if can't be retrieved
         // const crypto = require("crypto");
             import crypto from 'crypto'
             // const sessionKey = crypto.randomBytes(32).toString("hex");
             const sessionKey = process.env.SESSION_KEY || crypto.randomBytes(32).toString("hex");
             if(consoleLog===true){console.log(trace(),'\n🟢 sessionKey created.');} // DON'T LOG THIS!!!  KEEP IT SECURE!!!
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // EPXRESS
         // EXPRESS-SESSION
             // LAUNCH SESSION MANAGEMENT
@@ -130,7 +139,7 @@ if(consoleLog===true){console.log(trace(),'\nLOADED:- index.mjs');}
                     genid: function(req) {
                         // return genuuid() // use UUIDs for session IDs
                         return crypto.randomUUID(); // Generates a unique session ID
-                    }, 
+                    },
                     // name: "NO!", use data added to the session cookie later
                     secret: process.env.SESSION_KEY || sessionKey,
                     resave: false,   // Don't save unchanged sessions. Prevents unnecessary session saves if nothing has changed, improving efficiency.
@@ -143,6 +152,7 @@ if(consoleLog===true){console.log(trace(),'\nLOADED:- index.mjs');}
                         // reducing server storage usage, or complying with laws that require
                         // permission before setting a cookie. Choosing false will also help with 
                         // race conditions where a client makes multiple parallel requests without a session.
+                    createdAt: Date.now(),
                     cookie: { 
                         secure: false, // Means the session cookie is not restricted to HTTPS; set it to true in production for security.
                         httpOnly: true, // Prevent client-side JavaScript access (mitigates XSS attacks)
@@ -150,11 +160,11 @@ if(consoleLog===true){console.log(trace(),'\nLOADED:- index.mjs');}
                         maxAge: 15 * 60 * 1000 // ✅ Expires after 15 minutes (in milliseconds)
                     } // ❗❗❗Set "secure: false" to true for HTTPS
                 }));
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // AUTHENTICATE USER. AUTHENTICATION MIDDLEWARE
 
         if(consoleLog===true){console.log(`${trace()}\n🟢 JWT authentication is set up.`);}
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // // AUTHENTICATE USER BEFORE 
     //     // 1   mounting routers
     //     // 2   app.all
@@ -162,11 +172,11 @@ if(consoleLog===true){console.log(trace(),'\nLOADED:- index.mjs');}
     //     // 1   express-sessions
     //     // 2   jwt
         // app.use(authenticateUser);
-// // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 myDate = new Date();
 if(consoleLog===true){console.log(`${trace()}\n${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);}
 if(consoleLog===true){console.log(("<>").repeat(64));}
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // CORS handling START
         import cors from 'cors';
         app.use(cors({
@@ -176,8 +186,8 @@ if(consoleLog===true){console.log(("<>").repeat(64));}
             optionsSuccessStatus: 204 // Avoids extra response headers in preflight requests
         }));
         if(consoleLog===true){console.log(`${trace()}\n🟢 CORS headers are set.`);}
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// catch-all START 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// catch-all START 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 
 app.use((req, res, next) => {
 
     // // ensure invalid end-points are rejected
@@ -191,7 +201,33 @@ app.use((req, res, next) => {
     // app.use(authenticateUser);
 
     const myDate = new Date();
-    console.log(`🟨 ${trace()}\n🟨 ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}\n🟨 ${req.method}\n🟨 ${req.url}`);
+    console.log(`🟨 ${trace()}\n🟨 ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}\n🟨 ${req.method}\n🟨 🚀${req.url}🚀`);
+
+    console.log(trace(),"\n     req.headers.cookie ", req.headers.cookie);
+    console.log(trace(),"\n");
+    console.log(trace(),"\n     req.session.cookie.expires", req.session.cookie.expires);   
+    console.log(trace(),"\n     new Date()", new Date());
+    console.log(trace(),"\n     ((req.session.cookie.expires - new Date()) / 1000 /60).toFixed(0))", ((req.session.cookie.expires - new Date()) / 1000 /60).toFixed(0));
+    console.log("\n");
+    let expiresMS = req.session.cookie.expires;
+    expiresMS = expiresMS.getTime();
+    console.log(trace(),"\n     req.session.cookie.expires >>> getTime()", expiresMS);
+    console.log(trace(),"\n     Date.now()", Date.now());
+    console.log(trace(),"\n     req.session.cookie.expires >>> getTime() - Date.now() / 1000 /1 60 >>> toFixed(0)", ((expiresMS - Date.now()) / 1000 /60).toFixed(0));
+    console.log("\n");
+    console.log(trace(),"\n     req.session.cookie.maxAge", req.session.cookie.maxAge);
+    console.log(trace(),"\n     (req.session.cookie.maxAge / 1000 / 60).toFixed(0)", (req.session.cookie.maxAge / 1000 / 60).toFixed(0));
+    console.log("\n");
+    console.log(trace(),"\n     req.cookies", req.cookies);
+    console.log(trace(),"\n     req.session", req.session);
+    console.log(trace(),"\n     req.session.Session", req.session.Session);
+    // console.log("All Cookies: req.cookies", req.session.createdAt);
+    // console.log("All Cookies: req.cookies", req.session.createdAt.toLocaleString());
+    if(req.session.createdAt!=null){
+        console.log(trace(),"\n     🟩 req.session.createdAt", req.session.createdAt);
+    }
+
+ 
 
             // dbRouter.stack.forEach((route) => {
             //     if (route.route) {
@@ -233,22 +269,23 @@ app.use((req, res, next) => {
     next();
 
 });
-// catch-all END 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 🖥️ 🛜 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    // heartbeat detected
+// catch-all END 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    // Client heartbeat detected, extend session.💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙
         app.post("/heartbeat-session-extension", (req, res) => {
             if (req.session) {
                 req.session.createdAt = Date.now(); // Reset session timestamp to now
-                if(consoleLog===true){console.log(`${trace()}\n🟢 Heartbeat session extension success at ${new Date().toLocaleString()}:-\n`,req.session);}
-                if(consoleLog!=true){console.log(`${trace()}\n🟢 Heartbeat session extension success at ${new Date().toLocaleString()}`);}
-                res.send({ message: `Heartbeat session extension success at ${new Date().toLocaleString()}.`,status: true });
+                if(consoleLog===true){console.log(`${trace()}\n🟢 Client heartbeat detected, session extended at ${new Date().toLocaleString()}:-\n`,req.session);}
+                if(consoleLog!=true){console.log(`${trace()}\n🟢 Client heartbeat detected, session extended at ${new Date().toLocaleString()}`);}
+                res.send({ message: `Client heartbeat detected, session extended at ${new Date().toLocaleString()}.`,status: true });
             } else {
-                if(consoleLog===true){console.log(`${trace()}\n🔴 Heartbeat session extension error:-\n`,error);}
-                if(consoleLog!=true){console.log(`${trace()}\n🔴 Heartbeat session extension error:-\n`);}
-                res.status(403).json({ message: `Heartbeat session extension error:- No active session detected. ${error}`,status:false });
+                if(consoleLog===true){console.log(`${trace()}\n🔴 Client heartbeat detected, session extension error:- (req.session!=true)".\n`,error);}
+                if(consoleLog!=true){console.log(`${trace()}\n🔴 Client heartbeat detected, session extension error:- (req.session!=true)".`);}
+                res.status(403).json({ message: `Client heartbeat detected, session extension error:- (req.session!=true)". ${error}`,status:false });
             }
         });
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    // Client heartbeat detected, extend session.💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // MOUNT EXTERNAL ROUTERS
         if(consoleLog===true){console.log(`${trace()}\nMounting routers.`);}
 
@@ -333,23 +370,11 @@ app.use((req, res, next) => {
             if(routerMounted===false){console.log(`${trace()}\n🔴 Errorin router!\n`,dbRouter.stack);}
 
         if(consoleLog===true){console.log(`${trace()}\n🟢 Routers mounted.`);}
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    // // heartbeat - rfresh session
-    //     app.post('/heartbeat-session-extension', (req, res) => {
-    //         if (req.session) {
-    //             req.session.createdAt = Date.now(); // Reset session timestamp to now
-    //             console.log(trace(),`\n🟢 Heartbeat session extension success:-\n`,req.session);
-    //             res.send({ message: "Heartbeat session extension success.",status: true });
-    //         } else {
-    //             console.log(trace(),`\n🔴 Heartbeat session extension error:-\n`,error);
-    //             res.status(403).json({ message: `Heartbeat session extension error:- No active session detected. ${error}`,status:false });
-    //         }
-    //     });
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 myDate = new Date();
 if(consoleLog===true){console.log(`${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);}
 if(consoleLog===true){console.log(("<>").repeat(64));}
-// // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //     // SQLITE
 //         // // const sqlite3 = require("sqlite3").verbose();
 //         //     import sqlite3 from "sqlite3";
@@ -368,7 +393,7 @@ if(consoleLog===true){console.log(("<>").repeat(64));}
 //         // }
 //         import {accessDb} from './src/SQLite_ServerSide.mjs';
 //         accessDb("project");
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 // monitor memory usage
     // const formatMemoryUsage = (data) => `${(data / 1024 / 1024).toFixed(2)} MB`;

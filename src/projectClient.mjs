@@ -23,6 +23,8 @@ export function projectMJSisLoaded(){
             await new Promise(resolve => setTimeout(resolve, 500)); // Simulated async process
             await doAfterDOMandWindowLoad_globalLoginClient();
 
+            setTimeout(()=>{console.log('document.cookie:- ',document.cookie);},5000);
+
             // setInterval(() => {
             //     fetch('/heartbeat-session-extension', { method: 'POST', credentials: 'include' })
             //         .then(response => response.json())
@@ -41,6 +43,7 @@ export function projectMJSisLoaded(){
                 document.addEventListener("click", updateActivity);
                 const heartBeatInterval = clientConfigSettings.CLIENT_SESSION_HEARTBEAT_INTERVAL;
                 const logoutAfter = clientConfigSettings.CLIENT_SESSION_IDLE_LOGOUT_AFTER;
+                console.log('heartBeatInterval:- ',heartBeatInterval,'logoutAfter:- ',logoutAfter)
                 const intervalId = setInterval(() => {
                     if (Date.now() - lastActivity < logoutAfter * 60 * 1000) { // Active in last 15 min?
                         fetch('/heartbeat-session-extension', { method: 'POST', credentials: 'include' })

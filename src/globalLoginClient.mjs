@@ -180,7 +180,7 @@ async function login_step3(userEmailAddress,createNewAccount=false){
                 method: 'POST',                // Specifies a POST request
                 mode: 'cors',                  // Ensures cross-origin requests are handled
                 cache: 'no-cache',             // Prevents caching issues
-                // credentials: 'include',        // Includes cookies/session info
+                credentials: 'include',        // Includes cookies/session info
                 headers: {
                     'Content-Type': 'application/json',  // Sets content type for req.
                     // 'Authorization': `Bearer ${yourAccessToken}`, // Uses token-based auth (if applicable)
