@@ -11,412 +11,441 @@
 
 let myDate;
 myDate = new Date();
-console.log(("🎾").repeat(64));
-console.log(`🎾 ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}${(" ").repeat(128-2-(`🎾 ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`).length)}🎾`);
+console.log(("🔰").repeat(64));
+console.log(`🔰 ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}${(" ").repeat(128-2-(`🔰 ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`).length)}🔰`);
 myDate = new Date();
-console.log(`🎾 ${myDate}${(" ").repeat(128-2-(`🎾 ${myDate}`).length)}🎾`);
+console.log(`🔰 ${myDate}${(" ").repeat(128-2-(`🎾 ${myDate}`).length)}🔰`);
 process.env.TZ = "Australia/Sydney"; // 🌏 Sets the server timezone
-console.log(`🎾 Server running in timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}${(" ").repeat(128-2-(`🎾 Server running in timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`).length)}🎾`);
-console.log(("🎾").repeat(64));
-
-// process.env.TZ = "Australia/Sydney"; // 🌏 Sets the server timezone
-// console.log("Server running in timezone:", Intl.DateTimeFormat().resolvedOptions().timeZone);
+console.log(`🔰 Server running in timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}${(" ").repeat(128-2-(`🔰 Server running in timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`).length)}🔰`);
+console.log(("🔰").repeat(64));
 
 const consoleLog = true
 
-if(consoleLog===true){console.log(trace(),'\nLOADED:- index.mjs');}
-
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    // os - operatingSystem
+// trace()
+    function trace(whoCalled="") {
+        try {
+            const stack = new Error().stack;
+            const firstLine = stack.split('\n')[2].trim();
+            const x = firstLine.lastIndexOf("/");
+            const y = firstLine.lastIndexOf("/",x - 1);
+            const fileName_rowNumber_position = firstLine.slice(y + 1,firstLine.length);
+            return `📌Trace: [${whoCalled? whoCalled : ""}] ${fileName_rowNumber_position}📌`;
+        } catch (error) {
+            return '📌Trace: NOT AVAILABLE📌';
+        }
+    };
+// 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
+// 1️⃣ import statements
+    // OS - operatingSystem
         import os from 'os';
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    // FS - fileSystem
+        import fs from 'fs';
+        // import fs from 'fs/promises';
+            // - fs.writeFile from 'fs' expects a callback (cb), which is why you're getting the "cb argument must be of type function" error.
+            // - The 'fs/promises' version works natively with async/await, so no callback is needed.
     // PATH
         import path from 'path';
         import { fileURLToPath } from 'url';
-        // Get the current file path
-            const __filename = fileURLToPath(import.meta.url);
-        // Get the directory name
-            const __dirname = path.dirname(__filename);
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    // trace()
-        function trace() {
-            try {
-                const stack = new Error().stack;
-                const firstLine = stack.split('\n')[2].trim();
-                const x = firstLine.lastIndexOf("/");
-                const y = firstLine.lastIndexOf("/",x - 1);
-                const fileName_rowNumber_position = firstLine.slice(y + 1,firstLine.length);
-                return `📌Trace: ${fileName_rowNumber_position}`;
-            } catch (error) {
-                return '🔴 Trace line: not available';
-            }
-        };
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    // fs - fileSystem
-        import fs from 'fs';
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    // .ENV;  .MJS
-    
+            // Get the current file path
+                const __filename = fileURLToPath(import.meta.url);
+            // Get the directory name
+                const __dirname = path.dirname(__filename);
+    // ENVironment variables
         import dotenv from "dotenv";
-            // globalServer.env
-                try{
-                    const envPath = "./config/globalServer.env";
-                    if (fs.existsSync(envPath)) {
-                        dotenv.config({ path: envPath });
-                        if(consoleLog===true){console.log(trace(),`\nIMPORTED:- ${envPath}`);}
-                        const result = dotenv.config({ path: envPath });
-                        // if(consoleLog===true){console.log(trace(),`\n${envPath}:-\n`, result.parsed);}  
-                        const envVar = result.parsed;
-                        Object.keys(envVar).forEach(key => {
-                            // console.log(`key:- ${key} :- ${envVar[key]}`);
-                            console.log(`key:- ${key}`);
-                        }); 
-                    } else {
-                        console.log(trace(),`\n🔴 ERROR:- ${envPath} not found!`);
-                    }
-                } catch (error) {
-                    console.log(trace(),`\n🔴 ERROR:- ${envPath} not found!`);
-                }
-            // project.env
-                try{
-                    const envPath = "./config/projectServer.env";
-                    if (fs.existsSync(envPath)) {
-                        dotenv.config({ path: envPath });
-                        if(consoleLog===true){console.log(trace(),`\nIMPORTED:- ${envPath}`);}
-                        const result = dotenv.config({ path: envPath });
-                        // if(consoleLog===true){console.log(trace(),`\n${envPath}:`, result);}                
-                        const envVar = result.parsed;
-                        Object.keys(envVar).forEach(key => {
-                            // console.log(`key:- ${key} :- ${envVar[key]}`);
-                            console.log(`key:- ${key}`);
-                        }); 
-                    } else {
-                        if(consoleLog===true){console.log(trace(),`\n🔴 ERROR:- ${envPath} not found!`);}
-                    }
-                } catch (error) {
-                    if(consoleLog===true){console.log(trace(),`\n🔴 ERROR:- ${envPath} not found!`);}
-                }
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    // EPXRESS
-        // const express = require("express");
-        if(consoleLog===true){console.log(trace());}
+    // EXPRESS
         import express from "express";
-        const app = express();
-        app.set('trust proxy', 1) // trust first proxy
-        app.use(express.json()); // Middleware to parse JSON data
-        app.disable('x-powered-by'); // Reduce fingerprinting by hiding that this is an ExpressJS app
-        const staticFolders = ['config', 'db', 'media', 'public', 'src', 'styles'];
-        staticFolders.forEach(folder => {
-            try{
-                app.use(express.static(folder));
-                app.use(`/${folder}`,express.static(folder));
-                if(consoleLog===true){console.log(`mapped folder:- ${folder}`);}
-            }
-            catch{
-                if(consoleLog===true){console.log(`🔴 map to folder failed:- ${folder}`);}
-            }
-        });
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // COOKIE PARSER
         import cookieParser from 'cookie-parser';
-        app.use(cookieParser()); // Enables reading of cookies
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    // // JSONWEBTOKE for user authentication
-    //     import jwt from 'jsonwebtoken';
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    // JSONWEBTOKE for user authentication
+        import jwt from 'jsonwebtoken';
+    // CRYPTO
+        import crypto from 'crypto'
+        import { randomUUID } from 'crypto'; // randomUUID is a named export from crypto
+    // REDIS
+        import { createClient } from 'redis'; // createClient is a named export from redis
+        import { RedisStore } from 'connect-redis'; // RediStore is a named export from connect-redis
+    // SESSIONS
+        import session from 'express-session';
+    // CORS handling START
+        import cors from 'cors';
+    // SQLite
+        import sqlite3 from "sqlite3";
+    // ROUTERS
+        import dbRouter, * as dbFunctions from "./src/SQLite_ServerSide.mjs";
+        import loginRouter, * as loginFunctions from './src/globalLoginServer.mjs';
+        import globalRouter, * as globalFunctions from './src/globalRouter.mjs'; 
+        import projectRouter, * as projectFunctions from './src/projectRouter.mjs';
+        import sessionsRouter, * as sessionsFunctions from './src/globalSessionsServer.mjs';
+
+    function checkImports(){
+        try{
+            console.log("Imported os:", os ? "✅ " : "❌ Failed");
+            console.log("Imported fs:", fs ? "✅ " : "❌ Failed");
+            console.log("Imported path:", path ? "✅ " : "❌ Failed");
+            console.log("Imported fileURLToPath / url / path:", fileURLToPath ? "✅ " : "❌ Failed");
+            console.log("Imported dotenv:", dotenv ? "✅ " : "❌ Failed");
+            console.log("Imported express:", express ? "✅ " : "❌ Failed");
+            console.log("Imported cookieParser / cookie-parser:", cookieParser ? "✅ " : "❌ Failed");
+            console.log("Imported jwt / jsonwebtoken:", jwt ? "✅ " : "❌ Failed");
+            console.log("Imported crypto:", crypto ? "✅ " : "❌ Failed");
+            console.log("Imported randomUUID / crypto:", randomUUID ? "✅ " : "❌ Failed");
+            console.log("Imported createClient / redis:", createClient ? "✅ " : "❌ Failed");
+            console.log("Imported redisStore / connect-redis:", RedisStore ? "✅ " : "❌ Failed");
+            console.log("Imported session / express-session:", session ? "✅ " : "❌ Failed");
+            console.log("Imported cors:", cors ? "✅ " : "❌ Failed");
+            console.log("Imported sqlite3:", sqlite3 ? "✅ " : "❌ Failed");
+            console.log("Imported dbRouter:", dbRouter ? "✅ " : "❌ Failed");
+            console.log("Imported loginRouter:", loginRouter ? "✅ " : "❌ Failed");
+            console.log("Imported globalRouter:", globalRouter ? "✅ " : "❌ Failed");
+            console.log("Imported projectRouter:", globalRouter ? "✅ " : "❌ Failed");
+            console.log("Imported sessionsRouter:", sessionsRouter ? "✅ " : "❌ Failed");
+        }
+        catch (error) {
+            console.log("imports error:",error);
+        }     
+    }
+    checkImports();
+// 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
+// 2️⃣ environment configuration
+    // .ENV;  .MJS
+        // globalServer.env
+            try{
+                const envPath = "./config/globalServer.env";
+                if (fs.existsSync(envPath)) {
+                    dotenv.config({ path: envPath });
+                    if(consoleLog===true){console.log(trace(),`\nGlobal environment variables:- ${envPath}`);}
+                    const result = dotenv.config({ path: envPath });
+                    // if(consoleLog===true){console.log(trace(),`\n${envPath}:-\n`, result.parsed);}  
+                    const envVar = result.parsed;
+                    Object.keys(envVar).forEach(key => {
+                        // console.log(`key:- ${key} :- ${envVar[key]}`);
+                        console.log(`key:- ${key}`);
+                    }); 
+                } else {
+                    console.log(trace(),`\n🔴 ERROR:- ${envPath} not found!`);
+                }
+            } catch (error) {
+                console.log(trace(),`\n🔴 ERROR:- ${envPath} not found!`);
+            }
+        // project.env
+            try{
+                const envPath = "./config/projectServer.env";
+                if (fs.existsSync(envPath)) {
+                    dotenv.config({ path: envPath });
+                    if(consoleLog===true){console.log(trace(),`\nProject environment variables:- ${envPath}`);}
+                    const result = dotenv.config({ path: envPath });
+                    // if(consoleLog===true){console.log(trace(),`\n${envPath}:`, result);}                
+                    const envVar = result.parsed;
+                    Object.keys(envVar).forEach(key => {
+                        // console.log(`key:- ${key} :- ${envVar[key]}`);
+                        console.log(`key:- ${key}`);
+                    }); 
+                } else {
+                    if(consoleLog===true){console.log(trace(),`\n🔴 ERROR:- ${envPath} not found!`);}
+                }
+            } catch (error) {
+                if(consoleLog===true){console.log(trace(),`\n🔴 ERROR:- ${envPath} not found!`);}
+            }
+// 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
+// 3️⃣ create express app AND middleware
+    const app = express();
+    app.use(express.json());
+    app.disable('x-powered-by'); // Reduce fingerprinting by hiding that this is an ExpressJS app
+    app.set('trust proxy', 1) // trust first proxy
+    app.use(express.json()); // Middleware to parse JSON data
+    app.use(cookieParser()); // Enables reading of cookies
+    const staticFolders = ['config', 'db', 'media', 'public', 'src', 'styles'];
+    staticFolders.forEach(folder => {
+        try{
+            app.use(express.static(folder));
+            app.use(`/${folder}`,express.static(folder));
+            if(consoleLog===true){console.log(`mapped folder:- ${folder}`);}
+        }
+        catch{
+            if(consoleLog===true){console.log(`🔴 map to folder failed:- ${folder}`);}
+        }
+    });
+    // CORS handling
+        app.use(cors({
+            origin: '*',                         // ❌ ONLY for development only !!!!
+            // origin: 'https://yourdomain.com', // ✔️ USE THIS when in production !!!
+            methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+            allowedHeaders: ['Content-Type', 'Authorization'],
+            optionsSuccessStatus: 204, // Avoids extra response headers in preflight requests
+            credentials: true // true if your app requires authentication with cookies or Authorization headers
+        }));
+        // app.options('*', cors()); causes error !!! START
+            // app.options('*', cors()); // ensures Express automatically handles OPTIONS requests for every route, Without it, you may need to manually set headers in your route handlers.
+        // app.options('*', cors()); causes error !!! END
+        if(consoleLog===true){console.log(`${trace()} 🟢 CORS headers are set.`);}
+// 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
+// 4️⃣ session management
     // retrieve the session key OR create one if can't be retrieved
         // const crypto = require("crypto");
-            import crypto from 'crypto'
             // const sessionKey = crypto.randomBytes(32).toString("hex");
             const sessionKey = process.env.SESSION_KEY || crypto.randomBytes(32).toString("hex");
             if(consoleLog===true){console.log(trace(),'\n🟢 sessionKey created.');} // DON'T LOG THIS!!!  KEEP IT SECURE!!!
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    // EPXRESS
-        // EXPRESS-SESSION
-            // LAUNCH SESSION MANAGEMENT
-                import session from "express-session";
-                app.use(session({
-                    genid: function(req) {
-                        // return genuuid() // use UUIDs for session IDs
-                        return crypto.randomUUID(); // Generates a unique session ID
+    // Async function to create and return a RedisStore instance
+        async function createRedisStore() {
+            // Create a Redis client
+                const redisClient = createClient();
+                redisClient.on('error', (err) => {
+                    console.error('🔴 Redis Client Error', err);
+                });            
+            // Connect to the Redis server (make sure your Node version supports top-level await or use this inside an async function)
+                await redisClient.connect();
+            // Create an instance of RedisStore using the connected client
+                const redisStore = new RedisStore({
+                    client: redisClient,
+                    prefix: 'sess:', // Optional prefix for session keys in Redis
+                });
+                console.log(`${trace()}🟢 Redis is set up.`);
+                return redisStore;
+        }
+    // Function to set up the Express session middleware with the provided RedisStore
+        function setupExpressSession(redisStore) {
+            app.use(
+                session({
+                    store: redisStore,
+                    // Generate a unique session ID
+                        genid: (req) => randomUUID(),
+                    secret: process.env.SESSION_KEY || 'your-secret-key', // Replace with your secret or fallback value
+                    resave: false,
+                    saveUninitialized: true,
+                    cookie: {
+                        secure: false,    // Set to true for HTTPS in production
+                        httpOnly: true,   // Helps mitigate XSS
+                        sameSite: 'strict', // Helps mitigate CSRF
+                        maxAge: 15 * 60 * 1000, // Session expires after 15 minutes
                     },
-                    // name: "NO!", use data added to the session cookie later
-                    secret: process.env.SESSION_KEY || sessionKey,
-                    resave: false,   // Don't save unchanged sessions. Prevents unnecessary session saves if nothing has changed, improving efficiency.
-                    saveUninitialized: true,  
-                        // Allows sessions without login.  Ensures sessions are stored even if uninitialized 
-                        // (useful for logging new visitors).  
-                        // Forces a session that is “uninitialized” to be saved to the store. 
-                        // A session is uninitialized when it is new but not modified. 
-                        // Choosing false is useful for implementing login sessions, 
-                        // reducing server storage usage, or complying with laws that require
-                        // permission before setting a cookie. Choosing false will also help with 
-                        // race conditions where a client makes multiple parallel requests without a session.
-                    createdAt: Date.now(),
-                    cookie: { 
-                        secure: false, // Means the session cookie is not restricted to HTTPS; set it to true in production for security.
-                        httpOnly: true, // Prevent client-side JavaScript access (mitigates XSS attacks)
-                        sameSite: "strict", // Helps prevent CSRF attacks
-                        maxAge: 15 * 60 * 1000 // ✅ Expires after 15 minutes (in milliseconds)
-                    } // ❗❗❗Set "secure: false" to true for HTTPS
-                }));
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    // AUTHENTICATE USER. AUTHENTICATION MIDDLEWARE
+                })
+            );
+            console.log(`${trace()}🟢 Express session management is set up.`);
+        }
+    // Initialize session management
+        createRedisStore()
+        .then((redisStore)=>{
+            setupExpressSession(redisStore);
+        });
+// 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
+// 5️⃣ MOUNT EXTERNAL ROUTERS
+        function mountRouters() {
+            try{
+                app.use("/dbRouter", dbRouter);
+                app.use("/loginRouter", loginRouter);
+                app.use("/globalRouter", globalRouter);
+                app.use("/projectRouter", projectRouter);
+                app.use("/sessionsRouter", sessionsRouter);
+            }
+            catch (error) {
+                console.log(error);
+            }
+        }
+        mountRouters();
+// 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
+// 6️⃣ routes AND business logic
+    // log REQuest
+        async function logREQuest(req){
+            try{
+                // log the REQuest to "logs/request_yy-mm-ddThh-mm-ss.999Z.txt" START
+                    const reqData = {
+                        method: req.method,
+                        url: req.url,
+                        headers: req.headers,
+                        body: req.body,
+                        params: req.params,
+                        query: req.query
+                    };
+                    // Convert to a nicely formatted string
+                        const reqString = JSON.stringify(reqData, null, 2);
+                    // Create a timestamped log file
+                        const REQuestLogFileName = `logs/request_${myDate.toISOString().replace(/:/g, '-')}.txt`;
+                    // Write the request data to a log file
+                        const retries = 3;
+                        const delay = 500;
+                        for (let attempt = 1; attempt <= retries; attempt++) {
+                            try{
+                                // await fs.writeFile(REQuestLogFileName, reqString);
+                                await fs.promises.writeFile(REQuestLogFileName, reqString);
+                                console.log(`🪣 ${trace()}🟢 REQuest logged successfully after ${attempt} attempt(s):\n🪣 ${REQuestLogFileName}`);
+                                return;
+                            } catch (error) {
+                                console.warn(`🪣 ${trace()} ⚠️ Writing REQuest log on attempt ${attempt} failed:`, error.message);
+                                if (attempt < retries) {
+                                    await new Promise(res => setTimeout(res, delay * 2 ** (attempt - 1))); // Exponential backoff
+                                }else{
+                                    throw new Error(`🪣🚫 All ${retries} attempts to write REQuest log failed`);
+                                }
+                            }
+                        }
+                // log the REQuest to "logs/request_yy-mm-ddThh-mm-ss.999Z.txt" END
+            } catch (error) {
+                console.error(`🪣 ${trace("")}🔴 Catch! Error writing REQuest log:`, error);  
+            }
+        }
+// 🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣
+    //  catch-all START 🪣 
+        app.use(async(req, res, next) => {
 
-        if(consoleLog===true){console.log(`${trace()}\n🟢 JWT authentication is set up.`);}
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    // // AUTHENTICATE USER BEFORE 
-    //     // 1   mounting routers
-    //     // 2   app.all
-    // // AUTHENTICATE USER AFTER
-    //     // 1   express-sessions
-    //     // 2   jwt
-        // app.use(authenticateUser);
-// // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-myDate = new Date();
-if(consoleLog===true){console.log(`${trace()}\n${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);}
-if(consoleLog===true){console.log(("<>").repeat(64));}
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    // CORS handling START
-        import cors from 'cors';
-        app.use(cors({
-            origin: '*',
-            methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-            allowedHeaders: ['Content-Type', 'Authorization'],
-            optionsSuccessStatus: 204 // Avoids extra response headers in preflight requests
-        }));
-        if(consoleLog===true){console.log(`${trace()}\n🟢 CORS headers are set.`);}
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// catch-all START 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 
-app.use((req, res, next) => {
+            console.log("\n");
+            console.log(("🪣").repeat(64));
 
-    // // ensure invalid end-points are rejected
-    //     app.use((req, res) => {
-    //         res.status(404).json({ error: "Endpoint not found" });
-    //     });
+            const myDate = new Date();
+            console.log(`🪣 ${trace("")}\n🪣      ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}\n🪣      ${req.method}\n🪣      🚀 ${req.url} 🚀`);
 
-    console.log("\n");
-    console.log(("🟨").repeat(64));
+            // log REQuest
+                await logREQuest(req);
+                next();
 
-    // app.use(authenticateUser);
+            console.log(`🪣 ${trace()} Cookie: ${req.headers.cookie}`);
+            // check if user exists
+                if (!req.sessionID) {
+                    console.log(`🪣 ❌ 💛 No session exists.`);
+                }else{
+                    // req.session.visitorId = req.session.visitorId || crypto.randomUUID();
+                    // console.log(`🪣 💛 New visitor session: ${req.session.visitorId}`);
+                    req.sessionID = req.sessionID || crypto.randomUUID();
+                    console.log(`🪣 💛 New visitor session: ${req.sessionID}`);
+                }
 
-    const myDate = new Date();
-    console.log(`🟨 ${trace()}\n🟨 ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}\n🟨 ${req.method}\n🟨 🚀${req.url}🚀`);
 
-    console.log(trace(),"\n     req.headers.cookie ", req.headers.cookie);
-    console.log(trace(),"\n");
-    console.log(trace(),"\n     req.session.cookie.expires", req.session.cookie.expires);   
-    console.log(trace(),"\n     new Date()", new Date());
-    console.log(trace(),"\n     ((req.session.cookie.expires - new Date()) / 1000 /60).toFixed(0))", ((req.session.cookie.expires - new Date()) / 1000 /60).toFixed(0));
-    console.log("\n");
-    let expiresMS = req.session.cookie.expires;
-    expiresMS = expiresMS.getTime();
-    console.log(trace(),"\n     req.session.cookie.expires >>> getTime()", expiresMS);
-    console.log(trace(),"\n     Date.now()", Date.now());
-    console.log(trace(),"\n     req.session.cookie.expires >>> getTime() - Date.now() / 1000 /1 60 >>> toFixed(0)", ((expiresMS - Date.now()) / 1000 /60).toFixed(0));
-    console.log("\n");
-    console.log(trace(),"\n     req.session.cookie.maxAge", req.session.cookie.maxAge);
-    console.log(trace(),"\n     (req.session.cookie.maxAge / 1000 / 60).toFixed(0)", (req.session.cookie.maxAge / 1000 / 60).toFixed(0));
-    console.log("\n");
-    console.log(trace(),"\n     req.cookies", req.cookies);
-    console.log(trace(),"\n     req.session", req.session);
-    console.log(trace(),"\n     req.session.Session", req.session.Session);
-    // console.log("All Cookies: req.cookies", req.session.createdAt);
-    // console.log("All Cookies: req.cookies", req.session.createdAt.toLocaleString());
-    if(req.session.createdAt!=null){
-        console.log(trace(),"\n     🟩 req.session.createdAt", req.session.createdAt);
-    }
-
- 
-
-            // dbRouter.stack.forEach((route) => {
-            //     if (route.route) {
-            //         // routerMounted = true;
-            //         if(consoleLog===true){console.log(`${(" ").repeat(5)} Path: ${route.route.path}, Method: ${Object.keys(route.route.methods).join(", ")}`);}
+            if(req.headers.cookie){
+                console.log(`🪣 ${trace("")}\n🪣 Cookies: ${req.headers.cookie}`);
+            //     console.log(trace(""),"\n🪣      req.header ", JSON.stringify(req.headers, null, 2));
+            //     console.log(trace(""),"\n🪣      req.headers ", req.headers);
+            //     console.log(trace(""),"\n🪣      req.headers.cookie ", req.headers.cookie);
+            //     console.log(trace(""),"\n🪣      req.session ", req.session);
+            //     console.log(trace(""),"\n🪣      req.session.cookie ", req.session.cookie);
+            //     console.log(trace(""),"\n🪣 ");
+            //     console.log(trace(""),"\n🪣      req.session.cookie.expires", req.session.cookie.expires);   
+            //     console.log(trace(""),"\n🪣      new Date()", new Date());
+            //     console.log(trace(""),"\n🪣      ((req.session.cookie.expires - new Date()) / 1000 /60).toFixed(0))", ((req.session.cookie.expires - new Date()) / 1000 /60).toFixed(0));
+            //     console.log("\n🪣");
+            //     let expiresMS = req.session.cookie.expires;
+            //     expiresMS = expiresMS.getTime();
+            //     console.log(trace(""),"\n🪣      req.session.cookie.expires >>> getTime()", expiresMS);
+            //     console.log(trace(""),"\n🪣      Date.now()", Date.now());
+            //     console.log(trace(""),"\n🪣      req.session.cookie.expires >>> getTime() - Date.now() / 1000 /1 60 >>> toFixed(0)", ((expiresMS - Date.now()) / 1000 /60).toFixed(0));
+            //     console.log("\n🪣");
+            //     console.log(trace(""),"\n🪣      req.session.cookie.maxAge", req.session.cookie.maxAge);
+            //     console.log(trace(""),"\n🪣      (req.session.cookie.maxAge / 1000 / 60).toFixed(0)", (req.session.cookie.maxAge / 1000 / 60).toFixed(0));
+            //     console.log("\n🪣");
+            //     console.log(trace(""),"\n🪣      req.cookies", req.cookies);
+            //     console.log(trace(""),"\n🪣      req.session", req.session);
+            //     console.log(trace(""),"\n🪣      req.session.Session", req.session.Session);
+            //     // console.log("All Cookies: req.cookies", req.session.createdAt);
+            //     // console.log("All Cookies: req.cookies", req.session.createdAt.toLocaleString());
+            //     if(req.session.createdAt!=null){
+            //         console.log(trace(""),"\n🪣      🟩 req.session.createdAt", req.session.createdAt);
             //     }
-            // });
+            }
 
-    // // silent session regen START
-    //     const MAX_SESSION_AGE = 15 * 60 * 1000; // 15 minutes
-    //     const now = Date.now();
-    //     if (!req.session.createdAt) {
-    //         req.session.createdAt = now; // Store creation timestamp
-    //     }
-    //     if ((now - req.session.createdAt > MAX_SESSION_AGE)) {
-    //         const oldSecurityCode = req.session.securityCode; // Retrieve existing code
-    //         const newSecurityCode = crypto.randomBytes(4).toString("hex"); // Initial securityCode
-    //         req.session.regenerate((err) => {
-    //             if (err) {
-    //                 console.error("🔴 Session regeneration error:", err);
-    //                 return next(err); // Passes error forward if regeneration fails
-    //             }
-    //             req.session.createdAt = Date.now(); // Reset session timestamp to now
-    //             req.session.securityCode = newSecurityCode; // Assign new securityCode
-    //             console.log(`🟢 Session refreshed. Old Code: ${oldSecurityCode}, New Code: ${req.session.securityCode}`)
-    //             console.log(trace(),`\nSession details:- `,req.session);
-    //             console.log(trace(),'\nSession details JSON:- ', JSON.stringify(req.session, null, 2));
-    //             next(); // Move to next middleware after successful regeneration
-    //         });
-    //     } else {
-    //         next();
-    //     }
-    // slient session regen END
+            // // silent session regen START
+            //     const MAX_SESSION_AGE = 15 * 60 * 1000; // 15 minutes
+            //     const now = Date.now();
+            //     if (!req.session.createdAt) {
+            //         req.session.createdAt = now; // Store creation timestamp
+            //     }
+            //     if ((now - req.session.createdAt > MAX_SESSION_AGE)) {
+            //         const oldSecurityCode = req.session.securityCode; // Retrieve existing code
+            //         const newSecurityCode = crypto.randomBytes(4).toString("hex"); // Initial securityCode
+            //         req.session.regenerate((err) => {
+            //             if (err) {
+            //                 console.error("🔴 Session regeneration error:", err);
+            //                 return next(err); // Passes error forward if regeneration fails
+            //             }
+            //             req.session.createdAt = Date.now(); // Reset session timestamp to now
+            //             req.session.securityCode = newSecurityCode; // Assign new securityCode
+            //             console.log(`🟢 Session refreshed. Old Code: ${oldSecurityCode}, New Code: ${req.session.securityCode}`)
+            //             console.log(trace(""),`\nSession details:- `,req.session);
+            //             console.log(trace(""),'\nSession details JSON:- ', JSON.stringify(req.session, null, 2));
+            //             next(); // Move to next middleware after successful regeneration
+            //         });
+            //     } else {
+            //         next();
+            //     }
+            // slient session regen END
 
-    console.log(("🟨").repeat(64));
-    // console.log(("⌨ ").repeat(64));
-    // console.log(("↑ ").repeat(64));
+            next();
 
-    next();
-
-});
-// catch-all END 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 🟨 
+        });
+        // catch-all END 🪣
+// 🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // Client heartbeat detected, extend session.💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙
         app.post("/heartbeat-session-extension", (req, res) => {
-            if (req.session) {
-                req.session.createdAt = Date.now(); // Reset session timestamp to now
-                if(consoleLog===true){console.log(`${trace()}\n🟢 Client heartbeat detected, session extended at ${new Date().toLocaleString()}:-\n`,req.session);}
-                if(consoleLog!=true){console.log(`${trace()}\n🟢 Client heartbeat detected, session extended at ${new Date().toLocaleString()}`);}
-                res.send({ message: `Client heartbeat detected, session extended at ${new Date().toLocaleString()}.`,status: true });
-            } else {
-                if(consoleLog===true){console.log(`${trace()}\n🔴 Client heartbeat detected, session extension error:- (req.session!=true)".\n`,error);}
-                if(consoleLog!=true){console.log(`${trace()}\n🔴 Client heartbeat detected, session extension error:- (req.session!=true)".`);}
-                res.status(403).json({ message: `Client heartbeat detected, session extension error:- (req.session!=true)". ${error}`,status:false });
+            try{
+                if (req.session) {
+                    req.session.createdAt = Date.now(); // Reset session timestamp to now
+                    if(consoleLog!=true){console.log(`${trace("heartbeat-session-extension")}\n🟢 Client heartbeat detected, session extended at ${new Date().toLocaleString()}`);}
+                    res.send({ message: `Client heartbeat detected, session extended at ${new Date().toLocaleString()}.`,status: true });
+                } else {
+                    if(consoleLog!=true){console.log(`${trace("heartbeat-session-extension")}\n🔴 Client heartbeat detected, session extension error:- (req.session!=true)".`);}
+                    res.status(403).json({ message: `Client heartbeat detected, session extension error:- (req.session!=true)".`,status:false });
+                }
+            }catch (error){
+                    if(consoleLog===true){console.log(`${trace("heartbeat-session-extension")}\n🔴 Client heartbeat detected, session extension error:- (req.session!=true)".\n`,error.message);}
             }
         });
     // Client heartbeat detected, extend session.💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    // MOUNT EXTERNAL ROUTERS
-        if(consoleLog===true){console.log(`${trace()}\nMounting routers.`);}
-
-        let routerMounted = false;
-        import dbRouter, * as dbFunctions from "./src/SQLite_ServerSide.mjs";
-            app.use("/dbRouter", dbRouter);
-            if(dbFunctions.SQLite_ServerSideMJSisLoaded() === true){
-                // if(consoleLog===true){console.log(trace(),'\nIMPORTED:- router & all functions from ./src/SQLite_ServerSide.mjs');}
-            }else{
-                console.log(`🔴 ${trace()}\nError.`);
-            }
-            dbRouter.stack.forEach((route) => {
-                if (route.route) {
-                    routerMounted = true;
-                    // if(consoleLog===true){console.log(`${(" ").repeat(5)} Path: ${route.route.path}, Method: ${Object.keys(route.route.methods).join(", ")}`);}
-                }
-            });
-            if(routerMounted===false){console.log(`${trace()}\n🔴 Errorin router!\n`,dbRouter.stack);}
-
-        routerMounted = false;
-        import loginRouter, * as loginFunctions from './src/globalLoginServer.mjs';
-            app.use("/loginRouter", loginRouter);
-            if(loginFunctions.globalLoginServerMJSisLoaded() === true){
-                // if(consoleLog===true){console.log(trace(),'\nIMPORTED:- router & all functions from ./src/globalLoginServer.mjs');}
-            }else{
-                console.log(`🔴 ${trace()}\nError.`);
-            }
-            loginRouter.stack.forEach((route) => {
-                if (route.route) {
-                    routerMounted = true;
-                    // if(consoleLog===true){console.log(`${(" ").repeat(5)} Path: ${route.route.path}, Method: ${Object.keys(route.route.methods).join(", ")}`);}
-                }
-            });            
-            if(routerMounted===false){console.log(`${trace()}\n🔴 Errorin router!\n`,dbRouter.stack);}
-
-        routerMounted = false;
-        import globalRouter, * as globalFunctions from './src/globalRouter.mjs'; 
-            app.use("/globalRouter", globalRouter);
-            if(globalFunctions.globalRoutesMJSisLoaded() === true){
-                // if(consoleLog===true){console.log(trace(),'\nIMPORTED:- router & all functions from ./src/globalRoutes.mjs');}
-            }else{
-                console.log(`🔴 ${trace()}\nError.`);
-            }
-            globalRouter.stack.forEach((route) => {
-                if (route.route) {
-                    routerMounted = true;
-                    // if(consoleLog===true){console.log(`${(" ").repeat(5)} Path: ${route.route.path}, Method: ${Object.keys(route.route.methods).join(", ")}`);}
-                }
-            });            
-            if(routerMounted===false){console.log(`${trace()}\n🔴 Errorin router!\n`,dbRouter.stack);}
-
-        routerMounted = false;
-        import projectRouter, * as projectFunctions from './src/projectRouter.mjs';
-            app.use("/projectRouter", projectRouter);
-            if(projectFunctions.projectRoutesMJSisLoaded() === true){
-                // if(consoleLog===true){console.log(trace(),'\nIMPORTED:- router & all functions from projectRoutes.mjs');}
-            }else{
-                console.log(`🔴 ${trace()}\nError.`);
-            }
-            projectRouter.stack.forEach((route) => {
-                if (route.route) {
-                    routerMounted = true;
-                    // if(consoleLog===true){console.log(`${(" ").repeat(5)} Path: ${route.route.path}, Method: ${Object.keys(route.route.methods).join(", ")}`);}
-                }
-            });            
-            if(routerMounted===false){console.log(`${trace()}\n🔴 Errorin router!\n`,dbRouter.stack);}
-
-        routerMounted = false;
-        import sessionsRouter, * as sessionsFunctions from './src/globalSessionsServer.mjs';
-            app.use("/sessionsRouter", sessionsRouter);
-            if(sessionsFunctions.globalSessionsServerMJSisLoaded() === true){
-                // if(consoleLog===true){console.log(trace(),'\nIMPORTED:- router & all functions from globalSessionsServer.mjs');}
-            }else{
-                console.log(`🔴 ${trace()}\nError.`);
-            }
-            sessionsRouter.stack.forEach((route) => {
-                if (route.route) {
-                    routerMounted = true;
-                    // if(consoleLog===true){console.log(`${(" ").repeat(5)} Path: ${route.route.path}, Method: ${Object.keys(route.route.methods).join(", ")}`);}
-                }
-            });            
-            if(routerMounted===false){console.log(`${trace()}\n🔴 Errorin router!\n`,dbRouter.stack);}
-
-        if(consoleLog===true){console.log(`${trace()}\n🟢 Routers mounted.`);}
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 myDate = new Date();
 if(consoleLog===true){console.log(`${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);}
 if(consoleLog===true){console.log(("<>").repeat(64));}
-// // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//     // SQLITE
-//         // // const sqlite3 = require("sqlite3").verbose();
-//         //     import sqlite3 from "sqlite3";
-//         // // Connect to SQLite database || Create if it doesn't exist
-//         // export function accessDb(fileName){
-//         //     const db = new sqlite3.Database(`${process.env.PATH_TO_DATABASE}${fileName}.db`, (err) => {
-//         //         if (err) {
-//         //             console.error(`${trace()}\n🔴 Error connecting to database:\n`,fileName, err);
-//         //         } else {
-//         //             console.log(`${trace()}\n🟢 Connected to ${fileName}.db`);
-//         //         }
-//         //         myDate = new Date();
-//         //         if(consoleLog===true){console.log(`${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);}
-//         //         if(consoleLog===true){console.log(("<>").repeat(55));}
-//         //     });
-//         // }
-//         import {accessDb} from './src/SQLite_ServerSide.mjs';
-//         accessDb("project");
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        // // SQLITE
+        //     // const sqlite3 = require("sqlite3").verbose();
+        //         import sqlite3 from "sqlite3";
+        //     // Connect to SQLite database || Create if it doesn't exist
+        //     export function accessDb(fileName){
+        //         const db = new sqlite3.Database(`${process.env.PATH_TO_DATABASE}${fileName}.db`, (err) => {
+        //             if (err) {
+        //                 console.error(`${trace()}\n🔴 Error connecting to database:\n`,fileName, err);
+        //             } else {
+        //                 console.log(`${trace()}\n🟢 Connected to ${fileName}.db`);
+        //             }
+        //             myDate = new Date();
+        //             if(consoleLog===true){console.log(`${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);}
+        //             if(consoleLog===true){console.log(("<>").repeat(55));}
+        //         });
+        //     }
+        //     import {accessDb} from './src/SQLite_ServerSide.mjs';
+        //     accessDb("project");
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 // monitor memory usage
-    // const formatMemoryUsage = (data) => `${(data / 1024 / 1024).toFixed(2)} MB`;
-    // setInterval(() => {
-    //     const memoryUsage = process.memoryUsage();
-    //     console.clear(); // Clears previous logs for readability
-    //     if(consoleLog===true){console.log(("__").repeat(55));}
-    //     if(consoleLog===true){console.log(`🖥️ Memory Usage Monitor`);}
-    //     if(consoleLog===true){console.log(`1️⃣ RSS: Resident Size Set\n- The total memory allocated to your Node.mjs process, including:\n- Heap memory\n- Stack memory\n- Code segment\n- Why it matters:\n- This gives an overview of how much RAM your application is consuming. If RSS keeps increasing, it could indicate a memory leak.`);}
-    //     if(consoleLog===true){console.log(`${(" ").repeat(5)}RSS: ${formatMemoryUsage(memoryUsage.rss)}`);}
-    //     if(consoleLog===true){console.log(`${(" ").repeat(5)}${("~~").repeat(15)}`);}
-    //     if(consoleLog===true){console.log(`2️⃣ Heap Used\n- What it is: The amount of actively used memory in the JavaScript heap.\n- Why it matters: This is the actual memory being used to store variables, objects, and function executions.\n- Key observation: If heapUsed keeps growing without dropping, it could signal inefficient memory management.`);}
-    //     if(consoleLog===true){console.log(`${(" ").repeat(5)}Heap Used: ${formatMemoryUsage(memoryUsage.heapUsed)}`);}
-    //     if(consoleLog===true){console.log(`${(" ").repeat(5)}${("~~").repeat(15)}`);}
-    //     if(consoleLog===true){console.log(`3️⃣ Heap Total\n- What it is: The total allocated memory for the heap.\n- Why it matters: Node.mjs expands this dynamically, so a growing heap might indicate high memory demand.`);}
-    //     if(consoleLog===true){console.log(`${(" ").repeat(5)}Heap Total: ${formatMemoryUsage(memoryUsage.heapTotal)}`);}
-    //     if(consoleLog===true){console.log(`${(" ").repeat(5)}${("~~").repeat(15)}`);}
-    //     if(consoleLog===true){console.log(`4️⃣ External\n- What it is: Memory used by objects managed outside of the JavaScript heap, such as:\n- Buffer allocations (Buffer.from())\n- WebAssembly objects\n- Native C++ extensions\n- Why it matters: If your app uses a lot of Buffers (e.g., file handling or network requests), external might be a significant factor.`);}
-    //     if(consoleLog===true){console.log(`${(" ").repeat(5)}External: ${formatMemoryUsage(memoryUsage.external)}`);}
-    //     if(consoleLog===true){console.log(`${(" ").repeat(5)}${("~~").repeat(15)}`);}
-    //     if(consoleLog===true){console.log(`How to Use These Stats\n✅ If RSS is too high, your app might need optimization or might be consuming too much memory.\n✅ If heapUsed > heapTotal, it suggests memory saturation, potentially slowing performance.\n✅ If external memory spikes, you may have large Buffer allocations affecting memory usage.\n🚀`);}
-    //     if(consoleLog===true){console.log(("__").repeat(55));}
-    // }, 2000); // Logs every 2 seconds
+    const formatMemoryUsage = (data) => `${(data / 1024 / 1024).toFixed(2)} MB`;
+    setInterval(() => {
+        const memoryUsage = process.memoryUsage();
+        // console.clear(); // Clears previous logs for readability
+        let myText = "";
+        myText += ("__").repeat(55);
+        myText += `\n🖥️ Memory Usage Monitor`;
+        myText += `\n1️⃣ RSS: Resident Size Set\n- The total memory allocated to your Node.mjs process, including:\n- Heap memory\n- Stack memory\n- Code segment\n- Why it matters:\n- This gives an overview of how much RAM your application is consuming. If RSS keeps increasing, it could indicate a memory leak.`;
+        myText += `\n${(" ").repeat(5)}RSS: ${formatMemoryUsage(memoryUsage.rss)}`;
+        myText += `\n${(" ").repeat(5)}${("~~").repeat(15)}`;
+        myText += `\n2️⃣ Heap Used\n- What it is: The amount of actively used memory in the JavaScript heap.\n- Why it matters: This is the actual memory being used to store variables, objects, and function executions.\n- Key observation: If heapUsed keeps growing without dropping, it could signal inefficient memory management.`;
+        myText += `\n${(" ").repeat(5)}Heap Used: ${formatMemoryUsage(memoryUsage.heapUsed)}`;
+        myText += `\n${(" ").repeat(5)}${("~~").repeat(15)}`;
+        myText += `\n3️⃣ Heap Total\n- What it is: The total allocated memory for the heap.\n- Why it matters: Node.mjs expands this dynamically, so a growing heap might indicate high memory demand.`;
+        myText += `\n${(" ").repeat(5)}Heap Total: ${formatMemoryUsage(memoryUsage.heapTotal)}`;
+        myText += `\n${(" ").repeat(5)}${("~~").repeat(15)}`;
+        myText += `\n4️⃣ External\n- What it is: Memory used by objects managed outside of the JavaScript heap, such as:\n- Buffer allocations (Buffer.from())\n- WebAssembly objects\n- Native C++ extensions\n- Why it matters: If your app uses a lot of Buffers (e.g., file handling or network requests), external might be a significant factor.`;
+        myText += `\n${(" ").repeat(5)}External: ${formatMemoryUsage(memoryUsage.external)}`;
+        myText += `\n${(" ").repeat(5)}${("~~").repeat(15)}`;
+        myText += `\nHow to Use These Stats\n✅ If RSS is too high, your app might need optimization or might be consuming too much memory.\n✅ If heapUsed > heapTotal, it suggests memory saturation, potentially slowing performance.\n✅ If external memory spikes, you may have large Buffer allocations affecting memory usage.\n🚀`;
+        myText += `\n${("__").repeat(55)}`;
+        // Write the memory usage data to a log fie
+            const logFileName2 = `logs/memory_${myDate.toISOString().replace(/:/g, '-')}.txt`;
+            fs.writeFile(logFileName2, myText, (err) => {
+                if (err) {
+                    console.error(`${trace()}🔴 Error writing Memory statistics log:`, err);
+                } else {
+                    console.log(`${trace()}🟢 Memory statistics logged: ${logFileName2}`);
+                }
+            });
+    },  60 * 60 * 1000);
 
 const formatMemoryBar = (value, max) => {
     const barLength = Math.floor((value / max) * 40);
@@ -435,15 +464,16 @@ setInterval(() => {
     // if(consoleLog===true){console.log(`Heap Used:  ${formatMemoryBar(memory.heapUsed, 100000000)} ${memory.heapUsed / 1024 / 1024} MB`);}
     console.log(("~~").repeat(55));
 }, 1000 * 60 * 60);
-
-// Start the server
-    const PORT = process.env.PORT;
-    const DEV_IP_ADDRESS = process.env.DEV_IP_ADDRESS;
-    app.listen(PORT,'0.0.0.0', () => {
-        console.log(("🏁").repeat(64));
-        // console.log(`${trace()}\nServer is running on port:${PORT}\nAccessible on the server at either http://localhost:${PORT} or http://${DEV_IP_ADDRESS}:${PORT}.\nAccessible on the LAN at http://${DEV_IP_ADDRESS}:${PORT}.`);
-        console.log(`${trace()}\nServer is running on port:${PORT}.`);
-        myDate = new Date();
-        console.log(`${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);
-        console.log(("🏁").repeat(64));
-    });
+// 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
+// 7️⃣ start server
+    // Start the server
+        const PORT = process.env.PORT;
+        const DEV_IP_ADDRESS = process.env.DEV_IP_ADDRESS;
+        app.listen(PORT,'0.0.0.0', () => {
+            console.log(("🎾").repeat(64));
+            // console.log(`${trace()}\nServer is running on port:${PORT}\nAccessible on the server at either http://localhost:${PORT} or http://${DEV_IP_ADDRESS}:${PORT}.\nAccessible on the LAN at http://${DEV_IP_ADDRESS}:${PORT}.`);
+            console.log(`🎾 ${trace()}\n🎾 Server is running on port:${PORT}.`);
+            myDate = new Date();
+            console.log(`🎾 ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);
+            console.log(("🎾").repeat(64));
+        });

@@ -1,0 +1,17 @@
+{
+  "method": "GET",
+  "url": "/.well-known/appspecific/com.chrome.devtools.json",
+  "headers": {
+    "host": "localhost:3000",
+    "connection": "keep-alive",
+    "sec-fetch-site": "same-origin",
+    "sec-fetch-mode": "no-cors",
+    "sec-fetch-dest": "empty",
+    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36 Edg/136.0.0.0",
+    "accept-encoding": "gzip, deflate, br, zstd",
+    "accept-language": "en-GB,en;q=0.9,en-US;q=0.8,en-AU;q=0.7",
+    "cookie": "connect.sid=s%3A99aac763-b803-4652-b858-dbd483c45ff5.GWInaPncMqaVzuJ5%2BKPWudhaK6IbWxge3WhbyluA8zg"
+  },
+  "params": {},
+  "query": {}
+}

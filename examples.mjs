@@ -78,4 +78,89 @@ async function writeToDB() {
         };
     }
 }
-processData();
+// processData();
+
+
+// sessionManagement.js
+import express from 'express';
+import session from 'express-session';
+import { createClient } from 'redis';
+import { RedisStore } from 'connect-redis';
+import { randomUUID } from 'crypto';
+
+// Create the Express app
+const app = express();
+
+// Async function to create and return a RedisStore instance
+async function createRedisStore() {
+  // Create a Redis client
+  const redisClient = createClient();
+
+  redisClient.on('error', (err) => {
+    console.error('🔴 Redis Client Error', err);
+  });
+
+  // Connect to the Redis server (make sure your Node version supports top-level await or use this inside an async function)
+  await redisClient.connect();
+
+  // Create an instance of RedisStore using the connected client
+  const redisStore = new RedisStore({
+    client: redisClient,
+    prefix: 'sess:', // Optional prefix for session keys in Redis
+  });
+
+  console.log('🟢 Redis is set up.');
+  return redisStore;
+}
+
+// Function to set up the Express session middleware with the provided RedisStore
+function setupExpressSession(redisStore) {
+  app.use(
+    session({
+      store: redisStore,
+      // Generate a unique session ID
+      genid: (req) => randomUUID(),
+      secret: process.env.SESSION_KEY || 'your-secret-key', // Replace with your secret or fallback value
+      resave: false,
+      saveUninitialized: true,
+      cookie: {
+        secure: false,    // Set to true for HTTPS in production
+        httpOnly: true,   // Helps mitigate XSS
+        sameSite: 'strict', // Helps mitigate CSRF
+        maxAge: 15 * 60 * 1000, // Session expires after 15 minutes
+      },
+    })
+  );
+  console.log('🟢 Express session management is set up.');
+}
+
+// Main async function to set up session management
+async function setupSessionManagement() {
+  try {
+    // Wait for the Redis store to be created
+    const redisStore = await createRedisStore();
+
+    // Set up Express session using the RedisStore instance
+    setupExpressSession(redisStore);
+
+    console.log('✅ All session management setup complete.');
+  } catch (error) {
+    console.error('🔴 Error setting up session management:', error);
+  }
+}
+
+// Initialize session management
+setupSessionManagement();
+
+// Example Express route to test session functionality
+app.get('/', (req, res) => {
+  req.session.views = req.session.views ? req.session.views + 1 : 1;
+  res.send(`Number of views: ${req.session.views}`);
+});
+
+// Start the Express server
+app.listen(3000, () => {
+  console.log('Server is running on port 3000');
+});
+
+export default app;
