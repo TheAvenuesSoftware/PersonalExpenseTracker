@@ -10,131 +10,198 @@ export function SQLite_ServerSideMJSisLoaded(){
     import { Router } from "express";
     const dbRouter = Router();
     import sqlite3 from "sqlite3";
-    import {trace} from "./globalServer.mjs";
+    import { open } from "sqlite";
+    import { trace } from "../index.mjs";
     import { isValidJSONString } from "./globalClient.mjs";
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 
-// accessDb - open || create if not exist
-    export function accessDb(fileName){
-        const db = new sqlite3.Database(`${process.env.PATH_TO_DATABASE}${fileName}.db`, (err) => {
-            if (err) {
-                console.error(`${trace()}\n🔴 Error connecting to database:\n`,fileName, err);
-            } else {
-                console.log(`${trace()}\n🟢 Connected to ${fileName}.db`);
+            // 1. Initialize SQLite database based on a user's unique identifier
+                async function initDB(userId) {
+                    return open({
+                        filename: `./db/${userId}.db`, // Stores user databases in a dedicated folder
+                        driver: sqlite3.Database,
+                    });
+                }
+                // Example usage
+                    const dbPromise_Alice = initDB("alice123"); // Alice gets her own DB
+                    const dbPromise_Bob = initDB("bob456"); // Bob gets his own DB
+                // // ✅ Ensures one connection is shared across the app
+                // // ✅ Improves performance by reducing redundant connections
+                // ✅ Each user gets an isolated database
+                // ✅ Stored in a /databases/ directory to keep things organized
+
+            // 2. Instead of creating a new connection each time a user interacts with the app, maintain a connection pool in memory.
+                const dbInstances = new Map(); // Keeps track of initialized databases
+                export async function getDB(userId) {
+                    if (!dbInstances.has(userId)) {
+                        dbInstances.set(userId, await initDB(userId));
+                    }
+                    return dbInstances.get(userId);
+                }
+                // // Example usage
+                //     const dbAlice = await getDB("alice123");
+                //     const dbBob = await getDB("bob456");
+                // ✅ Prevents redundant reinitialization
+                // ✅ Speeds up access to databases already opened
+            // Ensure your schema is properly structured with indexing for performance:
+                async function setupSchema(userId) {
+                    console.log(trace(),'Setup schema for ',userId);
+                    const db = await getDB(userId);
+                    try{
+                        await db.exec(`
+                            CREATE TABLE IF NOT EXISTS users (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            active TEXT,
+                            name TEXT NOT NULL,
+                            email TEXT NOT NULL UNIQUE,
+                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                            );
+                            CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+                        `);
+                        console.log(trace(),'Setup schema successful for ',userId);
+                    } catch (error){
+                        console.log(trace(),userId,error);
+                    }
+                }
+                // ✅ Indexes speed up queries
+                // ✅ Ensures schema persists across restarts
+                setupSchema("alice123");
+                setupSchema("bob456");
+            // 3. Secure User Database Access
+                // Each user should only be able to access their own database:
+                // - Set strict file permissions (chmod 600 to restrict access).
+                // - Consider encrypting the databases using SQLCipher if storing sensitive data.
+                // Secure the Database
+                    // For production, consider:
+                    // - File Permissions: Restrict access to the SQLite file (chmod 600 database.sqlite).
+                    // - Encryption: Use SQLCipher for encrypted storage if dealing with sensitive data.
+                    // - Safe Queries: Always use parameterized queries to prevent SQL injection.
+                    // Example (Safe Query Execution):
+                        // async function insertUser(name, email) {
+                        //     const db = await dbPromise;
+                        //     await db.run('INSERT INTO users (name, email) VALUES (?, ?)', name, email);
+                        // }
+                        // centralise error handling function
+                            function handleDBError(err, action, database) {
+                                if (err.code === 'SQLITE_CONSTRAINT') {
+                                    console.error(`Constraint error during ${action} on database ${database}.db`);
+                                } else {
+                                    console.error(`Database error during ${action} ${database}:`, err);
+                                }
+                            }
+                        // CRUD - insert
+                            async function insertUser(userId, name, email) {
+                                const db = await getDB(userId);
+                                try {
+                                    await db.run('INSERT INTO users (name, email) VALUES (?, ?)', name, email);
+                                    console.log('User added!');
+                                } catch (err) {
+                                    // localised error handling
+                                        // if (err.code === 'SQLITE_CONSTRAINT') {
+                                        //     console.error('Constraint error: Email must be unique',err);
+                                        // } else {
+                                        //     console.error('Insert error:', err);
+                                        // }
+                                    // centralised error handling
+                                        handleDBError(err, 'insert', userId);
+                                }
+                            }
+                            insertUser("alice123","Donald","donald.garton@outlook.com");
+                            insertUser("bob456","Donald","donald.garton@outlook.com");
+                // Optimize for Performance
+                    async function optPer(userId){
+                        const db = await getDB(userId);
+                        try{
+                            // For production, optimize SQLite:
+                            // 1.1 - Enable WAL Mode (Write-Ahead Logging)
+                            // 1.2- Enable WAL mode for concurrent reads and writes:
+                                await db.exec('PRAGMA journal_mode = WAL;');
+                            // 2 - Increase Connection Cache
+                                await db.exec('PRAGMA cache_size = 10000;');
+                            // ✅ Boosts concurrent writes & read speed
+                            // ✅ Reduces write-lock contention
+                            // 3 - Use indexes for frequently queried data:
+                                await db.exec('CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);');
+                            // Suggested Enhancements:
+                                // - Memory Optimization for Large Queries:
+                                    await db.exec('PRAGMA temp_store = MEMORY;');
+                                    // - ✅ Ensures temporary data is stored in RAM instead of disk, making queries faster.
+                                // - Optimize synchronous Mode for Balanced Performance & Durability:
+                                    await db.exec('PRAGMA synchronous = NORMAL;');
+                                    // - ✅ Allows slightly faster writes while maintaining safety in case of power failure.
+                                    // 🚀 Default (FULL) is safest but may slow down high-frequency writes.
+                                // - Preload Frequently Used Data for Faster Access:
+                                    async function preloadData(userId) {
+                                    const db = await getDB(userId);
+                                        await db.all('SELECT * FROM users WHERE active = 1'); // Commonly accessed data
+                                    }
+                                    preloadData("alice123");
+                                    // - ✅ Ensures frequently queried records are cached in memory, reducing execution time.
+                        }catch (error){
+                            console.log(error);
+                        }
+                    }
+                    optPer("alice123");
+
+
+// Here’s a complete set of generic CRUD functions:
+    // 1. Create (Insert)
+        export async function insertRecord(userId, table, columns, values) {
+            const db = await getDB(userId);
+            try {
+                const placeholders = columns.map(() => '?').join(', ');
+                const query = `INSERT INTO ${table} (${columns.join(', ')}) VALUES (${placeholders})`;
+                await db.run(query, values);
+            } catch (err) {
+                console.error(`Insert error in ${table}:`, err);
             }
-            let myDate = new Date();
-            if(consoleLog===true){console.log(`${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);}
-            if(consoleLog===true){console.log(("<>").repeat(55));}
-        });
-    }
-
-// db fetch
-
-    export async function dbFetch_CoPilot(url,options){
-        const BASE_URL = "http://localhost:3000";
-        const fullUrl = new URL(url, BASE_URL);
-        const response = await fetch(fullUrl, options);
-    }
-
-    export async function dbFetch(url, method = 'GET', data = null) {
-        const BASE_URL = "http://localhost:3000";
-        const fullUrl = new URL(url, BASE_URL);
-        if(consoleLog===true){console.log(`${trace()}\nurl ▶ ${url}\nfullUrl ▶ ${fullUrl}\nmethod ▶ ${method}\ndata ▶ ${data}`);}
-        const parsedJSONdata = JSON.parse(data);
-        Object.keys(parsedJSONdata).forEach(key => {
-            console.log(`key:- ${key} parsedJSONdata[key]:- ${parsedJSONdata[key]}`);
-        }); 
-        try {
-            // Ensure data is correctly formatted before using it in the request
-                const body = isValidJSONString(data)
-                    ? data // Data is already stringified
-                    : typeof data === 'object' 
-                        ? JSON.stringify(data) // Convert object to JSON string
-                        : null; // No valid data, avoid sending an incorrect body
-            
-                const options = {
-                    method,
-                    headers: { 'Content-Type': 'application/json' },
-                    body
-                };
-            // 
-                const response = await fetch(fullUrl, options);
-                console.error(trace(),'\n❓📶🛜Fetch response:', response);
-                if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
-                return await response.json({message:response});
-        } catch (error) {
-            console.error(trace(),'\n🔴📶🛜Fetch error:', error);
         }
-    }
-
-// 🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️
-// routes
-    // catch all
-        dbRouter.use((req, res, next) => {
-            console.log(`${trace()}\nHandling request at: ${req.protocol}://${req.get('host')}${req.originalUrl}`);
-            next();
-        });
-    // Create
-        dbRouter.post("/dbCreate", async (req, res) => {
-            console.log(`${trace()}\nreq.body ▶ ${JSON.stringify(req.body)}`);
-            console.log(trace(), req.body);
-
-            const db = await new sqlite3.Database("./db/project.db", (err) => {
-                if (err) {
-                    console.error("Error opening database:", err.message);
-                } else {
-                    console.log("Connected to SQLite database");
-                }
-            });
-
-            const sql = `INSERT INTO users (user_name, user_email) VALUES ('${req.body.userName}', '${req.body.userEmailAddress}')`;
-            console.log(trace(),"\n",sql);
-            db.run(sql, function (err) {
-                if (err) {
-                    console.error(`${trace()}\n🔴🗄️💾 Error inserting user: ${err.message}`);
-                    return({message:err.message})
-                } else {
-                    console.log(`${trace()}\n🟢🗄️💾 User added successfully! ID: ${this.lastID}`);
-                    return({message:`🟢🗄️💾 add successful, ID: ${this.lastID}`})
-                }
-            });
-        });
-// 🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️🛣️
-
-// ⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸⫸
-    export async function dbCreate(payload){
-        if(consoleLog===true){console.log(`${trace()}\ndbCreate(✅)`);}
-        try{
-            Object.keys(payload).forEach(key => {
-                console.log(key,payload[key]);
-            }); 
-        }catch{
-                console.log(`🔴 ${trace()}payload is not a valid JSON object`);
+    // 2. Read (Select)
+        export async function getRecord(userId, table, condition = '', values = []) {
+            const db = await getDB(userId);
+            try {
+                const query = condition ? `SELECT * FROM ${table} WHERE ${condition}` : `SELECT * FROM ${table}`;
+                return await db.all(query, values);
+            } catch (err) {
+                console.error(`Select error in ${table}:`, err);
+                return [];
+            }
         }
-        const fetchUrl = "/dbRouter/dbCreate";
-        const fetchType = `POST`; 
-        const fetchPayload = payload;
-        if(consoleLog===true){console.log(`${trace()}\nfetchPayload:-\n${fetchPayload}`);}
-        if(consoleLog===true){console.log(`${trace()}\nJSON.stringify(fetchPayload):-\n${JSON.stringify(fetchPayload)}`);}
-        const data = await dbFetch(fetchUrl,fetchType,JSON.stringify(fetchPayload));
-        // const data = await dbFetch(fetchUrl,fetchType,fetchPayload);
-        if(consoleLog===true){console.log(`${trace()}\n${data}`);}
-        // if(consoleLog===true){console.log(`${trace()}\n${data.message}`);}
-        // if(consoleLog===true){console.log(`${trace()}\n${data.createNewAccount}`);}
-    }
-    // setTimeout(()=>{
-    //     dbCreate({userUUID:"123",userName:"D.Garton",userEmailAddress:"d.garton@netit.com.au"});
-    // },3000);
-// ⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷⫷
+    // 3. Update (Modify)
+        export async function updateRecord(userId, table, updates, condition, values) {
+            const db = await getDB(userId);
+            try {
+                const setClause = Object.keys(updates).map(key => `${key} = ?`).join(', ');
+                const query = `UPDATE ${table} SET ${setClause} WHERE ${condition}`;
+                await db.run(query, [...Object.values(updates), ...values]);
+            } catch (err) {
+                console.error(`Update error in ${table}:`, err);
+            }
+        }
+    // 4. Delete (Remove)
+        export async function deleteRecord(userId, table, condition, values) {
+            const db = await getDB(userId);
+            try {
+                const query = `DELETE FROM ${table} WHERE ${condition}`;
+                await db.run(query, values);
+            } catch (err) {
+                console.error(`Delete error in ${table}:`, err);
+            }
+        }
+// Usage
+    // Insert a user
+        insertRecord("alice123", "users", ["name", "email"], ["Alice", "alice@example.com"]);
+    // Fetch users
+        getRecord("alice123", "users").then(console.log);
+    // Update user email
+        updateRecord("alice123", "users", { email: "alice@newmail.com" }, "name = ?", ["Alice"]);
+    // // Delete a user
+    //     deleteRecord("alice123", "users", "name = ?", ["Alice"]);
+// Why This Approach Is Effective?
+    // ✅ Reusable → Works for any table in your database.
+    // ✅ Parameterized Queries → Prevents SQL injection.
+    // ✅ Scalable → Adaptable for different conditions and fields.
+    // ✅ Simplifies CRUD logic → No duplicate code across tables.
 
-// Read
-    // SELECT * FROM users;
-    // SELECT name, email FROM users WHERE id = 1;
-
-// Update
-    // UPDATE users SET email = 'newemail@example.com' WHERE id = 1;
-
-// Delete
-    // DELETE FROM users WHERE id = 1;
 
 export default dbRouter;

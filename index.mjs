@@ -11,18 +11,18 @@
 
 let myDate;
 myDate = new Date();
-console.log(("🔰").repeat(64));
-console.log(`🔰 ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}${(" ").repeat(128-2-(`🔰 ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`).length)}🔰`);
+console.log(("🔰").repeat(60));
+console.log(`🔰 ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}${(" ").repeat(118-(`🔰 ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`).length)}🔰`);
 myDate = new Date();
-console.log(`🔰 ${myDate}${(" ").repeat(128-2-(`🎾 ${myDate}`).length)}🔰`);
+console.log(`🔰 ${myDate}${(" ").repeat(118-(`🎾 ${myDate}`).length)}🔰`);
 process.env.TZ = "Australia/Sydney"; // 🌏 Sets the server timezone
-console.log(`🔰 Server running in timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}${(" ").repeat(128-2-(`🔰 Server running in timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`).length)}🔰`);
-console.log(("🔰").repeat(64));
+console.log(`🔰 Server running in timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}${(" ").repeat(118-(`🔰 Server running in timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`).length)}🔰`);
+console.log(("🔰").repeat(60));
 
 const consoleLog = true
 
 // trace()
-    function trace(whoCalled="") {
+    export function trace(whoCalled="") {
         try {
             const stack = new Error().stack;
             const firstLine = stack.split('\n')[2].trim();
@@ -70,12 +70,15 @@ const consoleLog = true
         import cors from 'cors';
     // SQLite
         import sqlite3 from "sqlite3";
+        import { open } from "sqlite";
     // ROUTERS
         import dbRouter, * as dbFunctions from "./src/SQLite_ServerSide.mjs";
         import loginRouter, * as loginFunctions from './src/globalLoginServer.mjs';
         import globalRouter, * as globalFunctions from './src/globalRouter.mjs'; 
         import projectRouter, * as projectFunctions from './src/projectRouter.mjs';
         import sessionsRouter, * as sessionsFunctions from './src/globalSessionsServer.mjs';
+    // SQLite CRUD
+        import { insertRecord, getRecord, updateRecord, deleteRecord } from "./src/SQLite_ServerSide.mjs";
 
     function checkImports(){
         try{
@@ -105,6 +108,9 @@ const consoleLog = true
         }     
     }
     checkImports();
+if(consoleLog===true){console.log(("<>").repeat(60));}
+if(consoleLog===true){console.log(trace());}
+if(consoleLog===true){console.log(("<>").repeat(60));}
 // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
 // 2️⃣ environment configuration
     // .ENV;  .MJS
@@ -146,6 +152,9 @@ const consoleLog = true
             } catch (error) {
                 if(consoleLog===true){console.log(trace(),`\n🔴 ERROR:- ${envPath} not found!`);}
             }
+if(consoleLog===true){console.log(("<>").repeat(60));}
+if(consoleLog===true){console.log(trace());}
+if(consoleLog===true){console.log(("<>").repeat(60));}
 // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
 // 3️⃣ create express app AND middleware
     const app = express();
@@ -165,6 +174,8 @@ const consoleLog = true
             if(consoleLog===true){console.log(`🔴 map to folder failed:- ${folder}`);}
         }
     });
+    if(consoleLog===true){console.log(`${trace()}🟢 Folders mapped in Express.`);}
+//   🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  
     // CORS handling
         app.use(cors({
             origin: '*',                         // ❌ ONLY for development only !!!!
@@ -177,16 +188,21 @@ const consoleLog = true
         // app.options('*', cors()); causes error !!! START
             // app.options('*', cors()); // ensures Express automatically handles OPTIONS requests for every route, Without it, you may need to manually set headers in your route handlers.
         // app.options('*', cors()); causes error !!! END
-        if(consoleLog===true){console.log(`${trace()} 🟢 CORS headers are set.`);}
+        if(consoleLog===true){console.log(`${trace()}🟢 CORS headers are set.`);}
+//   🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  
+if(consoleLog===true){console.log(("<>").repeat(60));}
+if(consoleLog===true){console.log(trace());}
+if(consoleLog===true){console.log(("<>").repeat(60));}
 // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
 // 4️⃣ session management
     // retrieve the session key OR create one if can't be retrieved
         // const crypto = require("crypto");
             // const sessionKey = crypto.randomBytes(32).toString("hex");
             const sessionKey = process.env.SESSION_KEY || crypto.randomBytes(32).toString("hex");
-            if(consoleLog===true){console.log(trace(),'\n🟢 sessionKey created.');} // DON'T LOG THIS!!!  KEEP IT SECURE!!!
+            if(consoleLog===true){console.log(trace(),'🟢 sessionKey created.');} // DON'T LOG THE KEY!!!  KEEP IT SECURE!!!
     // Async function to create and return a RedisStore instance
         async function createRedisStore() {
+            if(consoleLog===true){console.log(`${trace()}🟢 createRedisStore().`);}
             // Create a Redis client
                 const redisClient = createClient();
                 redisClient.on('error', (err) => {
@@ -204,6 +220,7 @@ const consoleLog = true
         }
     // Function to set up the Express session middleware with the provided RedisStore
         function setupExpressSession(redisStore) {
+            if(consoleLog===true){console.log(`${trace()}🟢 setupExpressSession(redisStore).`);}
             app.use(
                 session({
                     store: redisStore,
@@ -227,6 +244,9 @@ const consoleLog = true
         .then((redisStore)=>{
             setupExpressSession(redisStore);
         });
+if(consoleLog===true){console.log(("<>").repeat(60));}
+if(consoleLog===true){console.log(trace());}
+if(consoleLog===true){console.log(("<>").repeat(60));}
 // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
 // 5️⃣ MOUNT EXTERNAL ROUTERS
         function mountRouters() {
@@ -236,14 +256,19 @@ const consoleLog = true
                 app.use("/globalRouter", globalRouter);
                 app.use("/projectRouter", projectRouter);
                 app.use("/sessionsRouter", sessionsRouter);
+                console.log(`${trace()}🟢 mountRouters().`);
             }
             catch (error) {
                 console.log(error);
             }
         }
         mountRouters();
+if(consoleLog===true){console.log(("<>").repeat(60));}
+if(consoleLog===true){console.log(trace());}
+if(consoleLog===true){console.log(("<>").repeat(60));}
 // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
 // 6️⃣ routes AND business logic
+    console.log(`${trace()}🟢 routes AND logic.`);
     // log REQuest
         async function logREQuest(req){
             try{
@@ -283,6 +308,9 @@ const consoleLog = true
                 console.error(`🪣 ${trace("")}🔴 Catch! Error writing REQuest log:`, error);  
             }
         }
+if(consoleLog===true){console.log(("<>").repeat(60));}
+if(consoleLog===true){console.log(trace());}
+if(consoleLog===true){console.log(("<>").repeat(60));}
 // 🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣
     //  catch-all START 🪣 
         app.use(async(req, res, next) => {
@@ -371,6 +399,9 @@ const consoleLog = true
         });
         // catch-all END 🪣
 // 🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣
+if(consoleLog===true){console.log(("<>").repeat(60));}
+if(consoleLog===true){console.log(trace());}
+if(consoleLog===true){console.log(("<>").repeat(60));}
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // Client heartbeat detected, extend session.💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙
         app.post("/heartbeat-session-extension", (req, res) => {
@@ -389,31 +420,12 @@ const consoleLog = true
         });
     // Client heartbeat detected, extend session.💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 myDate = new Date();
-if(consoleLog===true){console.log(`${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);}
-if(consoleLog===true){console.log(("<>").repeat(64));}
+// if(consoleLog===true){console.log(`${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);}
+if(consoleLog===true){console.log(("<>").repeat(60));}
+if(consoleLog===true){console.log(trace());}
+if(consoleLog===true){console.log(("<>").repeat(60));}
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        // // SQLITE
-        //     // const sqlite3 = require("sqlite3").verbose();
-        //         import sqlite3 from "sqlite3";
-        //     // Connect to SQLite database || Create if it doesn't exist
-        //     export function accessDb(fileName){
-        //         const db = new sqlite3.Database(`${process.env.PATH_TO_DATABASE}${fileName}.db`, (err) => {
-        //             if (err) {
-        //                 console.error(`${trace()}\n🔴 Error connecting to database:\n`,fileName, err);
-        //             } else {
-        //                 console.log(`${trace()}\n🟢 Connected to ${fileName}.db`);
-        //             }
-        //             myDate = new Date();
-        //             if(consoleLog===true){console.log(`${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);}
-        //             if(consoleLog===true){console.log(("<>").repeat(55));}
-        //         });
-        //     }
-        //     import {accessDb} from './src/SQLite_ServerSide.mjs';
-        //     accessDb("project");
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 // monitor memory usage
     const formatMemoryUsage = (data) => `${(data / 1024 / 1024).toFixed(2)} MB`;
     setInterval(() => {
@@ -470,10 +482,10 @@ setInterval(() => {
         const PORT = process.env.PORT;
         const DEV_IP_ADDRESS = process.env.DEV_IP_ADDRESS;
         app.listen(PORT,'0.0.0.0', () => {
-            console.log(("🎾").repeat(64));
+            console.log(("🎾").repeat(60));
             // console.log(`${trace()}\nServer is running on port:${PORT}\nAccessible on the server at either http://localhost:${PORT} or http://${DEV_IP_ADDRESS}:${PORT}.\nAccessible on the LAN at http://${DEV_IP_ADDRESS}:${PORT}.`);
-            console.log(`🎾 ${trace()}\n🎾 Server is running on port:${PORT}.`);
+            console.log(`🎾 ${trace()}${(" ").repeat(118-(`🎾 ${trace()}`).length)}🎾\n🎾 Server is running on port:${PORT}.${(" ").repeat(118-(`🎾 Server is running on port:${PORT}.`).length)}🎾`);
             myDate = new Date();
-            console.log(`🎾 ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);
-            console.log(("🎾").repeat(64));
+            console.log(`🎾 ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}${(" ").repeat(118-(`🎾 ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`).length)}🎾`);
+            console.log(("🎾").repeat(60));
         });
