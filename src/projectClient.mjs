@@ -192,5 +192,5 @@ export function projectMJSisLoaded(){
             // ###################################################################################################
                 // globalClientJS.getGlobalFooter();
                 getGlobalFooter();
-            }
+        }
 

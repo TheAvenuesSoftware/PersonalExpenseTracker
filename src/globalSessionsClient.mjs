@@ -7,6 +7,7 @@ export function globalSessionsClientJSisLoaded(){
 
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 //  ONLY IMPORT CLIENT SIDE MODULES TO HERE
+    import {clientConfigSettings} from "./projectClientConfig.mjs";
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 
 // let sessionDuration = 0;
@@ -179,8 +180,8 @@ export function globalSessionsClientJSisLoaded(){
                 document.getElementById("sign-in-out-button").classList.remove("sign-in-button");
                 document.getElementById("sign-in-out-button").classList.add("sign-out-button");
             }
-        }catch{
+        }catch (error){
             alert("🔴 Fatal error logging out!");
-            console.log("🔴 Fatal error logging out!");
+            console.log("🔴 Fatal error logging out!",error);
         }
     }

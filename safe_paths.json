@@ -1,7 +1,6 @@
 {
     "allowedPaths": [
         "/.well-known/appspecific/com.chrome.devtools.json",
-        "/globalRouter/getGlobalFooter",
-        "/loginRouter/isLoginRequired"
+        "/heartbeat-session-extension"
     ]
 }

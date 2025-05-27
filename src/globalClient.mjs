@@ -7,6 +7,7 @@ export function globalClientJSisLoaded(){
 
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 //  ONLY IMPORT CLIENT SIDE MODULES TO HERE
+    import {clientConfigSettings} from "./projectClientConfig.mjs";
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 
 // universal fetch I
@@ -91,7 +92,6 @@ export async function universalFetchII(url,options){
             return false;
         }
     }
-
 
 // remove leading zeros from a number string START
     export function removeLeadingZerosFromString(myString){
@@ -319,7 +319,21 @@ export function detectOS() {
 export async function getGlobalFooter() {
     if(consoleLog===true){console.log('getGlobalFooter()...');}
     const fetchUrl = `/globalRouter/getGlobalFooter`;
-    if(consoleLog===true){console.log(fetchUrl);}
+    const fetchOptions = {
+            method: 'POST',                // Specifies a POST request
+            mode: 'cors',                  // Ensures cross-origin requests are handled
+            cache: 'no-cache',             // Prevents caching issues
+            credentials: clientConfigSettings.CLIENT_SESSION_CREDENTIALS,
+            headers: {
+                'Content-Type': 'application/json',  // Sets content type
+                // 'Authorization': `Bearer ${yourAccessToken}`, // Uses token-based auth (if applicable)
+                // 'Accept': 'application/json',        // Sets content type for res. If not json, server may return error. Use response.json() to parse the response.
+            },
+            body: JSON.stringify({          // Converts object to JSON for request
+                a:"a",
+            })
+        }
+    if(consoleLog===true){console.log(fetchUrl.fetchOptions);}
     try {
         // fetch
             const response = await fetch(fetchUrl);

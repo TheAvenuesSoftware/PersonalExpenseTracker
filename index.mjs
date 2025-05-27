@@ -237,7 +237,7 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
         console.log(`🪣 ${trace()}🔒 ⁉️req.url:-`,req.url);
 
         // Skip authentication for public routes
-            const publicRoutes = ["/loginRouter/login_step2", "/loginRouter/login_step3", "/loginRouter/login_step4"];
+            const publicRoutes = ["/loginRouter/login_step2", "/loginRouter/login_step3", "/loginRouter/login_step4","/globalRouter/getGlobalFooter"];
             if (publicRoutes.includes(req.path)) {
                 console.log(`🪣 ${trace()}🔒✅ loggoing in...`);
                 return next(); 
@@ -257,8 +257,15 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
                 console.warn(`🪣 ${trace()}🔒 ⁉️Session ID mismatch detected for \n🪣 ${cookieSid} v \n🪣 ${headerSid}`);
                 console.warn(`🪣 ${trace()}🔒 ⁉️Session ID mismatch detected for ${req.url}`);
                 if (!safePaths.includes(req.url)) {
-                    console.warn(`🪣 ${trace()}🔒🔴 Access denied due to session inconsistency:- ${req.url}`);
-                    return res.status(403).send("Access denied due to session inconsistency.");
+                    const allowedRouters = ["/dbRouter/", "/projectRouter/", "/globalRouter/", "/loginRouter/", "/sessionsRouter/"];
+                    if (allowedRouters.some(prefix => req.url.startsWith(prefix))) {
+                        // console.log("Request is allowed");
+                        console.warn(`🪣 ${trace()}🔒🟢 Access allowed to router:- ${req.url}`);
+                    } else {
+                        // console.log("Access denied");
+                        console.warn(`🪣 ${trace()}🔒🔴 Access denied due to session inconsistency:- ${req.url}`);
+                        return res.status(403).send("Access denied due to session inconsistency.");
+                    }
                 }else{
                     console.warn(`🪣 ${trace()}🔒🟢 Access allowed to safe path:- ${req.url}`);
                 }
