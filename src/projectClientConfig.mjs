@@ -20,7 +20,13 @@ export const clientConfigSettings = {
     CLIENT_SESSION_WARNING_DELAY: clientSessionWarningDelay,
     CLIENT_SESSION_EXPIRED_DELAY: clientSessionExpiredDelay,
     CLIENT_SESSION_HEARTBEAT_INTERVAL: 5, // minutes
-    CLIENT_SESSION_IDLE_LOGOUT_AFTER: 20 // minutes
+    CLIENT_SESSION_IDLE_LOGOUT_AFTER: 20, // minutes
+    CLIENT_SESSION_CREDENTIALS: "include"
+        // # Valid Options for credentials
+            // # - "include" → Sends cookies and authentication headers for both same-origin and cross-origin requests.
+            // # - "same-origin" → Only sends credentials if the request is to the same origin.
+            // # - "omit" → Does not send credentials at all (cookies and headers excluded).
+
 };
 if(consoleLog===true){console.log('Project client configuration variables, from projectClientConfig.mjs:-\n',clientConfigSettings);}
 if(consoleLog===true){console.log('Project client configuration variables, from projectClientConfig.mjs CLIENT_APP_NAME:-\n',clientConfigSettings.CLIENT_APP_NAME);}

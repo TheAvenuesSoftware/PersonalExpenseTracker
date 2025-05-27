@@ -1,18 +1,17 @@
 const consoleLog = false
 
-export function trace() {
+export function trace(whoCalled="") {
     try {
         const stack = new Error().stack;
         const firstLine = stack.split('\n')[2].trim();
         const x = firstLine.lastIndexOf("/");
         const y = firstLine.lastIndexOf("/",x - 1);
         const fileName_rowNumber_position = firstLine.slice(y + 1,firstLine.length);
-        return `📌Trace: ${fileName_rowNumber_position}`;
+        return `▶️Trace: [${whoCalled? whoCalled : ""}] ${fileName_rowNumber_position} ▶️`;
     } catch (error) {
-        return '🔴 Trace line: not available';
+        return '▶️🔴 Trace: NOT AVAILABLE▶️';
     }
 };
-
 
 if(consoleLog===true){console.log(trace(),"\nLOADED:- globalServer.mjs is loaded",new Date().toLocaleString());}
 export function globalServerMJSisLoaded(){

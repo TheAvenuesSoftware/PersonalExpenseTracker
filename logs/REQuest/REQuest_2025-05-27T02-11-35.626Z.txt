@@ -1,0 +1,20 @@
+{
+  "method": "GET",
+  "url": "/loginRouter/isLoginRequired",
+  "headers": {
+    "host": "localhost:3000",
+    "connection": "keep-alive",
+    "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1 Edg/136.0.0.0",
+    "dnt": "1",
+    "accept": "*/*",
+    "sec-fetch-site": "same-origin",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-dest": "empty",
+    "referer": "http://localhost:3000/",
+    "accept-encoding": "gzip, deflate, br, zstd",
+    "accept-language": "en-GB,en;q=0.9,en-US;q=0.8,en-AU;q=0.7",
+    "cookie": "connect.sid=s%3Ac85e7084-97db-420b-b71d-6f47755ee28a.%2B6UWnkhJCrI6zljfnj1AyO3%2BxuZPOFQf%2Fl7xMhs2c8o"
+  },
+  "params": {},
+  "query": {}
+}

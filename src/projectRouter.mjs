@@ -1,4 +1,4 @@
-const consoleLog = false
+const consoleLog = true
 
 if(consoleLog===true){console.log(trace(),"\nLOADED:- projectRoutes.mjs is loaded",new Date().toLocaleString());}
 export function projectRoutesMJSisLoaded(){
@@ -33,11 +33,11 @@ projectRouter.post('/validate_date', (req,res) => {
     today = new Date(new Date());
     if(consoleLog===true){console.log('today:- ',today);}
     if(date > today){
-        res.send(`{"response":"A future date is not valid, please try again."}`)
+        res.send({message:"A future date is not valid, please try again.",status:false})
     }
     // const dateMinus366
     if(date < today){
-        res.send(`{"response":"A future date is not valid, please try again."}`)
+        res.send({message:"Date is valid.",status:true});
     }
 });
 

@@ -19,21 +19,8 @@ process.env.TZ = "Australia/Sydney"; // 🌏 Sets the server timezone
 console.log(`🔰 Server running in timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}${(" ").repeat(118-(`🔰 Server running in timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`).length)}🔰`);
 console.log(("🔰").repeat(60));
 
-const consoleLog = true
+const consoleLog = false
 
-// trace()
-    export function trace(whoCalled="") {
-        try {
-            const stack = new Error().stack;
-            const firstLine = stack.split('\n')[2].trim();
-            const x = firstLine.lastIndexOf("/");
-            const y = firstLine.lastIndexOf("/",x - 1);
-            const fileName_rowNumber_position = firstLine.slice(y + 1,firstLine.length);
-            return `📌Trace: [${whoCalled? whoCalled : ""}] ${fileName_rowNumber_position}📌`;
-        } catch (error) {
-            return '📌Trace: NOT AVAILABLE📌';
-        }
-    };
 // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
 // 1️⃣ import statements
     // OS - operatingSystem
@@ -61,9 +48,6 @@ const consoleLog = true
     // CRYPTO
         import crypto from 'crypto'
         import { randomUUID } from 'crypto'; // randomUUID is a named export from crypto
-    // REDIS
-        import { createClient } from 'redis'; // createClient is a named export from redis
-        import { RedisStore } from 'connect-redis'; // RediStore is a named export from connect-redis
     // SESSIONS
         import session from 'express-session';
     // CORS handling START
@@ -72,13 +56,19 @@ const consoleLog = true
         import sqlite3 from "sqlite3";
         import { open } from "sqlite";
     // ROUTERS
-        import dbRouter, * as dbFunctions from "./src/SQLite_ServerSide.mjs";
-        import loginRouter, * as loginFunctions from './src/globalLoginServer.mjs';
-        import globalRouter, * as globalFunctions from './src/globalRouter.mjs'; 
-        import projectRouter, * as projectFunctions from './src/projectRouter.mjs';
-        import sessionsRouter, * as sessionsFunctions from './src/globalSessionsServer.mjs';
+        // import dbRouter, * as dbFunctions from "./src/SQLite_ServerSide.mjs";
+        // import loginRouter, * as loginFunctions from './src/globalLoginServer.mjs';
+        // import globalRouter, * as globalFunctions from './src/globalRouter.mjs'; 
+        // import projectRouter, * as projectFunctions from './src/projectRouter.mjs';
+        // import sessionsRouter, * as sessionsFunctions from './src/globalSessionsServer.mjs';
+        import dbRouter from "./src/SQLite_ServerSide.mjs";
+        import loginRouter from './src/globalLoginServer.mjs';
+        import globalRouter from './src/globalRouter.mjs'; 
+        import projectRouter from './src/projectRouter.mjs';
+        import sessionsRouter from './src/globalSessionsServer.mjs';
     // SQLite CRUD
         import { insertRecord, getRecord, updateRecord, deleteRecord } from "./src/SQLite_ServerSide.mjs";
+        import { trace } from "./src/globalServer.mjs";
 
     function checkImports(){
         try{
@@ -92,8 +82,6 @@ const consoleLog = true
             console.log("Imported jwt / jsonwebtoken:", jwt ? "✅ " : "❌ Failed");
             console.log("Imported crypto:", crypto ? "✅ " : "❌ Failed");
             console.log("Imported crypto { randomUUID }:", randomUUID ? "✅ " : "❌ Failed");
-            console.log("Imported redis { createClient }:", createClient ? "✅ " : "❌ Failed");
-            console.log("Imported connect-redis { RedisStore }:", RedisStore ? "✅ " : "❌ Failed");
             console.log("Imported session / express-session:", session ? "✅ " : "❌ Failed");
             console.log("Imported cors:", cors ? "✅ " : "❌ Failed");
             console.log("Imported sqlite3:", sqlite3 ? "✅ " : "❌ Failed");
@@ -120,13 +108,13 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
                 const envPath = "./config/globalServer.env";
                 if (fs.existsSync(envPath)) {
                     dotenv.config({ path: envPath });
-                    if(consoleLog===true){console.log(trace(),`\nGlobal environment variables:- ${envPath}`);}
+                    console.log(trace(),`\n   Global environment variables:- ${envPath}`);
                     const result = dotenv.config({ path: envPath });
                     // if(consoleLog===true){console.log(trace(),`\n${envPath}:-\n`, result.parsed);}  
                     const envVar = result.parsed;
                     Object.keys(envVar).forEach(key => {
                         // console.log(`key:- ${key} :- ${envVar[key]}`);
-                        console.log(`key:- ${key}`);
+                        console.log(`      key:- ${key}`);
                     }); 
                 } else {
                     console.log(trace(),`\n🔴 ERROR:- ${envPath} not found!`);
@@ -134,18 +122,19 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
             } catch (error) {
                 console.log(trace(),`\n🔴 ERROR:- ${envPath} not found!`);
             }
+//    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹
         // project.env
             try{
                 const envPath = "./config/projectServer.env";
                 if (fs.existsSync(envPath)) {
                     dotenv.config({ path: envPath });
-                    if(consoleLog===true){console.log(trace(),`\nProject environment variables:- ${envPath}`);}
+                    console.log(trace(),`\n   Project environment variables:- ${envPath}`);
                     const result = dotenv.config({ path: envPath });
                     // if(consoleLog===true){console.log(trace(),`\n${envPath}:`, result);}                
                     const envVar = result.parsed;
                     Object.keys(envVar).forEach(key => {
                         // console.log(`key:- ${key} :- ${envVar[key]}`);
-                        console.log(`key:- ${key}`);
+                        console.log(`      key:- ${key}`);
                     }); 
                 } else {
                     if(consoleLog===true){console.log(trace(),`\n🔴 ERROR:- ${envPath} not found!`);}
@@ -153,6 +142,7 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
             } catch (error) {
                 if(consoleLog===true){console.log(trace(),`\n🔴 ERROR:- ${envPath} not found!`);}
             }
+//    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹
 if(consoleLog===true){console.log(("<>").repeat(60));}
 if(consoleLog===true){console.log(trace());}
 if(consoleLog===true){console.log(("<>").repeat(60));}
@@ -176,7 +166,7 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
         }
     });
     if(consoleLog===true){console.log(`${trace()}🟢 Folders mapped in Express.`);}
-//   🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  
+//    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹
     // CORS handling
         app.use(cors({
             origin: '*',                         // ❌ ONLY for development only !!!!
@@ -190,88 +180,123 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
             // app.options('*', cors()); // ensures Express automatically handles OPTIONS requests for every route, Without it, you may need to manually set headers in your route handlers.
         // app.options('*', cors()); causes error !!! END
         if(consoleLog===true){console.log(`${trace()}🟢 CORS headers are set.`);}
-//   🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  🔹  
+//    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹
+    // 4️⃣ session management
+        // retrieve the session key OR create one if can't be retrieved
+            // const crypto = require("crypto");
+                // const sessionKey = crypto.randomBytes(32).toString("hex");
+                const sessionKey = process.env.SESSION_KEY || crypto.randomBytes(32).toString("hex");
+                if(consoleLog===true){console.log(trace(),'🟢 sessionKey created.');} // DON'T LOG THE KEY!!!  KEEP IT SECURE!!!
+        // express-session - set up the Express session middleware
+                console.log(`${trace()}🟢 Express session management set up commenced.`);
+                app.use(
+                    session({
+                        // store: redisStore, // redisStore seems to be unreliable, so let's not use it
+                        // Generate a unique session ID
+                            genid: (req) => randomUUID(),
+                        // START ensures a session is created even if no data is set, - anew session ID is issued when a user does not yet have a session cookie.
+                            secret: process.env.SESSION_KEY || 'your-secret-key', // Replace with your secret or fallback value
+                            resave: false, // false:- ensures a session is created even if no data is set, - anew session ID is issued when a user does not yet have a session cookie.
+                            saveUninitialized: true, // true:- ensures a session is created even if no data is set, - anew session ID is issued when a user does not yet have a session cookie.
+                        // END ensures a session is created even if no data is set, - anew session ID is issued when a user does not yet have a session cookie.
+                        cookie: {
+                            // secure: true,    // Set to true for HTTPS in production, false for development
+                            // secure: false,    // Set to true for HTTPS in production, false for development
+                            secure: process.env.NODE_ENV === "production",
+                            // httpOnly: true,   // Helps mitigate XSS - set to false for development, true for production
+                            httpOnly: false,   // Helps mitigate XSS - set to false for development, true for production
+                            // sameSite: "Strict", // Helps mitigate CSRF - "Strict" for development; "Lax" for standard; "None" for cross-origin requests with Secure true.
+                            sameSite: "Lax", // Helps mitigate CSRF - "Strict" for development; "Lax" for standard; "None" for cross-origin requests with Secure true.
+                            // sameSite: "None", // Helps mitigate CSRF - "Strict" for development; "Lax" for standard; "None" for cross-origin requests with Secure true.
+                            // SameSite Options:
+                            //     - 'Strict' → Only sends the cookie for same-site requests (highest security).
+                            //     - 'Lax' → Sends the cookie for same-site requests + top-level navigation (default).
+                            //     - 'None' → Allows cross-site cookies but requires Secure: true (useful for APIs).
+                            maxAge: 15 * 60 * 1000, // Session expires after 15 minutes
+                        },
+                    })
+                );
+                console.log(`${trace()}🟢 Express session management is set up.`);
+//    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹
 if(consoleLog===true){console.log(("<>").repeat(60));}
 if(consoleLog===true){console.log(trace());}
 if(consoleLog===true){console.log(("<>").repeat(60));}
 // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
-// 4️⃣ session management
-    // retrieve the session key OR create one if can't be retrieved
-        // const crypto = require("crypto");
-            // const sessionKey = crypto.randomBytes(32).toString("hex");
-            const sessionKey = process.env.SESSION_KEY || crypto.randomBytes(32).toString("hex");
-            if(consoleLog===true){console.log(trace(),'🟢 sessionKey created.');} // DON'T LOG THE KEY!!!  KEEP IT SECURE!!!
-    // Async function to create and return a RedisStore instance
-        async function createRedisStore() {
-            if(consoleLog===true){console.log(`${trace()}🟢 createRedisStore().`);}
-            // Create a Redis client
-                const redisClient = createClient();
-                redisClient.on('error', (err) => {
-                    console.error('🔴 Redis Client Error', err);
-                });            
-            // Connect to the Redis server (make sure your Node version supports top-level await or use this inside an async function)
-                await redisClient.connect();
-            // Create an instance of RedisStore using the connected client
-                const redisStore = new RedisStore({
-                    client: redisClient,
-                    prefix: 'sess:', // Optional prefix for session keys in Redis
-                });
-                console.log(`${trace()}🟢 Redis is set up.`);
-                return redisStore;
-        }
-    // Function to set up the Express session middleware with the provided RedisStore
-        function setupExpressSession(redisStore) {
-            if(consoleLog===true){console.log(`${trace()}🟢 setupExpressSession(redisStore).`);}
-            app.use(
-                session({
-                    store: redisStore,
-                    // Generate a unique session ID
-                        genid: (req) => randomUUID(),
-                    secret: process.env.SESSION_KEY || 'your-secret-key', // Replace with your secret or fallback value
-                    resave: false,
-                    saveUninitialized: true,
-                    cookie: {
-                        secure: false,    // Set to true for HTTPS in production
-                        httpOnly: true,   // Helps mitigate XSS
-                        sameSite: 'strict', // Helps mitigate CSRF
-                        maxAge: 15 * 60 * 1000, // Session expires after 15 minutes
-                    },
-                })
-            );
-            console.log(`${trace()}🟢 Express session management is set up.`);
-        }
-    // Initialize session management
-        createRedisStore()
-        .then((redisStore)=>{
-            setupExpressSession(redisStore);
-        });
+// AUTHENTICATE USER
+    console.log(`${trace()}🔒✅ Authentication in place.`);
+    app.use((req, res, next) => {
+
+        // Skip authentication for public routes
+            const publicRoutes = ["/loginRouter/login_step2", "/loginRouter/login_step3", "/loginRouter/login_step4"];
+            if (publicRoutes.includes(req.path)) {
+                console.log(`🪣 ${trace()}🔒✅ loggoing in...`);
+                return next(); 
+            }
+
+        // connect.sid
+            const rawCookieSessionId = req.cookies["connect.sid"];
+                console.log(`🪣 ${trace()}🔒 ⁉️cookie connect.sid:- `,rawCookieSessionId);
+            const rawSessionSessionId = req.session["connect.sid"];
+                console.log(`🪣 ${trace()}🔒 ⁉️session connect.sid:- `,rawSessionSessionId);
+
+        // check expiry
+            // console.log(`🪣 ${trace()}🔒✅ Authenticating....req.session\n`,req.session);
+            console.log(`🪣 ${trace()}🔒✅ Authenticating....req.session.cookie.expires:- `,new Date(req.session.cookie.expires).toLocaleString());
+        
+        // authentication
+            console.log(`🪣 ${trace()}🔒✅ Authenticating....req.session.securityCode.code:- `,req.session.securityCode? req.session.securityCode.code : "...not yet issued.");
+            console.log(`🪣 ${trace()}🔒✅ Authenticating....req.cookies.securityCode:- `,req.cookies.securityCode? req.cookies.securityCode : "...not yet received.");
+            console.log(`🪣 ${trace()}🔒✅ Authenticating user...`);
+            if (req.session.securityCode && req.cookies.securityCode) {
+                console.log(`🪣 ${trace()}🔒✅ authenticating user...`);
+                if (req.session.securityCode.code === req.cookies.securityCode) {
+                    console.log(`🪣 ${trace()}🔒✅ User authentication successful!`);
+                    return next();
+                } else {
+                    console.log(`🪣 ${trace()}🔒🔴 Security code mismatch — authentication failed!`,req.session.securityCode.code,req.cookies.securityCode);
+                    // res.status(401).send("Unauthorized");
+                    res.send({message:`Access denied.`,status:false});
+                    res.end();
+                }
+            } else {
+                console.log(`🪣 ${trace()}🔒🔴 Missing security code — authentication denied!`);
+                console.log(`🪣 ${trace()}🔒🔴 req.headers.cookie:-`,req.headers.cookie);
+                console.log(`🪣 ${trace()}🔒🔴 req.url:-`,req.url);
+                // res.status(401).send("Unauthorized");
+                res.send({message:`You are not logged in, please log in.`,status:false});
+                res.end();
+            }
+
+    });
+//    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹
 if(consoleLog===true){console.log(("<>").repeat(60));}
 if(consoleLog===true){console.log(trace());}
 if(consoleLog===true){console.log(("<>").repeat(60));}
 // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
 // 5️⃣ MOUNT EXTERNAL ROUTERS
-        function mountRouters() {
+        // function mountRouters() {
             try{
                 app.use("/dbRouter", dbRouter);
                 app.use("/loginRouter", loginRouter);
                 app.use("/globalRouter", globalRouter);
                 app.use("/projectRouter", projectRouter);
                 app.use("/sessionsRouter", sessionsRouter);
-                console.log(`${trace()}🟢 mountRouters().`);
+                console.log(`${trace()}🟢 Routers mounted.`);
             }
             catch (error) {
                 console.log(error);
             }
-        }
-        mountRouters();
+        // }
+        // mountRouters();
+//    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹
 if(consoleLog===true){console.log(("<>").repeat(60));}
 if(consoleLog===true){console.log(trace());}
 if(consoleLog===true){console.log(("<>").repeat(60));}
 // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
 // 6️⃣ routes AND business logic
-    console.log(`${trace()}🟢 routes AND logic.`);
-    // log REQuest
+    // log REQuest START
         async function logREQuest(req){
+            console.log(`🪣 ${trace()}🟢 log REQuest summary commenced.`);
             try{
                 // log the REQuest to "logs/request_yy-mm-ddThh-mm-ss.999Z.txt" START
                     const reqData = {
@@ -285,7 +310,7 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
                     // Convert to a nicely formatted string
                         const reqString = JSON.stringify(reqData, null, 2);
                     // Create a timestamped log file
-                        const REQuestLogFileName = `logs/request_${myDate.toISOString().replace(/:/g, '-')}.txt`;
+                        const REQuestLogFileName = `logs/REQuest/REQuest_${myDate.toISOString().replace(/:/g, '-')}.txt`;
                     // Write the request data to a log file
                         const retries = 3;
                         const delay = 500;
@@ -293,130 +318,87 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
                             try{
                                 // await fs.writeFile(REQuestLogFileName, reqString);
                                 await fs.promises.writeFile(REQuestLogFileName, reqString);
-                                console.log(`🪣 ${trace()}🟢 REQuest logged successfully after ${attempt} attempt(s):\n🪣 ${REQuestLogFileName}`);
+                                console.log(`🪣 ${trace()}🟢 Log REQuest summary to file "${REQuestLogFileName}" completed after ${attempt} attempt(s).`);
                                 return;
                             } catch (error) {
                                 console.warn(`🪣 ${trace()} ⚠️ Writing REQuest log on attempt ${attempt} failed:`, error.message);
                                 if (attempt < retries) {
                                     await new Promise(res => setTimeout(res, delay * 2 ** (attempt - 1))); // Exponential backoff
                                 }else{
-                                    throw new Error(`🪣🚫 All ${retries} attempts to write REQuest log failed`);
+                                    throw new Error(`🪣🔴🚫 All ${retries} attempts to write REQuest log failed.`);
                                 }
                             }
                         }
                 // log the REQuest to "logs/request_yy-mm-ddThh-mm-ss.999Z.txt" END
             } catch (error) {
-                console.error(`🪣 ${trace("")}🔴 Catch! Error writing REQuest log:`, error);  
+                console.error(`🪣 ${trace()}🔴 Catch! Error writing REQuest log:`, error);  
             }
         }
+    // log REQuest END
+//    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹
 if(consoleLog===true){console.log(("<>").repeat(60));}
 if(consoleLog===true){console.log(trace());}
 if(consoleLog===true){console.log(("<>").repeat(60));}
 // 🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣
-    //  catch-all START 🪣 
-        app.use(async(req, res, next) => {
+    app.use((req, res, next) => {
 
-            console.log("\n");
-            console.log(("🪣").repeat(64));
+        console.log("\n");
+        console.log(("🪣").repeat(60));
 
+        // REQuest summary
             const myDate = new Date();
-            console.log(`🪣 ${trace("")}\n🪣      ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}\n🪣      ${req.method}\n🪣      🚀 ${req.url} 🚀`);
+            console.log(`🪣 ${trace("")}\n🪣     DATE:   ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}\n🪣     METHOD: ${req.method}\n🪣     URL:   ${req.url}`);
 
-            // log REQuest
-                await logREQuest(req);
-                next();
-
-            console.log(`🪣 ${trace()} Cookie: ${req.headers.cookie}`);
-            // check if user exists
-                if (!req.sessionID) {
-                    console.log(`🪣 ❌ 💛 No session exists.`);
-                }else{
-                    // req.session.visitorId = req.session.visitorId || crypto.randomUUID();
-                    // console.log(`🪣 💛 New visitor session: ${req.session.visitorId}`);
-                    req.sessionID = req.sessionID || crypto.randomUUID();
-                    console.log(`🪣 💛 New visitor session: ${req.sessionID}`);
-                }
-
-
-            if(req.headers.cookie){
-                console.log(`🪣 ${trace("")}\n🪣 Cookies: ${req.headers.cookie}`);
-            //     console.log(trace(""),"\n🪣      req.header ", JSON.stringify(req.headers, null, 2));
-            //     console.log(trace(""),"\n🪣      req.headers ", req.headers);
-            //     console.log(trace(""),"\n🪣      req.headers.cookie ", req.headers.cookie);
-            //     console.log(trace(""),"\n🪣      req.session ", req.session);
-            //     console.log(trace(""),"\n🪣      req.session.cookie ", req.session.cookie);
-            //     console.log(trace(""),"\n🪣 ");
-            //     console.log(trace(""),"\n🪣      req.session.cookie.expires", req.session.cookie.expires);   
-            //     console.log(trace(""),"\n🪣      new Date()", new Date());
-            //     console.log(trace(""),"\n🪣      ((req.session.cookie.expires - new Date()) / 1000 /60).toFixed(0))", ((req.session.cookie.expires - new Date()) / 1000 /60).toFixed(0));
-            //     console.log("\n🪣");
-            //     let expiresMS = req.session.cookie.expires;
-            //     expiresMS = expiresMS.getTime();
-            //     console.log(trace(""),"\n🪣      req.session.cookie.expires >>> getTime()", expiresMS);
-            //     console.log(trace(""),"\n🪣      Date.now()", Date.now());
-            //     console.log(trace(""),"\n🪣      req.session.cookie.expires >>> getTime() - Date.now() / 1000 /1 60 >>> toFixed(0)", ((expiresMS - Date.now()) / 1000 /60).toFixed(0));
-            //     console.log("\n🪣");
-            //     console.log(trace(""),"\n🪣      req.session.cookie.maxAge", req.session.cookie.maxAge);
-            //     console.log(trace(""),"\n🪣      (req.session.cookie.maxAge / 1000 / 60).toFixed(0)", (req.session.cookie.maxAge / 1000 / 60).toFixed(0));
-            //     console.log("\n🪣");
-            //     console.log(trace(""),"\n🪣      req.cookies", req.cookies);
-            //     console.log(trace(""),"\n🪣      req.session", req.session);
-            //     console.log(trace(""),"\n🪣      req.session.Session", req.session.Session);
-            //     // console.log("All Cookies: req.cookies", req.session.createdAt);
-            //     // console.log("All Cookies: req.cookies", req.session.createdAt.toLocaleString());
-            //     if(req.session.createdAt!=null){
-            //         console.log(trace(""),"\n🪣      🟩 req.session.createdAt", req.session.createdAt);
-            //     }
+        // REQuest credentials received
+            // req.headers.cookie? console.log(`🪣 ${trace()}🟢 REQuest credentials received [req.headers.cookie]: ${true}`) : console.log(`🪣 ${trace()}🔴 REQuest credentials received [req.headers.cookie]: ${false}`);
+            console.log(`🪣 ${trace()}📫 REQuest headers received:`, req.headers? true : false);
+            console.log(`🪣 ${trace()}📫 Cookie in REQuest headers:`, req.headers.cookie? true : false);
+            console.log(`🪣 ${trace()}📫 Session in REQuest:`, req.session? true : false);
+            console.log(`🪣 ${trace()}📫 Cookie in REQuest session:`, req.session.cookie? true : false);
+            if(req.session.cookieID){
+                console.log(`🪣 ${trace()}📫 🟢 credentials authenticated.`,req.session.cookieID,req.headers.cookieID);
+            }else{
+                console.log(`🪣 ${trace()}📫 🔴 credentials NOT authenticated. ${req.session.cookieID} != ${req.headers.cookieID}`);
             }
 
-            // // silent session regen START
-            //     const MAX_SESSION_AGE = 15 * 60 * 1000; // 15 minutes
-            //     const now = Date.now();
-            //     if (!req.session.createdAt) {
-            //         req.session.createdAt = now; // Store creation timestamp
-            //     }
-            //     if ((now - req.session.createdAt > MAX_SESSION_AGE)) {
-            //         const oldSecurityCode = req.session.securityCode; // Retrieve existing code
-            //         const newSecurityCode = crypto.randomBytes(4).toString("hex"); // Initial securityCode
-            //         req.session.regenerate((err) => {
-            //             if (err) {
-            //                 console.error("🔴 Session regeneration error:", err);
-            //                 return next(err); // Passes error forward if regeneration fails
-            //             }
-            //             req.session.createdAt = Date.now(); // Reset session timestamp to now
-            //             req.session.securityCode = newSecurityCode; // Assign new securityCode
-            //             console.log(`🟢 Session refreshed. Old Code: ${oldSecurityCode}, New Code: ${req.session.securityCode}`)
-            //             console.log(trace(""),`\nSession details:- `,req.session);
-            //             console.log(trace(""),'\nSession details JSON:- ', JSON.stringify(req.session, null, 2));
-            //             next(); // Move to next middleware after successful regeneration
-            //         });
-            //     } else {
-            //         next();
-            //     }
-            // slient session regen END
+        // set session creation timestamp
+        // console.log(`🪣 Session object before try/catch:`, req.session);
+        // console.log("🪣 Before try/catch—this should appear!");
+            try{
+                if (!req.session.createdAt) {
+                    req.session.createdAt = Date.now(); // Store creation timestamp
+                    console.log(`🪣 ${trace()}📫 Session create time set to:`, req.session.createdAt);
+                }
+            } catch (error) {
+                console.log(`🪣 ${trace()}📫🔴 Session create time could not be set:`, error);
+            }
+            // Extract session ID from cookie
+                const rawSessionId = req.cookies["connect.sid"]; 
+            console.log(`${trace()} cookie connect.sid:- `,rawSessionId);
+            console.log(`${trace()} req.session:-\n`,req.session);
 
-            next();
+        next();
 
-        });
-        // catch-all END 🪣
+    });
 // 🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣🪣
 if(consoleLog===true){console.log(("<>").repeat(60));}
 if(consoleLog===true){console.log(trace());}
 if(consoleLog===true){console.log(("<>").repeat(60));}
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // Client heartbeat detected, extend session.💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙
-        app.post("/heartbeat-session-extension", (req, res) => {
-            try{
-                if (req.session) {
-                    req.session.createdAt = Date.now(); // Reset session timestamp to now
-                    if(consoleLog!=true){console.log(`${trace("heartbeat-session-extension")}\n🟢 Client heartbeat detected, session extended at ${new Date().toLocaleString()}`);}
-                    res.send({ message: `Client heartbeat detected, session extended at ${new Date().toLocaleString()}.`,status: true });
-                } else {
-                    if(consoleLog!=true){console.log(`${trace("heartbeat-session-extension")}\n🔴 Client heartbeat detected, session extension error:- (req.session!=true)".`);}
-                    res.status(403).json({ message: `Client heartbeat detected, session extension error:- (req.session!=true)".`,status:false });
+        app.post("/heartbeat-session-extension", (req, res) => {    
+            if (req.session) {
+                try{
+                    req.session.createdAt = Date.now();
+                    console.log(trace(),{ message: "Session extended!", status: true });
+                    res.json({ message: "Session extended!", status: true });
+                } catch (error) {
+                    console.log(trace(),{ message: "Session cookie not found.", status: false });
+                    res.json({ message: "Session cookie not found.", status: false });
                 }
-            }catch (error){
-                    if(consoleLog===true){console.log(`${trace("heartbeat-session-extension")}\n🔴 Client heartbeat detected, session extension error:- (req.session!=true)".\n`,error.message);}
+            } else {
+                console.log(trace(),{ message: "Session not found.", status: false });
+                res.json({ message: "Session not found.", status: false });
             }
         });
     // Client heartbeat detected, extend session.💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙

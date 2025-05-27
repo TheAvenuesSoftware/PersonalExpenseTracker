@@ -20,7 +20,7 @@ export function globalLoginServerMJSisLoaded(){
     import {trace} from "./globalServer.mjs";
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 
-loginRouter.get("/isLoginRequired", (req, res) => {
+loginRouter.post("/isLoginRequired", (req, res) => {
     // if(consoleLog===true){console.log(trace(),"\nrouter.get('/isLoginRequired");}
     // ❗❗❗const isLoginRequired = process.env.IS_LOGIN_REQUIRED; // DOESN'T WORK! it stores a text value of true, not the boolean.
         const isLoginRequired = process.env.IS_LOGIN_REQUIRED?.toLowerCase() === "true"; // Handles case variations
@@ -59,26 +59,24 @@ loginRouter.get("/isLoginRequired", (req, res) => {
     });
 
 // ROUTER login_step3
-
-    // OLD CODE FROM 2025-05-22
     loginRouter.post("/login_step3", async (req, res) => {
-        if(consoleLog===true){console.log(trace(),"\n✅login_step3 req.body:-\n",req.body);}
+        if(consoleLog===true){console.log(trace(),"✅login_step3 req.body:-\n",req.body);}
         // generate securityCode 🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒
             const securityCode = randomInt(100000, 999999); // 6-digit code
-            if(consoleLog===true){console.log(trace(),`\nLogin: session regen - Session securityCode:- ${securityCode}`);}
+            if(consoleLog===true){console.log(trace(),`Login: session regen - Session securityCode:- ${securityCode}`);}
             const securityCodeX = randomBytes(4).toString("hex"); // Hex-based code, more complex code if needed
-            if(consoleLog===true){console.log(trace(),`\nLogin: session regen - Session securityCodeX:- ${securityCodeX}`);}
+            if(consoleLog===true){console.log(trace(),`Login: session regen - Session securityCodeX:- ${securityCodeX}`);}
         // regenerate session & add security code to regenerated session
             // console.log("🔴 Before regen:", req.sessionID);
             const sessionID_preRegen = req.sessionID;
             const sessionRegenOK = await req.session.regenerate(err => {
                 if (err) {
-                    console.error(trace(),"\n🔴 Login: session regen - Session regen error:\n", err);
+                    console.error(trace(),"🔴 Login: session regen - Session regen error:\n", err);
                 } else {
                     const securityCodeTTL = 10; // minutes
                     req.session.securityCode = {
-                        code: securityCode,
-                        codeX: securityCodeX,
+                        code: securityCode.toString(),
+                        codeX: securityCodeX.toString(),
                         expiresAt: Date.now() + securityCodeTTL * 60 * 1000 // expiry in securityCodeTTL minutes
                             // 💬💬💬💬💬💬💬💬💬💬💬💬💬💬💬💬💬💬💬💬
                             // When validating the code, check if it has expired:
@@ -92,19 +90,19 @@ loginRouter.get("/isLoginRequired", (req, res) => {
                         setTimeout(() => {
                             if (req.session.securityCode && Date.now() > req.session.securityCode.expiresAt) {
                                 delete req.session.securityCode;
-                                console.log("🔴🟢❓ Login: session regen - Security code expired and removed!");
+                                console.log(trace(),"🔴🟢❓ Login: session regen - Security code expired and removed!");
                             }
                         }, ( securityCodeTTL + 1 ) * 60 * 1000);
-                    if(consoleLog===true){console.log(trace(),"\nLogin: session regen - Session regen ok.");}
-                    if(consoleLog===true){console.log(trace(),"\nLogin: session regen - Session securityCode updated.");}
-                    if(consoleLog===true){console.log(trace(),"\nLogin: session regen - req.session:-",JSON.stringify(req.session, null, 2));}
-                    if(consoleLog===true){console.log(trace(),"\nLogin: session regen - req.session.securityCode:-",JSON.stringify(req.session.securityCode, null, 2));}
-                    if(consoleLog===true){console.log(trace(),"\nLogin: session regen - req.session.securityCode.code:-",JSON.stringify(req.session.securityCode.code, null, 2));}
+                    if(consoleLog===true){console.log(trace(),"Login: session regen - Session regen ok.");}
+                    if(consoleLog===true){console.log(trace(),"Login: session regen - Session securityCode updated.");}
+                    if(consoleLog===true){console.log(trace(),"Login: session regen - req.session:-",JSON.stringify(req.session, null, 2));}
+                    if(consoleLog===true){console.log(trace(),"Login: session regen - req.session.securityCode:-",JSON.stringify(req.session.securityCode, null, 2));}
+                    if(consoleLog===true){console.log(trace(),"Login: session regen - req.session.securityCode.code:-",JSON.stringify(req.session.securityCode.code, null, 2));}
                     const sessionID_postRegen = req.sessionID;
                     if(sessionID_preRegen === sessionID_postRegen){
-                        console.log(`🔴 Login: session regen - Session regen failed: ${sessionID_preRegen} === ${sessionID_postRegen}`); // Should be different!
+                        console.log(`${trace()}🔴 Login: session regen - Session regen failed: ${sessionID_preRegen} === ${sessionID_postRegen}`); // Should be different!
                     }else{
-                        console.log(`🟢 Login: session regen - Session regen success: ${sessionID_preRegen} != ${sessionID_postRegen}`); // Should be different!
+                        console.log(`${trace()}🟢 Login: session regen - Session regen success: ${sessionID_preRegen} != ${sessionID_postRegen}`); // Should be different!
                     }
                 }
             });
@@ -118,12 +116,7 @@ loginRouter.get("/isLoginRequired", (req, res) => {
             const text = `Please enter the code below to log in to ${process.env.APP_NAME}\n\n${securityCode}`;
             // const loginCode = securityCode;
             const mailSent = await sendMail(from,to,subject,html,text);
-            console.log(`${trace()}\nmailSent:- `,mailSent);
-// if (!res.headersSent) {
-//     res.send({userLoginCodeSent: mailSent });
-// } else {
-//     console.warn("⚠ Response already sent, skipping...");
-// }
+            console.log(`${trace()}mailSent:- `,mailSent);
             if(mailSent === true){
                 const answer = `Login code has been emailed to ${req.body.userEmailAddress}.`
                 res.send({message:answer,userLoginCodeSent:true});
@@ -148,14 +141,27 @@ loginRouter.get("/isLoginRequired", (req, res) => {
             if(consoleLog===true){console.log(trace(),JSON.stringify(req.session.securityCode.code, null, 2));}
         }
         if(consoleLog===true){console.log(trace(),"\nreq.session.securityCode:-",JSON.stringify(req.session.securityCode.code, null, 2));}
-        if(req.body.userLoginCode===req.session.securityCode.code.toString()){
+        if(req.body.userLoginCode.toLowerCase().trim()===req.session.securityCode.code.toString().toLowerCase().trim()){
+            res.cookie("securityCode", `${req.session.securityCode.code.toString()}`, {
+                httpOnly: true,  // Prevents client-side JavaScript from accessing it
+                secure: true,    // Only transmits over HTTPS
+                sameSite: "Strict", // Blocks cross-site requests
+                maxAge: 15 * 60 * 1000 // Expires after 15 minutes
+            });
             res.send({message:`Login approved for ${req.body.userEmailAddress}.`,loginApproved:true});
-            console.log(`${trace()}\n🔒🟢 login success`);
+            console.log(`${trace()}🔒🟢 login success`);
+            // Extract session ID from cookie
+                const rawSessionId = req.cookies["connect.sid"]; 
+            console.log(`${trace()}🔒🟢 cookie connect.sid:- `,rawSessionId);
             req.session.name = req.body.userEmailAddress;
-            console.log(trace(),"\n",req.session);
+            req.session.userId = req.body.userEmailAddress;
+            req.session.save(err => {
+                if (err) console.error("🪣 Session failed to save:", err);
+            });
+            console.log(trace(),"req.session:-\n",req.session);
         }else{
-            res.send({message:`Login approved for ${req.body.userEmailAddress}.`,loginApproved:false});
-            console.log(`${trace()}\n🔒🔴 login fail`);
+            res.send({message:`Login not approved for ${req.body.userEmailAddress}.`,loginApproved:false});
+            console.log(`${trace()}🔒🔴 login fail`);
         }
     });
 

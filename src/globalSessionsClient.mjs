@@ -19,6 +19,7 @@ export function globalSessionsClientJSisLoaded(){
 //         try {
 //             const response = await fetch("http://localhost:3000/sessionsRoutes/store-session", {
 //                 method: "POST",
+            // credentials: clientConfigSettings.CLIENT_SESSION_CREDENTIALS,
 //                 headers: { "Content-Type": "application/json" },
 //                 body: JSON.stringify({ 
 //                     // userName: "User's name. Set at client side at login, if any.", 
@@ -38,6 +39,7 @@ export function globalSessionsClientJSisLoaded(){
 //         try {
 //             const response = await fetch("/refresh-session", { 
 //                 method: "POST",
+            // credentials: clientConfigSettings.CLIENT_SESSION_CREDENTIALS,
 //                 headers: { "Content-Type": "application/json" },
 //                 body: JSON.stringify({
 //                     // userName: "User's name. Set at client side at login, if any.", 
@@ -97,7 +99,7 @@ export function globalSessionsClientJSisLoaded(){
 //             browserMessagesJS.showCustomMessage(message,"plain");
 //             await fetch("/logout", { 
 //                     method: "POST", 
-//                     credentials: "include" 
+            // credentials: clientConfigSettings.CLIENT_SESSION_CREDENTIALS,
 //             }).then(() => {
 //                 const myDate = new Date();
 //                 if(consoleLog===true){console.log(`${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`);}
@@ -137,7 +139,7 @@ export function globalSessionsClientJSisLoaded(){
                     method: 'POST',                // Specifies a POST request
                     mode: 'cors',                  // Ensures cross-origin requests are handled
                     cache: 'no-cache',             // Prevents caching issues
-                    credentials: 'include',        // Includes cookies/session info
+                    credentials: clientConfigSettings.CLIENT_SESSION_CREDENTIALS,
                     headers: {
                         'Content-Type': 'application/json',  // Sets content type
                         // 'Authorization': `Bearer ${yourAccessToken}`, // Uses token-based auth (if applicable)

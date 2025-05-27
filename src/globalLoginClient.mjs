@@ -10,6 +10,7 @@ export function globalLoginClientJSisLoaded(){
 //     // import * as globalClientMJS from './globalClient.mjs';
     import {universalFetchII} from './globalClient.mjs';
     import {sessionLogout} from './globalSessionsClient.mjs';
+    import {clientConfigSettings} from "./projectClientConfig.mjs";
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 
         // document.addEventListener("DOMContentLoaded", () => {
@@ -88,10 +89,24 @@ export function globalLoginClientJSisLoaded(){
 async function isLoginRequired() {
     if(consoleLog===true){console.log('isLoginRequired()');}
     const fetchUrl = `/loginRouter/isLoginRequired`;
+    const fetchOptions = {
+            method: 'POST',                // Specifies a POST request
+            mode: 'cors',                  // Ensures cross-origin requests are handled
+            cache: 'no-cache',             // Prevents caching issues
+            credentials: clientConfigSettings.CLIENT_SESSION_CREDENTIALS,
+            headers: {
+                'Content-Type': 'application/json',  // Sets content type
+                // 'Authorization': `Bearer ${yourAccessToken}`, // Uses token-based auth (if applicable)
+                // 'Accept': 'application/json',        // Sets content type for res. If not json, server may return error. Use response.json() to parse the response.
+            },
+            body: JSON.stringify({          // Converts object to JSON for request
+                a:"a",
+            })
+        }
     if(consoleLog===true){console.log(fetchUrl);}
     try {
         // fetch
-            const response = await fetch(fetchUrl);
+            const response = await fetch(fetchUrl,fetchOptions);
             if (!response.ok) throw new Error(`Server Error: ${response.statusText}`);
             const data = await response.json(); // Fetch JSON object
             if(consoleLog===true){console.log(`isLoginRequired():- `,data);} // Logs correctly? Great!
@@ -119,7 +134,7 @@ async function login_step4(userEmailAddress,createNewAccount,userLoginCode){
                 method: 'POST',                // Specifies a POST request
                 mode: 'cors',                  // Ensures cross-origin requests are handled
                 cache: 'no-cache',             // Prevents caching issues
-                credentials: 'include',        // Includes cookies/session info
+                credentials: clientConfigSettings.CLIENT_SESSION_CREDENTIALS,
                 headers: {
                     'Content-Type': 'application/json',  // Sets content type
                     // 'Authorization': `Bearer ${yourAccessToken}`, // Uses token-based auth (if applicable)
@@ -180,7 +195,7 @@ async function login_step3(userEmailAddress,createNewAccount=false){
                 method: 'POST',                // Specifies a POST request
                 mode: 'cors',                  // Ensures cross-origin requests are handled
                 cache: 'no-cache',             // Prevents caching issues
-                credentials: 'include',        // Includes cookies/session info
+                credentials: clientConfigSettings.CLIENT_SESSION_CREDENTIALS,
                 headers: {
                     'Content-Type': 'application/json',  // Sets content type for req.
                     // 'Authorization': `Bearer ${yourAccessToken}`, // Uses token-based auth (if applicable)
@@ -243,7 +258,7 @@ async function login_step2(userEmailAddress){ // send userEmailAddress to server
                 method: 'POST',                // Specifies a POST request
                 mode: 'cors',                  // Ensures cross-origin requests are handled
                 cache: 'no-cache',             // Prevents caching issues
-                credentials: 'include',        // Includes cookies/session info
+                credentials: clientConfigSettings.CLIENT_SESSION_CREDENTIALS,
                 headers: {
                     'Content-Type': 'application/json',  // Sets content type
                     // 'Authorization': `Bearer ${yourAccessToken}`, // Uses token-based auth (if applicable)

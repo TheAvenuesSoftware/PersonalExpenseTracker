@@ -1,0 +1,3 @@
+▶️Trace: [] PersonalExpenseTracker/index.mjs:342:34) ▶️
+🪣 req.session [object Object]▶️Trace: [] PersonalExpenseTracker/index.mjs:343:34) ▶️
+🪣 req.session.cookie [object Object]

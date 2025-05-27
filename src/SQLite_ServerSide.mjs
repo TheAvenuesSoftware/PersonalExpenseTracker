@@ -11,12 +11,12 @@ export function SQLite_ServerSideMJSisLoaded(){
     const dbRouter = Router();
     import sqlite3 from "sqlite3";
     import { open } from "sqlite";
-    import { trace } from "../index.mjs";
+    import { trace } from "./globalServer.mjs";
     import { isValidJSONString } from "./globalClient.mjs";
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 
             // 1. Initialize SQLite database based on a user's unique identifier
-                async function initDB(userId) {
+                export async function initDB(userId) {
                     return open({
                         filename: `./db/${userId}.db`, // Stores user databases in a dedicated folder
                         driver: sqlite3.Database,
@@ -44,8 +44,8 @@ export function SQLite_ServerSideMJSisLoaded(){
                 // ✅ Prevents redundant reinitialization
                 // ✅ Speeds up access to databases already opened
             // Ensure your schema is properly structured with indexing for performance:
-                async function setupSchema(userId) {
-                    console.log(trace(),'Setup schema for ',userId);
+                export async function setupSchema(userId) {
+                    if(consoleLog===true){console.log(trace(),'Setup schema for ',userId);}
                     const db = await getDB(userId);
                     try{
                         await db.exec(`
@@ -58,9 +58,9 @@ export function SQLite_ServerSideMJSisLoaded(){
                             );
                             CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
                         `);
-                        console.log(trace(),'Setup schema successful for ',userId);
+                        if(consoleLog===true){console.log(trace(),'Setup schema successful for ',userId);}
                     } catch (error){
-                        console.log(trace(),userId,error);
+                        if(consoleLog===true){console.log(trace(),userId,error);}
                     }
                 }
                 // ✅ Indexes speed up queries
@@ -84,9 +84,9 @@ export function SQLite_ServerSideMJSisLoaded(){
                         // centralise error handling function
                             function handleDBError(err, action, database) {
                                 if (err.code === 'SQLITE_CONSTRAINT') {
-                                    console.error(`Constraint error during ${action} on database ${database}.db`);
+                                    if(consoleLog===true){console.error(`${trace()} Constraint error during ${action} on database ${database}.db`);}
                                 } else {
-                                    console.error(`Database error during ${action} ${database}:`, err);
+                                    if(consoleLog===true){console.error(`${trace()} Database error during ${action} ${database}:`, err);}
                                 }
                             }
                         // CRUD - insert
@@ -94,7 +94,7 @@ export function SQLite_ServerSideMJSisLoaded(){
                                 const db = await getDB(userId);
                                 try {
                                     await db.run('INSERT INTO users (name, email) VALUES (?, ?)', name, email);
-                                    console.log('User added!');
+                                    if(consoleLog===true){console.log(`${trace()} User added!`);}
                                 } catch (err) {
                                     // localised error handling
                                         // if (err.code === 'SQLITE_CONSTRAINT') {
@@ -109,7 +109,7 @@ export function SQLite_ServerSideMJSisLoaded(){
                             insertUser("alice123","Donald","donald.garton@outlook.com");
                             insertUser("bob456","Donald","donald.garton@outlook.com");
                 // Optimize for Performance
-                    async function optPer(userId){
+                    export async function optPer(userId){
                         const db = await getDB(userId);
                         try{
                             // For production, optimize SQLite:
@@ -138,7 +138,7 @@ export function SQLite_ServerSideMJSisLoaded(){
                                     preloadData("alice123");
                                     // - ✅ Ensures frequently queried records are cached in memory, reducing execution time.
                         }catch (error){
-                            console.log(error);
+                            if(consoleLog===true){console.log(`${trace()} `,error);}
                         }
                     }
                     optPer("alice123");
@@ -153,7 +153,7 @@ export function SQLite_ServerSideMJSisLoaded(){
                 const query = `INSERT INTO ${table} (${columns.join(', ')}) VALUES (${placeholders})`;
                 await db.run(query, values);
             } catch (err) {
-                console.error(`Insert error in ${table}:`, err);
+                if(consoleLog===true){console.error(`${trace()} Insert error in ${table}:`, err);}
             }
         }
     // 2. Read (Select)
@@ -163,7 +163,7 @@ export function SQLite_ServerSideMJSisLoaded(){
                 const query = condition ? `SELECT * FROM ${table} WHERE ${condition}` : `SELECT * FROM ${table}`;
                 return await db.all(query, values);
             } catch (err) {
-                console.error(`Select error in ${table}:`, err);
+                if(consoleLog===true){console.error(`${trace()} Select error in ${table}:`, err);}
                 return [];
             }
         }
@@ -175,7 +175,7 @@ export function SQLite_ServerSideMJSisLoaded(){
                 const query = `UPDATE ${table} SET ${setClause} WHERE ${condition}`;
                 await db.run(query, [...Object.values(updates), ...values]);
             } catch (err) {
-                console.error(`Update error in ${table}:`, err);
+                if(consoleLog===true){console.error(`${trace()} Update error in ${table}:`, err);}
             }
         }
     // 4. Delete (Remove)
@@ -185,14 +185,14 @@ export function SQLite_ServerSideMJSisLoaded(){
                 const query = `DELETE FROM ${table} WHERE ${condition}`;
                 await db.run(query, values);
             } catch (err) {
-                console.error(`Delete error in ${table}:`, err);
+                if(consoleLog===true){console.error(`${trace()} Delete error in ${table}:`, err);}
             }
         }
 // Usage
     // Insert a user
         insertRecord("alice123", "users", ["name", "email"], ["Alice", "alice@example.com"]);
     // Fetch users
-        getRecord("alice123", "users").then(console.log);
+        getRecord("alice123", "users").then(console.log(`${trace()}`));
     // Update user email
         updateRecord("alice123", "users", { email: "alice@newmail.com" }, "name = ?", ["Alice"]);
     // // Delete a user
@@ -203,5 +203,9 @@ export function SQLite_ServerSideMJSisLoaded(){
     // ✅ Scalable → Adaptable for different conditions and fields.
     // ✅ Simplifies CRUD logic → No duplicate code across tables.
 
+
+    dbRouter.get("/test", (req, res) => {
+        res.send({ message: "Router is working!" });
+    });
 
 export default dbRouter;

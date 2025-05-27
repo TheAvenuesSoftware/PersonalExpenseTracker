@@ -27,6 +27,7 @@ export function globalClientJSisLoaded(){
             // 
                 const options = {
                     method,
+                    credentials: clientConfigSettings.CLIENT_SESSION_CREDENTIALS,
                     headers: { 'Content-Type': 'application/json' },
                     body
                 };
@@ -49,7 +50,8 @@ export async function universalFetchII(url,options){
             //     method: 'POST',                // Specifies a POST request
             //     mode: 'cors',                  // Ensures cross-origin requests are handled
             //     cache: 'no-cache',             // Prevents caching issues
-            //     credentials: 'include',        // Includes cookies/session info
+            //     credentials: clientConfigSettings.CLIENT_SESSION_CREDENTIALS,
+
             //     headers: {
             //         'Content-Type': 'application/json',  // Sets content type
             //         'Authorization': `Bearer ${yourAccessToken}`, // Uses token-based auth (if applicable)
@@ -223,6 +225,7 @@ export async function universalFetchII(url,options){
         // Try sending data to the primary endpoint
         const response = await fetch(primaryEndpoint, {
             method: 'POST',
+            credentials: clientConfigSettings.CLIENT_SESSION_CREDENTIALS,
             headers: {
             'Content-Type': 'application/json',
             },
