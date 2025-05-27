@@ -70,33 +70,38 @@ const consoleLog = false
         import { insertRecord, getRecord, updateRecord, deleteRecord } from "./src/SQLite_ServerSide.mjs";
         import { trace } from "./src/globalServer.mjs";
 
-    function checkImports(){
+    // function checkImports(){
         try{
-            console.log("Imported os:", os ? "✅ " : "❌ Failed");
-            console.log("Imported fs:", fs ? "✅ " : "❌ Failed");
-            console.log("Imported path:", path ? "✅ " : "❌ Failed");
-            console.log("Imported url { fileURLToPath }:", fileURLToPath ? "✅ " : "❌ Failed");
-            console.log("Imported dotenv:", dotenv ? "✅ " : "❌ Failed");
-            console.log("Imported express:", express ? "✅ " : "❌ Failed");
-            console.log("Imported cookieParser / cookie-parser:", cookieParser ? "✅ " : "❌ Failed");
-            console.log("Imported jwt / jsonwebtoken:", jwt ? "✅ " : "❌ Failed");
-            console.log("Imported crypto:", crypto ? "✅ " : "❌ Failed");
-            console.log("Imported crypto { randomUUID }:", randomUUID ? "✅ " : "❌ Failed");
-            console.log("Imported session / express-session:", session ? "✅ " : "❌ Failed");
-            console.log("Imported cors:", cors ? "✅ " : "❌ Failed");
-            console.log("Imported sqlite3:", sqlite3 ? "✅ " : "❌ Failed");
-            console.log("Imported sqlite { open }:", open ? "✅ " : "❌ Failed");
-            console.log("Imported dbRouter:", dbRouter ? "✅ " : "❌ Failed");
-            console.log("Imported loginRouter:", loginRouter ? "✅ " : "❌ Failed");
-            console.log("Imported globalRouter:", globalRouter ? "✅ " : "❌ Failed");
-            console.log("Imported projectRouter:", globalRouter ? "✅ " : "❌ Failed");
-            console.log("Imported sessionsRouter:", sessionsRouter ? "✅ " : "❌ Failed");
+            if(consoleLog===true){console.log("Imported os:", os ? "✅ " : "❌ Failed");}
+            if(consoleLog===true){console.log("Imported fs:", fs ? "✅ " : "❌ Failed");}
+            if(consoleLog===true){console.log("Imported path:", path ? "✅ " : "❌ Failed");}
+            if(consoleLog===true){console.log("Imported url { fileURLToPath }:", fileURLToPath ? "✅ " : "❌ Failed");}
+            if(consoleLog===true){console.log("Imported dotenv:", dotenv ? "✅ " : "❌ Failed");}
+            if(consoleLog===true){console.log("Imported express:", express ? "✅ " : "❌ Failed");}
+            if(consoleLog===true){console.log("Imported cookieParser / cookie-parser:", cookieParser ? "✅ " : "❌ Failed");}
+            if(consoleLog===true){console.log("Imported jwt / jsonwebtoken:", jwt ? "✅ " : "❌ Failed");}
+            if(consoleLog===true){console.log("Imported crypto:", crypto ? "✅ " : "❌ Failed");}
+            if(consoleLog===true){console.log("Imported crypto { randomUUID }:", randomUUID ? "✅ " : "❌ Failed");}
+            if(consoleLog===true){console.log("Imported session / express-session:", session ? "✅ " : "❌ Failed");}
+            if(consoleLog===true){console.log("Imported cors:", cors ? "✅ " : "❌ Failed");}
+            if(consoleLog===true){console.log("Imported sqlite3:", sqlite3 ? "✅ " : "❌ Failed");}
+            if(consoleLog===true){console.log("Imported sqlite { open }:", open ? "✅ " : "❌ Failed");}
+            if(consoleLog===true){console.log("Imported dbRouter:", dbRouter ? "✅ " : "❌ Failed");}
+            if(consoleLog===true){console.log("Imported loginRouter:", loginRouter ? "✅ " : "❌ Failed");}
+            if(consoleLog===true){console.log("Imported globalRouter:", globalRouter ? "✅ " : "❌ Failed");}
+            if(consoleLog===true){console.log("Imported projectRouter:", globalRouter ? "✅ " : "❌ Failed");}
+            if(consoleLog===true){console.log("Imported sessionsRouter:", sessionsRouter ? "✅ " : "❌ Failed");}
+            if(consoleLog===true){console.log("Imported {insertRecord} from SQLite_ServerSide.mjs:", insertRecord ? "✅ " : "❌ Failed");}
+            if(consoleLog===true){console.log("Imported {getRecord} from SQLite_ServerSide.mjs:", getRecord ? "✅ " : "❌ Failed");}
+            if(consoleLog===true){console.log("Imported {updateRecord} from SQLite_ServerSide.mjs:", updateRecord ? "✅ " : "❌ Failed");}
+            if(consoleLog===true){console.log("Imported {deleteRecord} from SQLite_ServerSide.mjs:", deleteRecord ? "✅ " : "❌ Failed");}
+            if(consoleLog===true){console.log("Imported {trace} from globalServer.mjs:", trace ? "✅ " : "❌ Failed");}
         }
         catch (error) {
             console.log("imports error:",error);
         }     
-    }
-    checkImports();
+    // }
+    // checkImports();
 if(consoleLog===true){console.log(("<>").repeat(60));}
 if(consoleLog===true){console.log(trace());}
 if(consoleLog===true){console.log(("<>").repeat(60));}
@@ -108,19 +113,20 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
                 const envPath = "./config/globalServer.env";
                 if (fs.existsSync(envPath)) {
                     dotenv.config({ path: envPath });
-                    console.log(trace(),`\n   Global environment variables:- ${envPath}`);
+                    if(consoleLog===true){console.log(trace(),`\n   Global environment variables:- ${envPath}`);}
                     const result = dotenv.config({ path: envPath });
                     // if(consoleLog===true){console.log(trace(),`\n${envPath}:-\n`, result.parsed);}  
                     const envVar = result.parsed;
                     Object.keys(envVar).forEach(key => {
                         // console.log(`key:- ${key} :- ${envVar[key]}`);
-                        console.log(`      key:- ${key}`);
+                        if(consoleLog===true){console.log(`      key:- ${key}`);}
                     }); 
+                    console.log(`${trace()}🟢 Global environment variables loaded.`);
                 } else {
-                    console.log(trace(),`\n🔴 ERROR:- ${envPath} not found!`);
+                    console.log(`${trace()}🔴 ERROR:- ${envPath} not found!`);
                 }
             } catch (error) {
-                console.log(trace(),`\n🔴 ERROR:- ${envPath} not found!`);
+                console.log(`${trace()}🔴 ERROR:- ${envPath} not found!`);
             }
 //    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹
         // project.env
@@ -128,19 +134,20 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
                 const envPath = "./config/projectServer.env";
                 if (fs.existsSync(envPath)) {
                     dotenv.config({ path: envPath });
-                    console.log(trace(),`\n   Project environment variables:- ${envPath}`);
+                    if(consoleLog===true){console.log(trace(),`\n   Project environment variables:- ${envPath}`);}
                     const result = dotenv.config({ path: envPath });
                     // if(consoleLog===true){console.log(trace(),`\n${envPath}:`, result);}                
                     const envVar = result.parsed;
                     Object.keys(envVar).forEach(key => {
                         // console.log(`key:- ${key} :- ${envVar[key]}`);
-                        console.log(`      key:- ${key}`);
+                        if(consoleLog===true){console.log(`      key:- ${key}`);}
                     }); 
+                    console.log(`${trace()}🟢 Project environment variables loaded.`);
                 } else {
-                    if(consoleLog===true){console.log(trace(),`\n🔴 ERROR:- ${envPath} not found!`);}
+                    console.log(`${trace()}🔴 ERROR:- ${envPath} not found!`);
                 }
             } catch (error) {
-                if(consoleLog===true){console.log(trace(),`\n🔴 ERROR:- ${envPath} not found!`);}
+                console.log(`${trace()}🔴 ERROR:- ${envPath} not found!`);
             }
 //    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹
 if(consoleLog===true){console.log(("<>").repeat(60));}
@@ -155,31 +162,30 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
     app.use(express.json()); // Middleware to parse JSON data
     app.use(cookieParser()); // Enables reading of cookies
     const staticFolders = ['config', 'db', 'media', 'public', 'src', 'styles'];
-    staticFolders.forEach(folder => {
-        try{
+    try{
+        staticFolders.forEach(folder => {
             app.use(express.static(folder));
             app.use(`/${folder}`,express.static(folder));
             if(consoleLog===true){console.log(`mapped folder:- ${folder}`);}
-        }
-        catch{
-            if(consoleLog===true){console.log(`🔴 map to folder failed:- ${folder}`);}
-        }
-    });
-    if(consoleLog===true){console.log(`${trace()}🟢 Folders mapped in Express.`);}
+        });
+        console.log(`${trace()}🟢 Project folders mapped.`);
+    }
+    catch{
+        console.log(`🔴 map to folder failed:- ${folder}`);
+    }
 //    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹
     // CORS handling
-        app.use(cors({
-            origin: '*',                         // ❌ ONLY for development only !!!!
-            // origin: 'https://yourdomain.com', // ✔️ USE THIS when in production !!!
-            methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-            allowedHeaders: ['Content-Type', 'Authorization'],
-            optionsSuccessStatus: 204, // Avoids extra response headers in preflight requests
-            credentials: true // true if your app requires authentication with cookies or Authorization headers
-        }));
-        // app.options('*', cors()); causes error !!! START
-            // app.options('*', cors()); // ensures Express automatically handles OPTIONS requests for every route, Without it, you may need to manually set headers in your route handlers.
-        // app.options('*', cors()); causes error !!! END
-        if(consoleLog===true){console.log(`${trace()}🟢 CORS headers are set.`);}
+        app.use(cors(
+            {
+                origin: '*',                         // ❌ ONLY for development only !!!!
+                // origin: 'https://yourdomain.com', // ✔️ USE THIS when in production !!!
+                methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+                allowedHeaders: ['Content-Type', 'Authorization'],
+                optionsSuccessStatus: 204, // Avoids extra response headers in preflight requests
+                credentials: true // true if your app requires authentication with cookies or Authorization headers
+            }
+        ));
+        console.log(`${trace()}🟢 CORS headers are set.`);
 //    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹
     // 4️⃣ session management
         // retrieve the session key OR create one if can't be retrieved
@@ -188,7 +194,7 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
                 const sessionKey = process.env.SESSION_KEY || crypto.randomBytes(32).toString("hex");
                 if(consoleLog===true){console.log(trace(),'🟢 sessionKey created.');} // DON'T LOG THE KEY!!!  KEEP IT SECURE!!!
         // express-session - set up the Express session middleware
-                console.log(`${trace()}🟢 Express session management set up commenced.`);
+                console.log(`${trace()}🔒✅ Session management set up commenced.`);
                 app.use(
                     session({
                         // store: redisStore, // redisStore seems to be unreliable, so let's not use it
@@ -216,15 +222,19 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
                         },
                     })
                 );
-                console.log(`${trace()}🟢 Express session management is set up.`);
+                console.log(`${trace()}🔒✅ Session management is set up.`);
 //    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹
 if(consoleLog===true){console.log(("<>").repeat(60));}
 if(consoleLog===true){console.log(trace());}
 if(consoleLog===true){console.log(("<>").repeat(60));}
 // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
 // AUTHENTICATE USER
-    console.log(`${trace()}🔒✅ Authentication in place.`);
+    console.log(`${trace()}🔒✅ Authentication setup START.`);
+    const safePaths = JSON.parse(fs.readFileSync("safe_paths.json", "utf8")).allowedPaths;
+
     app.use((req, res, next) => {
+        console.log(("🔒").repeat(60));
+        console.log(`🪣 ${trace()}🔒 ⁉️req.url:-`,req.url);
 
         // Skip authentication for public routes
             const publicRoutes = ["/loginRouter/login_step2", "/loginRouter/login_step3", "/loginRouter/login_step4"];
@@ -235,9 +245,24 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
 
         // connect.sid
             const rawCookieSessionId = req.cookies["connect.sid"];
-                console.log(`🪣 ${trace()}🔒 ⁉️cookie connect.sid:- `,rawCookieSessionId);
-            const rawSessionSessionId = req.session["connect.sid"];
-                console.log(`🪣 ${trace()}🔒 ⁉️session connect.sid:- `,rawSessionSessionId);
+                if(consoleLog===true){console.log(`🪣 ${trace()}🔒 ⁉️cookie connect.sid:-              `,rawCookieSessionId);}
+                if(consoleLog===true){console.log(`🪣 ${trace()}🔒 ⁉️req.headers.cookie:-`,req.headers.cookie);}
+                if(consoleLog===true){console.log(`🪣 ${trace()}🔒 ⁉️cookie connect.sid:-`,rawCookieSessionId.slice(2,rawCookieSessionId.length));}
+                if(consoleLog===true){console.log(`🪣 ${trace()}🔒 ⁉️req.headers.cookie:-`,req.headers.cookie.slice(16,req.headers.cookie.length));}
+            const cookieSid = (req.cookies["connect.sid"] || "").replace(/^s:/, "");
+            const headerSid = (req.headers.cookie || "").match(/connect\.sid=s%3A([^;]+)/)?.[1];
+                if(consoleLog===true){console.log(`🪣 ${trace()}🔒 ⁉️cookieSid:-`,cookieSid);}
+                if(consoleLog===true){console.log(`🪣 ${trace()}🔒 ⁉️headerSid:-`,headerSid);}
+            if (cookieSid !== headerSid) {
+                console.warn(`🪣 ${trace()}🔒 ⁉️Session ID mismatch detected for \n🪣 ${cookieSid} v \n🪣 ${headerSid}`);
+                console.warn(`🪣 ${trace()}🔒 ⁉️Session ID mismatch detected for ${req.url}`);
+                if (!safePaths.includes(req.url)) {
+                    console.warn(`🪣 ${trace()}🔒🔴 Access denied due to session inconsistency:- ${req.url}`);
+                    return res.status(403).send("Access denied due to session inconsistency.");
+                }else{
+                    console.warn(`🪣 ${trace()}🔒🟢 Access allowed to safe path:- ${req.url}`);
+                }
+            }
 
         // check expiry
             // console.log(`🪣 ${trace()}🔒✅ Authenticating....req.session\n`,req.session);
@@ -260,14 +285,14 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
                 }
             } else {
                 console.log(`🪣 ${trace()}🔒🔴 Missing security code — authentication denied!`);
-                console.log(`🪣 ${trace()}🔒🔴 req.headers.cookie:-`,req.headers.cookie);
-                console.log(`🪣 ${trace()}🔒🔴 req.url:-`,req.url);
+                // console.log(`🪣 ${trace()}🔒🔴 req.headers.cookie:-`,req.headers.cookie);
                 // res.status(401).send("Unauthorized");
                 res.send({message:`You are not logged in, please log in.`,status:false});
                 res.end();
             }
-
+        console.log(("🔒").repeat(60));
     });
+    console.log(`${trace()}🔒✅ Authentication setup END.`);
 //    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹
 if(consoleLog===true){console.log(("<>").repeat(60));}
 if(consoleLog===true){console.log(trace());}
@@ -281,7 +306,7 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
                 app.use("/globalRouter", globalRouter);
                 app.use("/projectRouter", projectRouter);
                 app.use("/sessionsRouter", sessionsRouter);
-                console.log(`${trace()}🟢 Routers mounted.`);
+                console.log(`${trace()}🔒✅ Routers mounted - must be done after Authentication is setup.`);
             }
             catch (error) {
                 console.log(error);

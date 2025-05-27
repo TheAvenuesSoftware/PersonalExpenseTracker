@@ -1,6 +1,6 @@
 const consoleLog = false;
 
-if(consoleLog===true){console.log(trace(),"\nLOADED:- SQLite_ServerSide.mjs is loaded",new Date().toLocaleString());}
+if(consoleLog===true){console.log(trace(),"LOADED:- SQLite_ServerSide.mjs is loaded",new Date().toLocaleString());}
 export function SQLite_ServerSideMJSisLoaded(){
     return true;
 }
@@ -192,7 +192,10 @@ export function SQLite_ServerSideMJSisLoaded(){
     // Insert a user
         insertRecord("alice123", "users", ["name", "email"], ["Alice", "alice@example.com"]);
     // Fetch users
-        getRecord("alice123", "users").then(console.log(`${trace()}`));
+        getRecord("alice123", "users")
+        .then(()=>{
+            if(consoleLog===true){console.log(`${trace()}`);}
+        });
     // Update user email
         updateRecord("alice123", "users", { email: "alice@newmail.com" }, "name = ?", ["Alice"]);
     // // Delete a user

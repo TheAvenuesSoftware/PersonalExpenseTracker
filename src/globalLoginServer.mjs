@@ -1,6 +1,6 @@
 const consoleLog = true
 
-if(consoleLog===true){console.log(trace(),"\nLOADED:- globalLoginServer.mjs is loaded",new Date().toLocaleString());}
+if(consoleLog===true){console.log(trace(),"LOADED:- globalLoginServer.mjs is loaded",new Date().toLocaleString());}
 export function globalLoginServerMJSisLoaded(){
     return true;
 }

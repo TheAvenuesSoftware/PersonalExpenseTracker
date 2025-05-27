@@ -1,6 +1,6 @@
 const consoleLog = true
 
-if(consoleLog===true){console.log(trace(),"\nLOADED:- projectRoutes.mjs is loaded",new Date().toLocaleString());}
+if(consoleLog===true){console.log(trace(),"LOADED:- projectRouter.mjs is loaded",new Date().toLocaleString());}
 export function projectRoutesMJSisLoaded(){
     return true;
 }
