@@ -149,8 +149,8 @@ loginRouter.post("/isLoginRequired", (req, res) => {
                 httpOnly: true,  // Prevents client-side JavaScript from accessing it
                 // secure: true,    // Only transmits over HTTPS
                 secure: false,
-                // sameSite: "Strict", // Blocks cross-site requests
-                sameSite: "None", 
+                sameSite: "Strict", // Blocks cross-site requests
+                // sameSite: "None", 
                 maxAge: 15 * 60 * 1000 // Expires after 15 minutes
             });
             res.send({message:`Login approved for ${req.body.userEmailAddress}.`,loginApproved:true});
