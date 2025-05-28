@@ -206,19 +206,25 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
                             saveUninitialized: true, // true:- ensures a session is created even if no data is set, - anew session ID is issued when a user does not yet have a session cookie.
                         // END ensures a session is created even if no data is set, - anew session ID is issued when a user does not yet have a session cookie.
                         cookie: {
-                            // secure: true,    // Set to true for HTTPS in production, false for development
-                            // secure: false,    // Set to true for HTTPS in production, false for development
-                            secure: process.env.NODE_ENV === "production",
-                            // httpOnly: true,   // Helps mitigate XSS - set to false for development, true for production
-                            httpOnly: false,   // Helps mitigate XSS - set to false for development, true for production
-                            // sameSite: "Strict", // Helps mitigate CSRF - "Strict" for development; "Lax" for standard; "None" for cross-origin requests with Secure true.
-                            sameSite: "Lax", // Helps mitigate CSRF - "Strict" for development; "Lax" for standard; "None" for cross-origin requests with Secure true.
-                            // sameSite: "None", // Helps mitigate CSRF - "Strict" for development; "Lax" for standard; "None" for cross-origin requests with Secure true.
-                            // SameSite Options:
-                            //     - 'Strict' → Only sends the cookie for same-site requests (highest security).
-                            //     - 'Lax' → Sends the cookie for same-site requests + top-level navigation (default).
-                            //     - 'None' → Allows cross-site cookies but requires Secure: true (useful for APIs).
-                            maxAge: 15 * 60 * 1000, // Session expires after 15 minutes
+                            // domain
+                                // domain: process.env.DEV_IP_ADDRESS,
+                            // secure
+                                // secure: true,    // Set to true for HTTPS in production, false for development
+                                // secure: false,    // Set to true for HTTPS in production, false for development
+                                secure: process.env.NODE_ENV === "production",
+                            // httpOnly
+                                // httpOnly: true,   // Helps mitigate XSS - set to false for development, true for production
+                                httpOnly: false,   // Helps mitigate XSS - set to false for development, true for production
+                            // sameSite
+                                sameSite: "Strict", // Helps mitigate CSRF - "Strict" for development; "Lax" for standard; "None" for cross-origin requests with Secure true.
+                                // sameSite: "Lax", // Helps mitigate CSRF - "Strict" for development; "Lax" for standard; "None" for cross-origin requests with Secure true.
+                                // sameSite: "None", // Helps mitigate CSRF - "Strict" for development; "Lax" for standard; "None" for cross-origin requests with Secure true.
+                                    // SameSite Options:
+                                    //     - 'Strict' → Only sends the cookie for same-site requests (highest security).
+                                    //     - 'Lax' → Sends the cookie for same-site requests + top-level navigation (default).
+                                    //     - 'None' → Allows cross-site cookies but requires Secure: true (useful for APIs).
+                            // maxAge
+                                maxAge: 15 * 60 * 1000, // Session expires after 15 minutes
                         },
                     })
                 );

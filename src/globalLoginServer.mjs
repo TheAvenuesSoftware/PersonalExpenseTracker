@@ -17,6 +17,7 @@ export function globalLoginServerMJSisLoaded(){
     import {loginEmailHtml} from './projectServerConfig.mjs'
     import dotenv from "dotenv";
         dotenv.config({path:`./config/globalServer.env`});
+        dotenv.config({path:`./config/projectServer.env`});
     import {trace} from "./globalServer.mjs";
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 
@@ -143,9 +144,13 @@ loginRouter.post("/isLoginRequired", (req, res) => {
         if(consoleLog===true){console.log(trace(),"\nreq.session.securityCode:-",JSON.stringify(req.session.securityCode.code, null, 2));}
         if(req.body.userLoginCode.toLowerCase().trim()===req.session.securityCode.code.toString().toLowerCase().trim()){
             res.cookie("securityCode", `${req.session.securityCode.code.toString()}`, {
+                // domain: process.env.DEV_IP_ADDRESS , // example:- '192.168.1.103', // ensures cookie is valid across the nwteork
+                // path: '/',
                 httpOnly: true,  // Prevents client-side JavaScript from accessing it
-                secure: true,    // Only transmits over HTTPS
-                sameSite: "Strict", // Blocks cross-site requests
+                // secure: true,    // Only transmits over HTTPS
+                secure: false,
+                // sameSite: "Strict", // Blocks cross-site requests
+                sameSite: "None", 
                 maxAge: 15 * 60 * 1000 // Expires after 15 minutes
             });
             res.send({message:`Login approved for ${req.body.userEmailAddress}.`,loginApproved:true});
