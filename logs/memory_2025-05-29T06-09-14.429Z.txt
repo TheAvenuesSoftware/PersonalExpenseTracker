@@ -1,0 +1,36 @@
+______________________________________________________________________________________________________________
+🖥️ Memory Usage Monitor
+1️⃣ RSS: Resident Size Set
+- The total memory allocated to your Node.mjs process, including:
+- Heap memory
+- Stack memory
+- Code segment
+- Why it matters:
+- This gives an overview of how much RAM your application is consuming. If RSS keeps increasing, it could indicate a memory leak.
+     RSS: 58.16 MB
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2️⃣ Heap Used
+- What it is: The amount of actively used memory in the JavaScript heap.
+- Why it matters: This is the actual memory being used to store variables, objects, and function executions.
+- Key observation: If heapUsed keeps growing without dropping, it could signal inefficient memory management.
+     Heap Used: 12.60 MB
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+3️⃣ Heap Total
+- What it is: The total allocated memory for the heap.
+- Why it matters: Node.mjs expands this dynamically, so a growing heap might indicate high memory demand.
+     Heap Total: 14.45 MB
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+4️⃣ External
+- What it is: Memory used by objects managed outside of the JavaScript heap, such as:
+- Buffer allocations (Buffer.from())
+- WebAssembly objects
+- Native C++ extensions
+- Why it matters: If your app uses a lot of Buffers (e.g., file handling or network requests), external might be a significant factor.
+     External: 2.42 MB
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+How to Use These Stats
+✅ If RSS is too high, your app might need optimization or might be consuming too much memory.
+✅ If heapUsed > heapTotal, it suggests memory saturation, potentially slowing performance.
+✅ If external memory spikes, you may have large Buffer allocations affecting memory usage.
+🚀
+______________________________________________________________________________________________________________

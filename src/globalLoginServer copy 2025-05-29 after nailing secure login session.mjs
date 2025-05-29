@@ -1,4 +1,4 @@
-const consoleLog = false;
+const consoleLog = true
 
 if(consoleLog===true){console.log(trace(),"LOADED:- globalLoginServer.mjs is loaded",new Date().toLocaleString());}
 export function globalLoginServerMJSisLoaded(){
@@ -152,31 +152,60 @@ loginRouter.post("/isLoginRequired", (req, res) => {
         }
         if(consoleLog===true){console.log(trace(),"\nreq.session.securityCode:-",JSON.stringify(req.session.securityCode.code, null, 2));}
         if(req.body.userLoginCode.toLowerCase().trim()===req.session.securityCode.code.toString().toLowerCase().trim()){
-            // update session with authenticated user details
-                req.session.user = {
-                    email: req.body.userEmailAddress,
-                    authenticated: true
-                };
-            // ensure session is saved
-                req.session.save(err => {
-                    if (err) {
-                        console.error(`${trace()}🔒🔴 Failed to save session:`, err);
-                    } else {
-                        console.log(`${trace()}🔒🟢 Session saved successfully.${JSON.stringify(req.session,null,2)}`);
-                    }
-                });
-            // send response to client
-                res.send({message:`Login approved for ${req.body.userEmailAddress}.`,loginApproved:true});
+req.session.user = {
+    id: req.body.userEmailAddress,
+    email: req.body.userEmailAddress,
+    authenticated: true
+};
+req.session.save(err => {
+    if (err) {
+        console.error(`${trace()}🔒🔴 Failed to save session:`, err);
+    } else {
+        console.log(`${trace()}🔒🟢 Session saved successfully.${JSON.stringify(req.session,null,2)}`);
+    }
+});
+
+
+// res.cookie("securityCode", `${req.session.securityCode.code.toString()}`, {
+//     // domain: process.env.DEV_IP_ADDRESS , // example:- '192.168.1.103', // ensures cookie is valid across the nwteork
+//     // path: '/',
+//     httpOnly: true,  // Prevents client-side JavaScript from accessing it
+//     // secure: true,    // Only transmits over HTTPS
+//     secure: false,
+//     sameSite: "Strict", // Blocks cross-site requests
+//     // sameSite: "None", 
+//     maxAge: 15 * 60 * 1000 // Expires after 15 minutes
+// });
+// if (process.env.APP_SERVER_MODE_DEVELOPMENT === "true") {
+//   res.cookie("sessionID", sessionID, {
+// //   res.cookie("sessionID", sessionID, {
+//     httpOnly: true,  // Protects against XSS attacks
+//     secure: false,   // Allow HTTP in development
+//     sameSite: "lax"  // Allows some cross-site interaction for dev testing
+//   });
+//     console.log(`${trace()}🔒✅ Development mode sessionID sent to client.`);
+// } else if (process.env.APP_SERVER_MODE_PRODUCTION === "true") {
+//   res.cookie("sessionID", sessionID, {
+//     httpOnly: true,  // Essential for security
+//     secure: true,    // Requires HTTPS in production
+//     sameSite: "strict", // Prevents CSRF risks by restricting cross-site access
+//     maxAge: 60 * 60 * 1000 // 1-hour expiration for session security
+//   });
+//     console.log(`${trace()}🔒✅ Production mode sessionID sent to client.`);
+// } else {
+//   throw new Error("Invalid configuration: Neither development nor production mode is set.");
+// }
+            res.send({message:`Login approved for ${req.body.userEmailAddress}.`,loginApproved:true});
             console.log(`${trace()}🔒🟢 login success`);
             // Extract session ID from cookie
-            //     const rawSessionId = req.cookies["connect.sid"]; 
-            // console.log(`${trace()}🔒🟢 cookie connect.sid:- `,rawSessionId);
-            // req.session.name = req.body.userEmailAddress;
-            // req.session.userId = req.body.userEmailAddress;
-            // req.session.save(err => {
-            //     if (err) console.error("🪣 Session failed to save:", err);
-            // });
-            console.log(trace(),"req.session:-\n",JSON.stringify(req.session,null,2));
+                const rawSessionId = req.cookies["connect.sid"]; 
+            console.log(`${trace()}🔒🟢 cookie connect.sid:- `,rawSessionId);
+            req.session.name = req.body.userEmailAddress;
+            req.session.userId = req.body.userEmailAddress;
+            req.session.save(err => {
+                if (err) console.error("🪣 Session failed to save:", err);
+            });
+            console.log(trace(),"req.session:-\n",req.session);
         }else{
             res.send({message:`Login not approved for ${req.body.userEmailAddress}.`,loginApproved:false});
             console.log(`${trace()}🔒🔴 login fail`);

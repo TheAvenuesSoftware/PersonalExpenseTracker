@@ -19,7 +19,7 @@ process.env.APP_TZ = "Australia/Sydney"; // 🌏 Sets the server timezone
 console.log(`🔰 Server running in timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}${(" ").repeat(118-(`🔰 Server running in timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`).length)}🔰`);
 console.log(("🔰").repeat(60));
 
-const consoleLog = false;
+const consoleLog = false
 
 // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
 // 1️⃣ import statements
@@ -362,20 +362,22 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
 
         // 
             if (req.headers.cookie) {
-                console.log(`🪣 ${trace()}🔒✅ Cookies found in req.headers:-`,req.headers.cookie);
+                console.log(`🪣 ${trace()}🔒✅ Cookies found:`, req.headers.cookie);
             } else {
-                console.log(`🪣 ${trace()}🔒🔴 Cookies not found req.headers:-`,req.headers);
+                console.log(`🪣 ${trace()}🔒🔴 No cookies present.`);
             }
-            // if (req.headers.authorization) {
-            //     console.log(`🪣 ${trace()}🔒✅ Authorization header found:-`,req.headers.authorization);
-            // } else {
-            //     console.log(`🪣 ${trace()}🔒🔴 Authorization header not found:-`,req.headers.cookie);
-            // }
+            if (req.headers.authorization) {
+                console.log(`🪣 ${trace()}🔒✅ Authorization header detected:`, req.headers.authorization);
+            } else {
+                console.log(`🪣 ${trace()}🔒🔴 No Authorization header.`);
+            }
 
         // verify connect.sid
             const rawCookieSessionId = req.cookies["connect.sid"];
                 if(consoleLog===true){console.log(`🪣 ${trace()}🔒 ⁉️cookie connect.sid:-              `,rawCookieSessionId);}
                 if(consoleLog===true){console.log(`🪣 ${trace()}🔒 ⁉️req.headers.cookie:-`,req.headers.cookie);}
+                if(consoleLog===true){console.log(`🪣 ${trace()}🔒 ⁉️cookie connect.sid:-`,rawCookieSessionId.slice(2,rawCookieSessionId.length));}
+                if(consoleLog===true){console.log(`🪣 ${trace()}🔒 ⁉️req.headers.cookie:-`,req.headers.cookie.slice(16,req.headers.cookie.length));}
             const cookieSid = (req.cookies["connect.sid"] || "").replace(/^s:/, "");
             const headerSid = (req.headers.cookie || "").match(/connect\.sid=s%3A([^;]+)/)?.[1];
                 if(consoleLog===true){console.log(`🪣 ${trace()}🔒 ⁉️cookieSid:-`,cookieSid);}
@@ -406,22 +408,22 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
             console.log(`🪣 ${trace()}🔒✅ Authenticating....req.session.securityCode.code:- `,req.session.securityCode? req.session.securityCode.code : "...not yet issued.");
             console.log(`🪣 ${trace()}🔒✅ Authenticating....req.cookies.securityCode:- `,req.cookies.securityCode? req.cookies.securityCode : "...not yet received.");
             console.log(`🪣 ${trace()}🔒✅ Authenticating user...`);
-            if (req.session.user && req.session.user.authenticated) { // the value stored at authenticated is either true or false
-                // console.log(`🪣 ${trace()}🔒✅ authenticating user...`);
-                // if (req.session.securityCode.code === req.cookies.securityCode) {
+            if (req.session.securityCode && req.cookies.securityCode) {
+                console.log(`🪣 ${trace()}🔒✅ authenticating user...`);
+                if (req.session.securityCode.code === req.cookies.securityCode) {
                     console.log(`🪣 ${trace()}🔒✅ User authentication successful!`);
                     return next();
-                // } else {
-                //     console.log(`🪣 ${trace()}🔒🔴 Security code mismatch — authentication failed!`,req.session.securityCode.code,req.cookies.securityCode);
-                //     // res.status(401).send("Unauthorized");
-                //     res.send({message:`Access denied.`,status:false});
-                //     res.end();
-                // }
+                } else {
+                    console.log(`🪣 ${trace()}🔒🔴 Security code mismatch — authentication failed!`,req.session.securityCode.code,req.cookies.securityCode);
+                    // res.status(401).send("Unauthorized");
+                    res.send({message:`Access denied.`,status:false});
+                    res.end();
+                }
             } else {
-                console.log(`🪣 ${trace()}🔒🔴 Missing user details — authentication denied!`);
+                console.log(`🪣 ${trace()}🔒🔴 Missing security code — authentication denied!`);
                 // console.log(`🪣 ${trace()}🔒🔴 req.headers.cookie:-`,req.headers.cookie);
                 // res.status(401).send("Unauthorized");
-                res.send({message:`Missing user details — authentication denied!`,status:false});
+                res.send({message:`You are not logged in, please log in.`,status:false});
                 res.end();
             }
         console.log(("🔒").repeat(60));
@@ -514,10 +516,10 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
             console.log(`🪣 ${trace()}📫 Cookie in REQuest headers:`, req.headers.cookie? true : false);
             console.log(`🪣 ${trace()}📫 Session in REQuest:`, req.session? true : false);
             console.log(`🪣 ${trace()}📫 Cookie in REQuest session:`, req.session.cookie? true : false);
-            if(req.session && req.headers.cookie){
-                console.log(`🪣 ${trace()}📫 🟢 Credentials received.`,JSON.stringify(req.session,null,2),JSON.stringify(req.headers,null,2));
+            if(req.session.cookieID){
+                console.log(`🪣 ${trace()}📫 🟢 credentials authenticated.`,req.session.cookieID,req.headers.cookieID);
             }else{
-                console.log(`🪣 ${trace()}📫 🔴 Credentials NOT received. ${JSON.stringify(req.session,null,2)} != ${JSON.stringify(req.headers,null,2)}`);
+                console.log(`🪣 ${trace()}📫 🔴 credentials NOT authenticated. ${req.session.cookieID} != ${req.headers.cookieID}`);
             }
 
         // set session creation timestamp
@@ -534,8 +536,7 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
             // Extract session ID from cookie
                 const rawSessionId = req.cookies["connect.sid"]; 
             console.log(`🪣 ${trace()}📫 cookie connect.sid:- `,rawSessionId);
-            const createdAtMilliseconds = req.session.createdAt;
-            console.log(`🪣 ${trace()}📫 req.session.createdAt:-`,new Date(createdAtMilliseconds).toLocaleDateString(),new Date(createdAtMilliseconds).toLocaleTimeString());
+            console.log(`🪣 ${trace()}📫 req.session:-\n`,req.session);
 
         next();
 
@@ -546,27 +547,9 @@ if(consoleLog===true){console.log(trace());}
 if(consoleLog===true){console.log(("<>").repeat(60));}
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 app.get("/session-check", (req, res) => {
-if (req.session) {
-    console.log(`🪣 ${trace()}🔒🟢 req.session:-\n`,req.session);
-    // update session with authenticated user details
-    req.session.user = {
-        id: req.cookies["connect.sid"],
-        name: "guest",
-        email: "",
-        authenticated: false
-    };
-    // ensure session is saved
-    req.session.save(err => {
-        if (err) {
-            console.error(`${trace()}🔒🔴 Failed to save session:`, err);
-            res.json({ sessionExists: true, sessionUpdated: false });
-        } else {
-            console.log(`${trace()}🔒🟢 Session saved successfully.${JSON.stringify(req.session,null,2)}`);
-            res.json({ sessionExists: true, sessionUpdated: true });
-        }
-    });
-} else {
-    console.log(`🪣 ${trace()}🔒🔴 req.session:-\n`,req.session);
+  if (req.session) {
+    res.json({ sessionExists: true, user: req.session });
+  } else {
     res.json({ sessionExists: false });
   }
 });

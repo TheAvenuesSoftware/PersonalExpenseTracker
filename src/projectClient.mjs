@@ -1,4 +1,4 @@
-const consoleLog = true;
+const consoleLog = false;
 
 if(consoleLog===true){console.log("\nLOADED:- projectClient.mjs is loaded",new Date().toLocaleString());}
 export function projectMJSisLoaded(){
@@ -24,32 +24,35 @@ export function projectMJSisLoaded(){
             await doAfterDOMandWindowLoad_globalLoginClient();
 
             // dynamically set fetch credentials mode START 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
-                // function setFetchCredentialsMode(mode="omit"){
-                //     clientConfigSettings.CLIENT_SESSION_CREDENTIALS = mode;
-                //     console.log('Fetch credentials mode is set to:- ',clientConfigSettings.CLIENT_SESSION_CREDENTIALS);
-                // };
-                // const checkForSessionCookie_IntervalId = setInterval(() => {
-                //     console.log('document.cookie exists?:- ',document.cookie? document.cookie : "nope.");
-                //     const credentialsMode = document.cookie? "include" : "omit";
-                //     setFetchCredentialsMode(credentialsMode);
-                //     if(credentialsMode==="include"){
-                //             clearInterval(checkForSessionCookie_IntervalId); 
-                //     }
-                // }, 1000); // Every 1 second
-                fetch("/session-check", {
-                    method: "GET",
-                    credentials: "include"
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.sessionExists) {
-                        clientConfigSettings.CLIENT_SESSION_CREDENTIALS = "include";
-                        console.log("Session is active!", data.sessionExists);
-                    } else {
-                        clientConfigSettings.CLIENT_SESSION_CREDENTIALS = "omit";
-                        console.log("No session detected.");
+                const fetchUrl = "/session-check";
+                const fetchOptions = {
+                        method: 'GET',
+                        mode: 'cors',                  // Ensures cross-origin requests are handled
+                        cache: 'no-cache',             // Prevents caching issues
+                        credentials: clientConfigSettings.CLIENT_SESSION_CREDENTIALS,
+                        headers: {
+                            'Content-Type': 'application/json',  // Sets content type
+                            // 'Authorization': `Bearer ${yourAccessToken}`, // Uses token-based auth (if applicable)
+                            // 'Accept': 'application/json',        // Sets content type for res. If not json, server may return error. Use response.json() to parse the response.
+                        }
                     }
-                });
+                if(consoleLog===true){console.log(JSON.stringify(fetchOptions));}
+                try {
+                    const response = await fetch(fetchUrl, fetchOptions);                
+                    // if (!response.ok) throw new Error(`Server Error: ${response.statusText}`);
+                    // const data = await response.json();
+                    const jso = await response.json(); // converts fetch response from JSON to a JSO
+                    console.log('🟢 Response received:-\n', JSON.stringify(jso,null,2));
+                    if(jso.sessionExists===true){
+                        clientConfigSettings.CLIENT_SESSION_CREDENTIALS = "include";
+                        console.log("Session is active!", jso.sessionExists);
+                    }else{
+                        clientConfigSettings.CLIENT_SESSION_CREDENTIALS = "omit";
+                        console.log("No session detected.", jso.sessionExists);
+                    }
+                } catch (error) {
+                    if(consoleLog===true){console.error("Error sending POST request:", error.message);}
+                }
             // dynamically set fetch credentials mode END 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
 
             // idle tracking START 🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸
@@ -158,6 +161,7 @@ export function projectMJSisLoaded(){
                 }
 
             // add event listeners START
+            try{
                 document.getElementById("date").addEventListener('blur', () => {
                     const date = document.getElementById("date");
                     async function validate_date() {
@@ -190,18 +194,28 @@ export function projectMJSisLoaded(){
                     }
                     validate_date();
                 });
+            } catch (error) {
+            }
+            try{
                 document.getElementById("amount").addEventListener('click', () => {
-
                 });
+            } catch (error) {
+            }
+            try{
                 document.getElementById("category").addEventListener('click', () => {
-
                 });
+            } catch (error) {
+            }
+            try{
                 document.getElementById("description").addEventListener('click', () => {
-
                 });
+            } catch (error) {
+            }
+            try{
                 document.getElementById("submitData").addEventListener('click', () => {
-
                 });
+            } catch (error) {
+            }
 
             // ###################################################################################################
                 // globalClientJS.getGlobalFooter();

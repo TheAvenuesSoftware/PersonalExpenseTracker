@@ -1,4 +1,4 @@
-const consoleLog = false
+const consoleLog = false;
 
 export function trace(whoCalled="") {
     try {
@@ -9,7 +9,7 @@ export function trace(whoCalled="") {
         const fileName_rowNumber_position = firstLine.slice(y + 1,firstLine.length);
         return `▶️Trace: [${whoCalled? whoCalled : ""}] ${fileName_rowNumber_position} ▶️`;
     } catch (error) {
-        return '▶️🔴 Trace: NOT AVAILABLE▶️';
+        return '▶️🔴 Trace: NOT AVAILABLE▶️',error;
     }
 };
 
