@@ -9,8 +9,6 @@ export function globalRoutesMJSisLoaded(){
 //  SERVER SIDE IMPORTS ONLY
     import { Router } from "express";
     const globalRouter = Router();
-    // import * as globalClientJS from "./globalClient.mjs";
-    // import {newDateAttributes} from "./globalClient.mjs";
     import {trace} from "./globalServer.mjs";
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 

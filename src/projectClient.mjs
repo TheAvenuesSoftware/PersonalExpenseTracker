@@ -24,18 +24,32 @@ export function projectMJSisLoaded(){
             await doAfterDOMandWindowLoad_globalLoginClient();
 
             // dynamically set fetch credentials mode START 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
-                function setFetchCredentialsMode(mode="omit"){
-                    clientConfigSettings.CLIENT_SESSION_CREDENTIALS = mode;
-                    console.log('Fetch credentials mode is set to:- ',clientConfigSettings.CLIENT_SESSION_CREDENTIALS);
-                };
-                const checkForSessionCookie_IntervalId = setInterval(() => {
-                    console.log('document.cookie exists?:- ',document.cookie? document.cookie : "nope.");
-                    const credentialsMode = document.cookie? "include" : "omit";
-                    setFetchCredentialsMode(credentialsMode);
-                    if(credentialsMode==="include"){
-                            clearInterval(checkForSessionCookie_IntervalId); 
+                // function setFetchCredentialsMode(mode="omit"){
+                //     clientConfigSettings.CLIENT_SESSION_CREDENTIALS = mode;
+                //     console.log('Fetch credentials mode is set to:- ',clientConfigSettings.CLIENT_SESSION_CREDENTIALS);
+                // };
+                // const checkForSessionCookie_IntervalId = setInterval(() => {
+                //     console.log('document.cookie exists?:- ',document.cookie? document.cookie : "nope.");
+                //     const credentialsMode = document.cookie? "include" : "omit";
+                //     setFetchCredentialsMode(credentialsMode);
+                //     if(credentialsMode==="include"){
+                //             clearInterval(checkForSessionCookie_IntervalId); 
+                //     }
+                // }, 1000); // Every 1 second
+                fetch("/session-check", {
+                    method: "GET",
+                    credentials: "include"
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.sessionExists) {
+                        clientConfigSettings.CLIENT_SESSION_CREDENTIALS = "include";
+                        console.log("Session is active!", data.sessionExists);
+                    } else {
+                        clientConfigSettings.CLIENT_SESSION_CREDENTIALS = "omit";
+                        console.log("No session detected.");
                     }
-                }, 1000); // Every 1 second
+                });
             // dynamically set fetch credentials mode END 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
 
             // idle tracking START 🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸

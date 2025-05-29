@@ -15,7 +15,7 @@ console.log(("🔰").repeat(60));
 console.log(`🔰 ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}${(" ").repeat(118-(`🔰 ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`).length)}🔰`);
 myDate = new Date();
 console.log(`🔰 ${myDate}${(" ").repeat(118-(`🎾 ${myDate}`).length)}🔰`);
-process.env.TZ = "Australia/Sydney"; // 🌏 Sets the server timezone
+process.env.APP_TZ = "Australia/Sydney"; // 🌏 Sets the server timezone
 console.log(`🔰 Server running in timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}${(" ").repeat(118-(`🔰 Server running in timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`).length)}🔰`);
 console.log(("🔰").repeat(60));
 
@@ -175,60 +175,163 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
     }
 //    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹
     // CORS handling
-        app.use(cors(
-            {
-                origin: '*',                         // ❌ ONLY for development only !!!!
-                // origin: 'https://yourdomain.com', // ✔️ USE THIS when in production !!!
-                methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-                allowedHeaders: ['Content-Type', 'Authorization'],
-                optionsSuccessStatus: 204, // Avoids extra response headers in preflight requests
-                credentials: true // true if your app requires authentication with cookies or Authorization headers
-            }
-        ));
-        console.log(`${trace()}🟢 CORS headers are set.`);
+        // app.use(
+        //         cors(
+        //         {
+        //             origin: '*',                         // ❌ ONLY for development only !!!!
+        //             // origin: 'https://yourdomain.com', // ✔️ USE THIS when in production !!!
+        //             methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        //             allowedHeaders: ['Content-Type', 'Authorization'],
+        //             optionsSuccessStatus: 204, // Avoids extra response headers in preflight requests
+        //             credentials: true // true if your app requires authentication with cookies or Authorization headers
+        //         }
+        //     )
+        // );
+        // console.log(`${trace()}🟢 CORS headers are set.`);
+
+        if (process.env.APP_SERVER_MODE_DEVELOPMENT === "true") {
+            const PORT = process.env.APP_PORT; 
+            const corsDevelopmentOrigin = `http://localhost:${PORT}`;
+            app.use(cors({
+                // origin: corsDevelopmentOrigin,
+                    origin: '*',
+
+                    credentials: true,
+
+                    methods: ["GET", "POST", "PUT", "DELETE","OPTIONS"],
+
+                    allowedHeaders: ['Content-Type', 'Authorization'],
+
+                    optionsSuccessStatus: 204, // Avoids extra response headers in preflight requests
+            }));
+            console.log(`${trace()}🔒✅ CORS headers set up for Development completed.`);
+        } else if (process.env.APP_SERVER_MODE_PRODUCTION === "true") {
+            app.use(cors({
+
+                    origin: "https://myproductiondomain.com",
+
+                    credentials: true,
+
+                    methods: ["GET", "POST", "PUT", "DELETE"],
+
+                    allowedHeaders: ["Content-Type", "Authorization"],
+
+                    optionsSuccessStatus: 204
+            }));
+            console.log(`${trace()}🔒✅ CORS headers set up for Production completed.`);
+        } else {
+            console.log(`${trace()}🔒🔴 CORS headers set up failed. Neither development nor production mode is set.`);
+            throw new Error("Invalid configuration: Neither development nor production mode is set.");
+        }
 //    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹
     // 4️⃣ session management
         // retrieve the session key OR create one if can't be retrieved
             // const crypto = require("crypto");
                 // const sessionKey = crypto.randomBytes(32).toString("hex");
-                const sessionKey = process.env.SESSION_KEY || crypto.randomBytes(32).toString("hex");
-                if(consoleLog===true){console.log(trace(),'🟢 sessionKey created.');} // DON'T LOG THE KEY!!!  KEEP IT SECURE!!!
-        // express-session - set up the Express session middleware
-                console.log(`${trace()}🔒✅ Session management set up commenced.`);
-                app.use(
-                    session({
-                        // store: redisStore, // redisStore seems to be unreliable, so let's not use it
+                const sessionKey = process.env.APP_SESSION_KEY || crypto.randomBytes(32).toString("hex");
+                console.log(`${trace()}🔒✅ sessionKey created.`); // DON'T LOG THE KEY!!!  KEEP IT SECURE!!!
+            // express-session - set up the Express session middleware
+                // console.log(`${trace()}🔒✅ Session management set up commenced.`);
+                // app.use(
+                //     session(
+                //         {
+                //             // store: redisStore, // redisStore seems to be unreliable, so let's not use it
+                //             // Generate a unique session ID
+                //                 genid: (req) => randomUUID(),
+                //             // START ensures a session is created even if no data is set, - anew session ID is issued when a user does not yet have a session cookie.
+                //                 secret: process.env.APP_SESSION_KEY || 'your-secret-key', // Replace with your secret or fallback value
+                //                 resave: false, // false:- ensures a session is created even if no data is set, - anew session ID is issued when a user does not yet have a session cookie.
+                //                 saveUninitialized: true, // true:- ensures a session is created even if no data is set, - anew session ID is issued when a user does not yet have a session cookie.
+                //             // END ensures a session is created even if no data is set, - anew session ID is issued when a user does not yet have a session cookie.
+                //             cookie: 
+                //                 {
+                //                     // domain
+                //                         // domain: process.env.APP_DEV_IP_ADDRESS,
+                //                     // secure
+                //                         // secure: true,    // Set to true for HTTPS in production, false for development
+                //                         // secure: false,    // Set to true for HTTPS in production, false for development
+                //                         secure: process.env.APP_NODE_ENV === "production",
+                //                     // httpOnly
+                //                         // httpOnly: true,   // Helps mitigate XSS - set to false for development, true for production
+                //                         httpOnly: false,   // Helps mitigate XSS - set to false for development, true for production
+                //                     // sameSite
+                //                         sameSite: "Strict", // Helps mitigate CSRF - "Strict" for development; "Lax" for standard; "None" for cross-origin requests with Secure true.
+                //                         // sameSite: "Lax", // Helps mitigate CSRF - "Strict" for development; "Lax" for standard; "None" for cross-origin requests with Secure true.
+                //                         // sameSite: "None", // Helps mitigate CSRF - "Strict" for development; "Lax" for standard; "None" for cross-origin requests with Secure true.
+                //                             // SameSite Options:
+                //                             //     - 'Strict' → Only sends the cookie for same-site requests (highest security).
+                //                             //     - 'Lax' → Sends the cookie for same-site requests + top-level navigation (default).
+                //                             //     - 'None' → Allows cross-site cookies but requires Secure: true (useful for APIs).
+                //                     // maxAge
+                //                         maxAge: 15 * 60 * 1000, // Session expires after 15 minutes
+                //                 },
+                //         }
+                //     )
+                // );
+                // console.log(`${trace()}🔒✅ Session management is set up.`);
+
+                if (process.env.APP_SERVER_MODE_DEVELOPMENT === "true") {
+                    console.log(`${trace()}🔒✅ Session management set up for Development commenced.`);
+                    app.use(session({
                         // Generate a unique session ID
                             genid: (req) => randomUUID(),
-                        // START ensures a session is created even if no data is set, - anew session ID is issued when a user does not yet have a session cookie.
-                            secret: process.env.SESSION_KEY || 'your-secret-key', // Replace with your secret or fallback value
-                            resave: false, // false:- ensures a session is created even if no data is set, - anew session ID is issued when a user does not yet have a session cookie.
-                            saveUninitialized: true, // true:- ensures a session is created even if no data is set, - anew session ID is issued when a user does not yet have a session cookie.
-                        // END ensures a session is created even if no data is set, - anew session ID is issued when a user does not yet have a session cookie.
-                        cookie: {
-                            // domain
-                                // domain: process.env.DEV_IP_ADDRESS,
-                            // secure
-                                // secure: true,    // Set to true for HTTPS in production, false for development
-                                // secure: false,    // Set to true for HTTPS in production, false for development
-                                secure: process.env.NODE_ENV === "production",
-                            // httpOnly
+
+                            secret: process.env.APP_SESSION_SECRET || "defaultSecret",
+
+                            resave: false,
+
+                        // saveUninitialized if true, a session starts on the first request, even if the user doesn’t interact with it, ensuring the session ID is available early. 
+                        // saveUninitialized if false, a session is only created when something is stored in it, reducing unnecessary session storage usage
+                            saveUninitialized: true,
+   
+                            cookie:
+                            {
+
+                                    secure: false, // Allow HTTP in development
+
                                 // httpOnly: true,   // Helps mitigate XSS - set to false for development, true for production
-                                httpOnly: false,   // Helps mitigate XSS - set to false for development, true for production
-                            // sameSite
-                                sameSite: "Strict", // Helps mitigate CSRF - "Strict" for development; "Lax" for standard; "None" for cross-origin requests with Secure true.
-                                // sameSite: "Lax", // Helps mitigate CSRF - "Strict" for development; "Lax" for standard; "None" for cross-origin requests with Secure true.
-                                // sameSite: "None", // Helps mitigate CSRF - "Strict" for development; "Lax" for standard; "None" for cross-origin requests with Secure true.
-                                    // SameSite Options:
-                                    //     - 'Strict' → Only sends the cookie for same-site requests (highest security).
-                                    //     - 'Lax' → Sends the cookie for same-site requests + top-level navigation (default).
-                                    //     - 'None' → Allows cross-site cookies but requires Secure: true (useful for APIs).
-                            // maxAge
-                                maxAge: 15 * 60 * 1000, // Session expires after 15 minutes
-                        },
-                    })
-                );
-                console.log(`${trace()}🔒✅ Session management is set up.`);
+                                    httpOnly: true,
+
+                                //     - 'strict' → Only sends the cookie for same-site requests (highest security).
+                                //     - 'lax' → Sends the cookie for same-site requests + top-level navigation (default).
+                                //     - 'none' → Allows cross-site cookies but requires Secure: true (useful for APIs).
+                                    // if sameSite is set to none, secure must be set to true
+                                    sameSite: "lax"
+                            }
+                    }));
+                    console.log(`${trace()}🔒✅ Session management set up for Development completed.`);
+                } else if (process.env.APP_SERVER_MODE_PRODUCTION === "true") {
+                    console.log(`${trace()}🔒✅ Session management set up for Production commenced.`);
+                    app.use(session({
+                       // Generate a unique session ID
+                            genid: (req) => randomUUID(),
+
+                           secret: process.env.APP_SESSION_SECRET || "defaultSecret",
+
+                           resave: false,
+
+                        // saveUninitialized if true, a session starts on the first request, even if the user doesn’t interact with it, ensuring the session ID is available early. 
+                        // saveUninitialized if false, a session is only created when something is stored in it, reducing unnecessary session storage usage
+                           saveUninitialized: true,
+
+                           cookie: 
+                            {
+
+                                    secure: true, // Requires HTTPS in production
+
+                                // httpOnly: true,   // Helps mitigate XSS - set to false for development, true for production
+                                    httpOnly: true,
+
+                                    sameSite: "strict", // Prevents cross-site cookie access for security
+
+                                    maxAge: 60 * 60 * 1000 // 1-hour session expiration
+                            }
+                    }));
+                    console.log(`${trace()}🔒✅ Session management set up for Production completed.`);
+                } else {
+                    console.log(`${trace()}🔒🔴 Session management set up failed.  Neither development nor production mode is set.`);
+                    throw new Error("Invalid configuration: Neither development nor production mode is set.");
+                }
 //    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹
 if(consoleLog===true){console.log(("<>").repeat(60));}
 if(consoleLog===true){console.log(trace());}
@@ -236,20 +339,40 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
 // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
 // AUTHENTICATE USER
     console.log(`${trace()}🔒✅ Authentication setup START.`);
-    const safePaths = JSON.parse(fs.readFileSync("safe_paths.json", "utf8")).allowedPaths;
+    // const safePaths = JSON.parse(fs.readFileSync("safe_paths.json", "utf8")).allowedPaths;
+    const safeURLs = JSON.parse(fs.readFileSync("knownURLs.json", "utf8")).safe_URLs;
+    const startupURLs = JSON.parse(fs.readFileSync("knownURLs.json", "utf8")).startup_URLs;
 
     app.use((req, res, next) => {
         console.log(("🔒").repeat(60));
         console.log(`🪣 ${trace()}🔒 ⁉️req.url:-`,req.url);
 
+        // skip startup URLs
+            if (startupURLs.includes(req.url)) {
+                console.warn(`🪣 ${trace()}🔒🟢 Startup URL:- ${req.url}..., by-pass authentication.`);
+                return next();
+            }
+
         // Skip authentication for public routes
-            const publicRoutes = ["/loginRouter/login_step2", "/loginRouter/login_step3", "/loginRouter/login_step4","/globalRouter/getGlobalFooter"];
+            const publicRoutes = ["/loginRouter/login_step2", "/loginRouter/login_step3", "/loginRouter/login_step4"];
             if (publicRoutes.includes(req.path)) {
-                console.log(`🪣 ${trace()}🔒✅ loggoing in...`);
+                console.log(`🪣 ${trace()}🔒✅ Loggoing in..., by-pass authentication.`);
                 return next(); 
             }
 
-        // connect.sid
+        // 
+            if (req.headers.cookie) {
+                console.log(`🪣 ${trace()}🔒✅ Cookies found:`, req.headers.cookie);
+            } else {
+                console.log(`🪣 ${trace()}🔒🔴 No cookies present.`);
+            }
+            if (req.headers.authorization) {
+                console.log(`🪣 ${trace()}🔒✅ Authorization header detected:`, req.headers.authorization);
+            } else {
+                console.log(`🪣 ${trace()}🔒🔴 No Authorization header.`);
+            }
+
+        // verify connect.sid
             const rawCookieSessionId = req.cookies["connect.sid"];
                 if(consoleLog===true){console.log(`🪣 ${trace()}🔒 ⁉️cookie connect.sid:-              `,rawCookieSessionId);}
                 if(consoleLog===true){console.log(`🪣 ${trace()}🔒 ⁉️req.headers.cookie:-`,req.headers.cookie);}
@@ -260,20 +383,20 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
                 if(consoleLog===true){console.log(`🪣 ${trace()}🔒 ⁉️cookieSid:-`,cookieSid);}
                 if(consoleLog===true){console.log(`🪣 ${trace()}🔒 ⁉️headerSid:-`,headerSid);}
             if (cookieSid !== headerSid) {
-                console.warn(`🪣 ${trace()}🔒 ⁉️Session ID mismatch detected for \n🪣 ${cookieSid} v \n🪣 ${headerSid}`);
-                console.warn(`🪣 ${trace()}🔒 ⁉️Session ID mismatch detected for ${req.url}`);
-                if (!safePaths.includes(req.url)) {
+                console.warn(`🪣 ${trace()}🔒⚠️Session ID mismatch detected, cookieSid != headersDis:-\n🪣 ${cookieSid} v \n🪣 ${headerSid}`);
+                console.warn(`🪣 ${trace()}🔒⚠️Session ID mismatch detected for ${req.url}`);
+                if (!safeURLs.includes(req.url)) {
                     const allowedRouters = ["/dbRouter/", "/projectRouter/", "/globalRouter/", "/loginRouter/", "/sessionsRouter/"];
                     if (allowedRouters.some(prefix => req.url.startsWith(prefix))) {
                         // console.log("Request is allowed");
-                        console.warn(`🪣 ${trace()}🔒🟢 Access allowed to router:- ${req.url}`);
+                        console.warn(`🪣 ${trace()}🔒⚠️🟢 Access allowed to router:- ${req.url}`);
                     } else {
                         // console.log("Access denied");
-                        console.warn(`🪣 ${trace()}🔒🔴 Access denied due to session inconsistency:- ${req.url}`);
+                        console.warn(`🪣 ${trace()}🔒⚠️🔴 Access denied due to session inconsistency:- ${req.url}`);
                         return res.status(403).send("Access denied due to session inconsistency.");
                     }
                 }else{
-                    console.warn(`🪣 ${trace()}🔒🟢 Access allowed to safe path:- ${req.url}`);
+                    console.warn(`🪣 ${trace()}🔒⚠️🟢 Access allowed to safe path:- ${req.url}`);
                 }
             }
 
@@ -319,7 +442,7 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
                 app.use("/globalRouter", globalRouter);
                 app.use("/projectRouter", projectRouter);
                 app.use("/sessionsRouter", sessionsRouter);
-                console.log(`${trace()}🔒✅ Routers mounted - must be done after Authentication is setup.`);
+                console.log(`${trace()}🟢 Routers mounted - must be done after Authentication is setup.`);
             }
             catch (error) {
                 console.log(error);
@@ -412,8 +535,8 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
             }
             // Extract session ID from cookie
                 const rawSessionId = req.cookies["connect.sid"]; 
-            console.log(`${trace()} cookie connect.sid:- `,rawSessionId);
-            console.log(`${trace()} req.session:-\n`,req.session);
+            console.log(`🪣 ${trace()}📫 cookie connect.sid:- `,rawSessionId);
+            console.log(`🪣 ${trace()}📫 req.session:-\n`,req.session);
 
         next();
 
@@ -422,6 +545,14 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
 if(consoleLog===true){console.log(("<>").repeat(60));}
 if(consoleLog===true){console.log(trace());}
 if(consoleLog===true){console.log(("<>").repeat(60));}
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+app.get("/session-check", (req, res) => {
+  if (req.session) {
+    res.json({ sessionExists: true, user: req.session });
+  } else {
+    res.json({ sessionExists: false });
+  }
+});
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // Client heartbeat detected, extend session.💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙
         app.post("/heartbeat-session-extension", (req, res) => {    
@@ -500,8 +631,8 @@ setInterval(() => {
 // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
 // 7️⃣ start server
     // Start the server
-        const PORT = process.env.PORT;
-        const DEV_IP_ADDRESS = process.env.DEV_IP_ADDRESS;
+        const PORT = process.env.APP_PORT;
+        const DEV_IP_ADDRESS = process.env.APP_DEV_IP_ADDRESS;
         app.listen(PORT,'0.0.0.0', () => {
             console.log(("🎾").repeat(60));
             // console.log(`${trace()}\nServer is running on port:${PORT}\nAccessible on the server at either http://localhost:${PORT} or http://${DEV_IP_ADDRESS}:${PORT}.\nAccessible on the LAN at http://${DEV_IP_ADDRESS}:${PORT}.`);

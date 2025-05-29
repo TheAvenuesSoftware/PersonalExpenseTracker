@@ -32,17 +32,17 @@ export function globalServerMJSisLoaded(){
         // if(consoleLog===true){console.log(`${trace()}\nfrom:- ${from}\nto:-${to}\nsubject:- ${subject}\nhtml:- ${html.replace(" ","")}\ntext:- ${text}\n`);}
         // data validation START
                 if ([from, to, subject, html, text].some(val => !val)) {
-                    console.error(trace(), `\n🔴 Something went wrong. Missing or undefined values`);
+                    console.error(trace(),`🔴 Something went wrong. Missing or undefined values`);
                     return false;
                 }
-                if (!process.env.GLOBAL_SMTP_HOST || !process.env.GLOBAL_SMTP_USER || !process.env.GLOBAL_SMTP_PASS) {
-                    console.error(trace(), `\n🔴 SMTP credentials are missing`);
+                if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
+                    console.error(trace(),`🔴 SMTP credentials are missing`);
                     return false;
                 }
         // // data validation END
         // Create a transporter object using SMTP transport START
             const transporter = await nodemailer.createTransport({
-                host: process.env.GLOBAL_SMTP_HOST,
+                host: process.env.SMTP_HOST,
                 // secure settings
                 // non-secure settings
                     port: 587,
@@ -51,8 +51,8 @@ export function globalServerMJSisLoaded(){
                         //     port: 465,
                         //     secure: true, // uses SSL
                 auth: {
-                    user: process.env.GLOBAL_SMTP_USER,
-                    pass: process.env.GLOBAL_SMTP_PASS
+                    user: process.env.SMTP_USER,
+                    pass: process.env.SMTP_PASS
                 },
                 tls: {
                     // rejectUnauthorized: false // set to true for better security
@@ -60,7 +60,7 @@ export function globalServerMJSisLoaded(){
                 }
             });
             // 🔴🔴🔴 KEEP PRIVATE 🔴🔴🔴 
-                // console.log(`log(trace()\nGLOBAL_SMTP_HOST:- ${process.env.GLOBAL_SMTP_HOST}\nGLOBAL_SMTP_USER:- ${process.env.GLOBAL_SMTP_USER}\nGLOBAL_SMTP_PASS:- ${process.env.GLOBAL_SMTP_PASS}\n`);}
+                // console.log(`log(trace()\nSMTP_HOST:- ${process.env.SMTP_HOST}\nSMTP_USER:- ${process.env.SMTP_USER}\nSMTP_PASS:- ${process.env.SMTP_PASS}\n`);}
             // 🔴🔴🔴 KEEP PRIVATE 🔴🔴🔴 
         // Create a transporter object using SMTP transport END
         // send mail START
@@ -73,11 +73,11 @@ export function globalServerMJSisLoaded(){
                     text: text
                 }
                 const info = await transporter.sendMail(mailOptions)
-                console.log(`${trace()}\n🟢 Nodemailer info.response:-\n${info.response}`);
-                console.log(`${trace()}\n🟢 Nodemailer success.`);
+                console.log(`${trace()}🟢 Nodemailer info.response:- ${info.response}`);
+                console.log(`${trace()}🟢 Nodemailer success.`);
                 return true;
             } catch (error) {
-                console.error(trace(),'\n🔴 Nodemailer error sending email:- ',error);
+                console.error(trace(),'🔴 Nodemailer error sending email:- ',error);
                 return false;
             }
         // send mail END

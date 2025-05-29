@@ -1,6 +1,0 @@
-{
-    "allowedPaths": [
-        "/.well-known/appspecific/com.chrome.devtools.json",
-        "/heartbeat-session-extension"
-    ]
-}

@@ -46,15 +46,15 @@ loginRouter.post("/isLoginRequired", (req, res) => {
 
 // ROUTER login_step2 - check if database exists
     loginRouter.post("/login_step2", (req, res) => {
-        if(consoleLog===true){console.log(trace(),"\nlogin_step2 req.body:-\n",req.body);}
+        if(consoleLog===true){console.log(trace(),"login_step2 req.body:-\n",req.body);}
         // const filePath = `./data/${userEmailAddress}/${userEmailAddress}.db`;
         const filePath = `./data/${req.body.userEmailAddress}.db`;
-        if(consoleLog===true){console.log(trace(),`\n`,filePath);}
+        if(consoleLog===true){console.log(trace(),filePath);}
         if (fs.existsSync(filePath)) {
-            if(consoleLog===true){console.log(trace(),`\n🟢 File exists - ${filePath}`);}
+            if(consoleLog===true){console.log(trace(),`🟢 File exists - ${filePath}`);}
             res.send({"message":`File named "${req.body.userEmailAddress}.db" found.`,"createNewAccount":false,"issueLoginCode":true});
         } else {
-            if(consoleLog===true){console.log(trace(),`\n🔴 File not found - ${filePath}`);}
+            if(consoleLog===true){console.log(trace(),`🔴 File not found - ${filePath}`);}
             res.send({"message":`File named "${req.body.userEmailAddress}.db" not found.`,"createNewAccount":true,"issueLoginCode":false});
         }
     });
@@ -101,16 +101,25 @@ loginRouter.post("/isLoginRequired", (req, res) => {
                     if(consoleLog===true){console.log(trace(),"Login: session regen - req.session.securityCode.code:-",JSON.stringify(req.session.securityCode.code, null, 2));}
                     const sessionID_postRegen = req.sessionID;
                     if(sessionID_preRegen === sessionID_postRegen){
-                        console.log(`${trace()}🔴 Login: session regen - Session regen failed: ${sessionID_preRegen} === ${sessionID_postRegen}`); // Should be different!
+                        console.log(`${trace()}🔒🔴 Login: session regen - Session regen failed: ${sessionID_preRegen} === ${sessionID_postRegen}`); // Should be different!
                     }else{
-                        console.log(`${trace()}🟢 Login: session regen - Session regen success: ${sessionID_preRegen} != ${sessionID_postRegen}`); // Should be different!
+                        console.log(`${trace()}🔒🟢 Login: session regen - Session regen success: ${sessionID_preRegen} != ${sessionID_postRegen}`); // Should be different!
+                        console.log(`${trace()}🔒🟢 req.session: ${JSON.stringify(req.session,null,2)}`);
+                        req.session.save(err => {
+                            if (err) {
+                                console.error(`${trace()}🔒🔴 Failed to save session:`, err);
+                            } else {
+                                console.log(`${trace()}🔒🟢 Session saved successfully.`);
+                            }
+                        });
+                        console.log(`${trace()}🔒🟢 req.session: ${JSON.stringify(req.session,null,2)}`);
                     }
                 }
             });
             if(sessionRegenOK===true){console.log(trace(),`🟢 Session regen ok!`);}
         // 🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒
         // send code by email
-            const from = process.env.GLOBAL_SMTP_USER;
+            const from = process.env.SMTP_USER;
             const to = req.body.userEmailAddress;
             const subject = `${process.env.APP_NAME} login code`;
             const html = await loginEmailHtml(securityCode);
@@ -134,25 +143,58 @@ loginRouter.post("/isLoginRequired", (req, res) => {
 
 // ROUTER login_step4
     loginRouter.post("/login_step4", async (req, res) => {
-        if(consoleLog===true){console.log(trace(),"\n✅login_step4 req.body:-\n",req.body);}
-        if(consoleLog===true){console.log(trace(),JSON.stringify(req.session, null, 2));}
-        if(consoleLog===true){console.log(trace(),JSON.stringify(req.session.securityCode, null, 2));}
+        if(consoleLog===true){console.log(trace(),"login_step4 req.body:-\n✅",req.body);}
+        if(consoleLog===true){console.log(trace(),"login_step4 req.session\n✅",JSON.stringify(req.session, null, 2));}
         if(typeof req.session.securityCode === "undefined"){
+            if(consoleLog===true){console.log(trace(),"\n🔴",JSON.stringify(req.session.securityCode, null, 2));}
         }else{
-            if(consoleLog===true){console.log(trace(),JSON.stringify(req.session.securityCode.code, null, 2));}
+            if(consoleLog===true){console.log(trace(),"\n✅",JSON.stringify(req.session.securityCode, null, 2));}
         }
         if(consoleLog===true){console.log(trace(),"\nreq.session.securityCode:-",JSON.stringify(req.session.securityCode.code, null, 2));}
         if(req.body.userLoginCode.toLowerCase().trim()===req.session.securityCode.code.toString().toLowerCase().trim()){
-            res.cookie("securityCode", `${req.session.securityCode.code.toString()}`, {
-                // domain: process.env.DEV_IP_ADDRESS , // example:- '192.168.1.103', // ensures cookie is valid across the nwteork
-                // path: '/',
-                httpOnly: true,  // Prevents client-side JavaScript from accessing it
-                // secure: true,    // Only transmits over HTTPS
-                secure: false,
-                sameSite: "Strict", // Blocks cross-site requests
-                // sameSite: "None", 
-                maxAge: 15 * 60 * 1000 // Expires after 15 minutes
-            });
+req.session.user = {
+    id: req.body.userEmailAddress,
+    email: req.body.userEmailAddress,
+    authenticated: true
+};
+req.session.save(err => {
+    if (err) {
+        console.error(`${trace()}🔒🔴 Failed to save session:`, err);
+    } else {
+        console.log(`${trace()}🔒🟢 Session saved successfully.${JSON.stringify(req.session,null,2)}`);
+    }
+});
+
+
+// res.cookie("securityCode", `${req.session.securityCode.code.toString()}`, {
+//     // domain: process.env.DEV_IP_ADDRESS , // example:- '192.168.1.103', // ensures cookie is valid across the nwteork
+//     // path: '/',
+//     httpOnly: true,  // Prevents client-side JavaScript from accessing it
+//     // secure: true,    // Only transmits over HTTPS
+//     secure: false,
+//     sameSite: "Strict", // Blocks cross-site requests
+//     // sameSite: "None", 
+//     maxAge: 15 * 60 * 1000 // Expires after 15 minutes
+// });
+// if (process.env.APP_SERVER_MODE_DEVELOPMENT === "true") {
+//   res.cookie("sessionID", sessionID, {
+// //   res.cookie("sessionID", sessionID, {
+//     httpOnly: true,  // Protects against XSS attacks
+//     secure: false,   // Allow HTTP in development
+//     sameSite: "lax"  // Allows some cross-site interaction for dev testing
+//   });
+//     console.log(`${trace()}🔒✅ Development mode sessionID sent to client.`);
+// } else if (process.env.APP_SERVER_MODE_PRODUCTION === "true") {
+//   res.cookie("sessionID", sessionID, {
+//     httpOnly: true,  // Essential for security
+//     secure: true,    // Requires HTTPS in production
+//     sameSite: "strict", // Prevents CSRF risks by restricting cross-site access
+//     maxAge: 60 * 60 * 1000 // 1-hour expiration for session security
+//   });
+//     console.log(`${trace()}🔒✅ Production mode sessionID sent to client.`);
+// } else {
+//   throw new Error("Invalid configuration: Neither development nor production mode is set.");
+// }
             res.send({message:`Login approved for ${req.body.userEmailAddress}.`,loginApproved:true});
             console.log(`${trace()}🔒🟢 login success`);
             // Extract session ID from cookie

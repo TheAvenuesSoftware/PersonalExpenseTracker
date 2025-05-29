@@ -1,4 +1,4 @@
-const consoleLog = false;
+const consoleLog = true;
 
 if(consoleLog===true){console.log("LOADED:- globalLoginClient.mjs is loaded",new Date().toLocaleString());}
 export function globalLoginClientJSisLoaded(){
@@ -131,8 +131,8 @@ async function login_step4(userEmailAddress,createNewAccount,userLoginCode){
     try{
         const fetchUrl = "/loginRouter/login_step4";
         const fetchOptions = {
-                method: 'POST',                // Specifies a POST request
-                mode: 'cors',                  // Ensures cross-origin requests are handled
+                method: 'POST',
+                mode: 'cors',
                 cache: 'no-cache',             // Prevents caching issues
                 credentials: clientConfigSettings.CLIENT_SESSION_CREDENTIALS,
                 headers: {
@@ -146,7 +146,7 @@ async function login_step4(userEmailAddress,createNewAccount,userLoginCode){
                     userLoginCode:userLoginCode
                 })
             }
-        if(consoleLog===true){console.log(JSON.stringify(fetchOptions));}
+        if(consoleLog===true){console.log(JSON.stringify(fetchOptions,null,2));}
         // const data = await universalFetchII(fetchUrl,fetchOptions);
         const response = await fetch(fetchUrl,fetchOptions);
         if (!response.ok) {
