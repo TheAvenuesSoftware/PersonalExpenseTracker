@@ -1,4 +1,4 @@
-const consoleLog = false;
+const consoleLog = true;
 
 if(consoleLog===true){console.log("LOADED:- globalClient.mjs is loaded",new Date().toLocaleString());}
 export function globalClientJSisLoaded(){
@@ -7,8 +7,50 @@ export function globalClientJSisLoaded(){
 
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 //  ONLY IMPORT CLIENT SIDE MODULES TO HERE
-    import {clientConfigSettings} from "./projectClientConfig.mjs";
+    import {clientConfigSettings} from "./projectConfig_Client.mjs";
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
+
+// fetch responseHandler
+    export function fetchResponseHandler(res) {
+        if(consoleLog===true){console.log("fetchResponseHandler() res:- ",res);}
+        const status = res.headers.get('Status');
+        if(consoleLog===true){console.log("fetchResponseHandler() status:- ",res.status);}
+        const contentType = res.headers.get('Content-Type');
+        if(consoleLog===true){console.log("fetchResponseHandler() content-type:- ",contentType);}
+        if (res.ok) {
+            // Handle response dynamically based on content type
+            if (contentType.includes('application/json')) {
+                if(consoleLog===true){console.log("fetchResponseHandler() content-type:- ",contentType);}
+                return res.json(); // Parse JSON
+            } else if (contentType.includes('text/plain')) {
+                if(consoleLog===true){console.log("fetchResponseHandler() content-type:- ",contentType);}
+                return res.text(); // Parse plain text
+            } else if (contentType.includes('text/html')) {
+                if(consoleLog===true){console.log("fetchResponseHandler() content-type:- ",contentType);}
+                return res.text(); // Parse plain text
+            } else if (contentType.includes('application/octet-stream')) {
+                if(consoleLog===true){console.log("fetchResponseHandler() content-type:- ",contentType);}
+                return res.blob(); // Handle binary data
+            } else {
+                if(consoleLog===true){console.log("fetchResponseHandler() content-type:- ",contentType);}
+                throw new Error('Unexpected Content-Type');
+            }
+        } else {
+                if(consoleLog===true){console.log("fetchResponseHandler() content-type:- ",contentType);}
+            // Handle error response
+            resStatusHandler(res);
+            throw new Error(`HTTP Error ${res.status}: ${res.statusText}`);
+        }
+    }
+// res status handler
+    export function resStatusHandler(res) {
+        alert("🔴 Error: " + res.status + " - " + res.statusText);
+        if (!res.ok) {
+            // throw new Error(`HTTP Error ${res.status}: ${res.statusText}`);
+            alert(res.status);
+        }
+        // return res; // Process response normally
+    }
 
 // universal fetch I
     export async function universalFetch(url, method = 'GET', data = null) {
@@ -318,6 +360,7 @@ export function detectOS() {
 // getGlobalFooter()
 export async function getGlobalFooter() {
     if(consoleLog===true){console.log('getGlobalFooter()...');}
+    if(consoleLog===true){console.log('clientConfigSettings.CLIENT_SESSION_CREDENTIALS:-',clientConfigSettings.CLIENT_SESSION_CREDENTIALS);}
     const fetchUrl = `/globalRouter/getGlobalFooter`;
     const fetchOptions = {
             method: 'POST',                // Specifies a POST request
@@ -327,22 +370,27 @@ export async function getGlobalFooter() {
             headers: {
                 'Content-Type': 'application/json',  // Sets content type
                 // 'Authorization': `Bearer ${yourAccessToken}`, // Uses token-based auth (if applicable)
-                // 'Accept': 'application/json',        // Sets content type for res. If not json, server may return error. Use response.json() to parse the response.
-            },
-            body: JSON.stringify({          // Converts object to JSON for request
-                a:"a",
-            })
+                'Accept': 'text/html',        // Sets content type for res. If not json, server may return error. Use response.json() to parse the response.
+            }
+            // ,
+            // body: JSON.stringify({          
+            //     a:"a"
+            // }) // Converts object to JSON for request
         }
-    if(consoleLog===true){console.log(fetchUrl.fetchOptions);}
+    if(consoleLog===true){console.log(fetchUrl,fetchOptions);}
     try {
         // fetch
-            const response = await fetch(fetchUrl);
-            if (!response.ok) throw new Error(`Server Error: ${response.statusText}`);
-            const html = await response.text(); // Fetch HTML as text
+            const response = await fetch(fetchUrl,fetchOptions);
+            const html = await fetchResponseHandler(response); // Use the fetchResponseHandler to process the response
+            if(consoleLog===true){console.log("getGlobalFooter() responseParsed:- ",html);}
+            // if (!response.ok) throw new Error(`Server Error: ${response.statusText}`);
+            // const html = await response.text(); // Fetch HTML as text
             // if(consoleLog===true){console.log(html);} // Logs correctly? Great!
         // Inject into the page
             document.getElementById("global-footer").innerHTML = html;
     } catch (error) {
-        console.error("Error fetching HTML from:",fetchUrl, error.message);
+        console.error("Error fetching from:",fetchUrl, error.message);
+        console.error("Error fetching from:",fetchUrl, error.message);
+        resStatusHandler(response);
     }
 }

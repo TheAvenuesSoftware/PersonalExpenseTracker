@@ -50,25 +50,42 @@ const consoleLog = false;
         import { randomUUID } from 'crypto'; // randomUUID is a named export from crypto
     // SESSIONS
         import session from 'express-session';
-    // CORS handling START
+        // CORS handling START
         import cors from 'cors';
-    // SQLite
+        // SQLite
         import sqlite3 from "sqlite3";
         import { open } from "sqlite";
-    // ROUTERS
+        // ROUTERS
         // import dbRouter, * as dbFunctions from "./src/SQLite_ServerSide.mjs";
         // import loginRouter, * as loginFunctions from './src/globalLoginServer.mjs';
-        // import globalRouter, * as globalFunctions from './src/globalRouter.mjs'; 
-        // import projectRouter, * as projectFunctions from './src/projectRouter.mjs';
+        // import globalRouter, * as globalFunctions from './src/globalServer.mjs'; 
+        // import projectRouter, * as projectFunctions from './src/projectServer.mjs';
         // import sessionsRouter, * as sessionsFunctions from './src/globalSessionsServer.mjs';
         import dbRouter from "./src/SQLite_ServerSide.mjs";
         import loginRouter from './src/globalLoginServer.mjs';
-        import globalRouter from './src/globalRouter.mjs'; 
-        import projectRouter from './src/projectRouter.mjs';
+        import globalRouter from './src/globalServer.mjs'; 
+        import projectRouter from './src/projectServer.mjs';
         import sessionsRouter from './src/globalSessionsServer.mjs';
-    // SQLite CRUD
+        // SQLite CRUD
         import { insertRecord, getRecord, updateRecord, deleteRecord } from "./src/SQLite_ServerSide.mjs";
         import { trace } from "./src/globalServer.mjs";
+        
+        // RATE LIMITER
+            import { rateLimit } from 'express-rate-limit';         
+        // SANITIZE INPUTS
+            import sanitizeHtml from "sanitize-html";
+            const userInput = "<script>alert('Hacked!');</script><p>Hello</p>";
+            const cleanInput = sanitizeHtml(userInput);
+            console.log(`${trace()} 🟢 sanitizeHtml() functionality is in place:- ${cleanInput}`); // Output: "<p>Hello</p>";
+            // examples
+                // 1
+                    // const cleanInput = sanitizeHtml(userInput, {
+                    //     allowedTags: ["p", "strong", "a"],
+                    //     allowedAttributes: {
+                    //         "a": ["href"]
+                    //     }
+                    // });
+                    // console.log(cleanInput); // Only keeps `<p>`, `<strong>`, and `<a>`
 
     // function checkImports(){
         try{
@@ -89,7 +106,7 @@ const consoleLog = false;
             if(consoleLog===true){console.log("Imported dbRouter:", dbRouter ? "✅ " : "❌ Failed");}
             if(consoleLog===true){console.log("Imported loginRouter:", loginRouter ? "✅ " : "❌ Failed");}
             if(consoleLog===true){console.log("Imported globalRouter:", globalRouter ? "✅ " : "❌ Failed");}
-            if(consoleLog===true){console.log("Imported projectRouter:", globalRouter ? "✅ " : "❌ Failed");}
+            if(consoleLog===true){console.log("Imported projectRouter:", projectRouter ? "✅ " : "❌ Failed");}
             if(consoleLog===true){console.log("Imported sessionsRouter:", sessionsRouter ? "✅ " : "❌ Failed");}
             if(consoleLog===true){console.log("Imported {insertRecord} from SQLite_ServerSide.mjs:", insertRecord ? "✅ " : "❌ Failed");}
             if(consoleLog===true){console.log("Imported {getRecord} from SQLite_ServerSide.mjs:", getRecord ? "✅ " : "❌ Failed");}
@@ -173,6 +190,23 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
     catch{
         console.log(`🔴 map to folder failed:- ${folder}`);
     }
+//    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹
+    // RATE LIMITER
+        const rateLimitNumber = 5
+        const rateLimitDuration = 15; // minutes
+        const limiter = rateLimit({
+            windowMs: rateLimitDuration * 60 * 1000,
+            limit: rateLimitNumber,
+            handler: (req, res) => {
+                res.send('<h1>stop!</>');
+                // res.status(429).json({
+                //     error: "Rate limit exceeded",
+                //     retryAfter: "15 minutes"
+                // });
+            }
+        });
+        console.log(`${trace()}🟢 Rate limiter set to a limit of ${rateLimitNumber} requests every ${rateLimitDuration} minutes.`);
+        // app.use(limiter);
 //    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹
     // CORS handling
         // app.use(
@@ -503,6 +537,12 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
 
         console.log("\n");
         console.log(("🪣").repeat(60));
+
+        // sanitize any HTML in the request body
+            if (req.body && req.body.content) {
+                req.body.content = sanitizeHtml(req.body.content);
+            }
+            // next(); // Proceed to the next middleware or route handler
 
         // REQuest summary
             const myDate = new Date();

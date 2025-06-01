@@ -14,7 +14,7 @@ export function globalLoginServerMJSisLoaded(){
     // import {accessDb} from './SQLite_ServerSide.mjs'
     import {randomInt, randomBytes} from "crypto";
     import {sendMail} from './globalServer.mjs'
-    import {loginEmailHtml} from './projectServerConfig.mjs'
+    import {loginEmailHtml} from './projectConfig_Server.mjs'
     import dotenv from "dotenv";
         dotenv.config({path:`./config/globalServer.env`});
         dotenv.config({path:`./config/projectServer.env`});
@@ -121,7 +121,7 @@ loginRouter.post("/isLoginRequired", (req, res) => {
         // send code by email
             const from = process.env.SMTP_USER;
             const to = req.body.userEmailAddress;
-            const subject = `${process.env.APP_NAME} login code`;
+            const subject = `${process.env.APP_NAME} Login Code`;
             const html = await loginEmailHtml(securityCode);
             const text = `Please enter the code below to log in to ${process.env.APP_NAME}\n\n${securityCode}`;
             // const loginCode = securityCode;
@@ -177,6 +177,7 @@ loginRouter.post("/isLoginRequired", (req, res) => {
             //     if (err) console.error("🪣 Session failed to save:", err);
             // });
             console.log(trace(),"req.session:-\n",JSON.stringify(req.session,null,2));
+            postLoginActions(req, res); // Call the post-login actions function
         }else{
             res.send({message:`Login not approved for ${req.body.userEmailAddress}.`,loginApproved:false});
             console.log(`${trace()}🔒🔴 login fail`);

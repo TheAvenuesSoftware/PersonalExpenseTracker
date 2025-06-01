@@ -1,6 +1,6 @@
 const consoleLog = false
 
-if(consoleLog===true){console.log("LOADED:- projectClientConfig.mjs is loaded");}
+if(consoleLog===true){console.log("LOADED:- projectConfig_Client.mjs is loaded");}
 export function projectClientConfigJSisLoaded(){
     return true;
 }

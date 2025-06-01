@@ -15,10 +15,10 @@ export function SQLite_ServerSideMJSisLoaded(){
     import { isValidJSONString } from "./globalClient.mjs";
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 
-            // 1. Initialize SQLite database based on a user's unique identifier
-                export async function initDB(userId) {
+            // 1. Initialize SQLite database based on a user's unique identifier: email address for example.
+                export async function initDB(dbFileName) {
                     return open({
-                        filename: `./db/${userId}.db`, // Stores user databases in a dedicated folder
+                        filename: `./db/${dbFileName}.db`, // Stores user databases in a dedicated folder
                         driver: sqlite3.Database,
                     });
                 }
@@ -32,11 +32,11 @@ export function SQLite_ServerSideMJSisLoaded(){
 
             // 2. Instead of creating a new connection each time a user interacts with the app, maintain a connection pool in memory.
                 const dbInstances = new Map(); // Keeps track of initialized databases
-                export async function getDB(userId) {
-                    if (!dbInstances.has(userId)) {
-                        dbInstances.set(userId, await initDB(userId));
+                export async function getDB(dbFileName) {
+                    if (!dbInstances.has(dbFileName)) {
+                        dbInstances.set(dbFileName, await initDB(dbFileName));
                     }
-                    return dbInstances.get(userId);
+                    return dbInstances.get(dbFileName);
                 }
                 // // Example usage
                 //     const dbAlice = await getDB("alice123");
@@ -44,9 +44,9 @@ export function SQLite_ServerSideMJSisLoaded(){
                 // ✅ Prevents redundant reinitialization
                 // ✅ Speeds up access to databases already opened
             // Ensure your schema is properly structured with indexing for performance:
-                export async function setupSchema(userId) {
-                    if(consoleLog===true){console.log(trace(),'Setup schema for ',userId);}
-                    const db = await getDB(userId);
+                export async function setupSchema(dbFileName) {
+                    if(consoleLog===true){console.log(trace(),'Setup schema for ',dbFileName);}
+                    const db = await getDB(dbFileName);
                     try{
                         await db.exec(`
                             CREATE TABLE IF NOT EXISTS users (
@@ -58,9 +58,9 @@ export function SQLite_ServerSideMJSisLoaded(){
                             );
                             CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
                         `);
-                        if(consoleLog===true){console.log(trace(),'Setup schema successful for ',userId);}
+                        if(consoleLog===true){console.log(trace(),'Setup schema successful for ',dbFileName);}
                     } catch (error){
-                        if(consoleLog===true){console.log(trace(),userId,error);}
+                        if(consoleLog===true){console.log(trace(),dbFileName,error);}
                     }
                 }
                 // ✅ Indexes speed up queries
@@ -90,8 +90,8 @@ export function SQLite_ServerSideMJSisLoaded(){
                                 }
                             }
                         // CRUD - insert
-                            async function insertUser(userId, name, email) {
-                                const db = await getDB(userId);
+                            async function insertUser(dbFileName, name, email) {
+                                const db = await getDB(dbFileName);
                                 try {
                                     await db.run('INSERT INTO users (name, email) VALUES (?, ?)', name, email);
                                     if(consoleLog===true){console.log(`${trace()} User added!`);}
@@ -103,14 +103,14 @@ export function SQLite_ServerSideMJSisLoaded(){
                                         //     console.error('Insert error:', err);
                                         // }
                                     // centralised error handling
-                                        handleDBError(err, 'insert', userId);
+                                        handleDBError(err, 'insert', dbFileName);
                                 }
                             }
                             insertUser("alice123","Donald","donald.garton@outlook.com");
                             insertUser("bob456","Donald","donald.garton@outlook.com");
                 // Optimize for Performance
-                    export async function optPer(userId){
-                        const db = await getDB(userId);
+                    export async function optPer(dbFileName){
+                        const db = await getDB(dbFileName);
                         try{
                             // For production, optimize SQLite:
                             // 1.1 - Enable WAL Mode (Write-Ahead Logging)
@@ -131,8 +131,8 @@ export function SQLite_ServerSideMJSisLoaded(){
                                     // - ✅ Allows slightly faster writes while maintaining safety in case of power failure.
                                     // 🚀 Default (FULL) is safest but may slow down high-frequency writes.
                                 // - Preload Frequently Used Data for Faster Access:
-                                    async function preloadData(userId) {
-                                    const db = await getDB(userId);
+                                    async function preloadData(dbFileName) {
+                                    const db = await getDB(dbFileName);
                                         await db.all('SELECT * FROM users WHERE active = 1'); // Commonly accessed data
                                     }
                                     preloadData("alice123");
@@ -146,8 +146,8 @@ export function SQLite_ServerSideMJSisLoaded(){
 
 // Here’s a complete set of generic CRUD functions:
     // 1. Create (Insert)
-        export async function insertRecord(userId, table, columns, values) {
-            const db = await getDB(userId);
+        export async function insertRecord(dbFileName, table, columns, values) {
+            const db = await getDB(dbFileName);
             try {
                 const placeholders = columns.map(() => '?').join(', ');
                 const query = `INSERT INTO ${table} (${columns.join(', ')}) VALUES (${placeholders})`;
@@ -157,8 +157,8 @@ export function SQLite_ServerSideMJSisLoaded(){
             }
         }
     // 2. Read (Select)
-        export async function getRecord(userId, table, condition = '', values = []) {
-            const db = await getDB(userId);
+        export async function getRecord(dbFileName, table, condition = '', values = []) {
+            const db = await getDB(dbFileName);
             try {
                 const query = condition ? `SELECT * FROM ${table} WHERE ${condition}` : `SELECT * FROM ${table}`;
                 return await db.all(query, values);
@@ -168,8 +168,8 @@ export function SQLite_ServerSideMJSisLoaded(){
             }
         }
     // 3. Update (Modify)
-        export async function updateRecord(userId, table, updates, condition, values) {
-            const db = await getDB(userId);
+        export async function updateRecord(dbFileName, table, updates, condition, values) {
+            const db = await getDB(dbFileName);
             try {
                 const setClause = Object.keys(updates).map(key => `${key} = ?`).join(', ');
                 const query = `UPDATE ${table} SET ${setClause} WHERE ${condition}`;
@@ -179,8 +179,8 @@ export function SQLite_ServerSideMJSisLoaded(){
             }
         }
     // 4. Delete (Remove)
-        export async function deleteRecord(userId, table, condition, values) {
-            const db = await getDB(userId);
+        export async function deleteRecord(dbFileName, table, condition, values) {
+            const db = await getDB(dbFileName);
             try {
                 const query = `DELETE FROM ${table} WHERE ${condition}`;
                 await db.run(query, values);

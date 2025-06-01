@@ -24,6 +24,11 @@ export function projectRoutesMJSisLoaded(){
     import {trace} from "./globalServer.mjs";
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 
+export function postLoginActions(req,res){
+    const dbPromise_Alice = initDB(req.body.userEmailAddress); // each user gets their own DB
+
+}
+
 projectRouter.post('/validate_date', (req,res) => {
     if(consoleLog===true){console.log(trace());}
     if(consoleLog===true){console.log('req.body:- ',req.body);}

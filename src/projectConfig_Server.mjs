@@ -36,6 +36,8 @@ if(consoleLog===true){console.log('Project server configuration variables, from 
 
 // loginEmailHtml
     export function loginEmailHtml(loginCode){
+        const myDate = new Date();
+        const myYear = myDate.getFullYear();
         const loginEmailHtml =  `
                             <!DOCTYPE html>
                             <html>
@@ -56,7 +58,7 @@ if(consoleLog===true){console.log('Project server configuration variables, from 
                                         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
                                     }
                                     .header {
-                                        background: linear-gradient(135deg, #4A90E2, #1440AF);
+                                        background-color:rgb(76, 102, 175);
                                         color: #ffffff;
                                         padding: 10px 0;
                                         text-align: center;
@@ -86,18 +88,18 @@ if(consoleLog===true){console.log('Project server configuration variables, from 
                             <body>
                                 <div class="container">
                                     <div class="header">
-                                        <p>Personal Expense Tracker Access Code</p>
+                                        <p>${serverConfigSettings.SERVER_APP_NAME} Access Code</p>
                                     </div>
                                     <div class="content">
                                         <p>Dear User,</p>
                                         <p><strong>${loginCode}</strong> is your access code.</p>
-                                        <p>Use this code to access your Personal Expense Tracker account.</p>
+                                        <p>Use this code to access your ${serverConfigSettings.SERVER_APP_NAME} account.</p>
                                         <p style="color:red"><b>DELETE THIS EMAIL WHEN DONE. A code will be issued each time you log in.</b></p>
                                         <p>This method of sign-in is secure so long as your email account is secure, a password is not necessary.</p>
-                                        <p>If you believe your email account is insecure or if you believe your emails are being intercepted, DO NOT use your Personal Expense Tracker account untill your email account is secure.</p>
+                                        <p>If you believe your email account is insecure or if you believe your emails are being intercepted, DO NOT use your ${serverConfigSettings.SERVER_APP_NAME} account untill your email account is secure.</p>
                                     </div>
                                     <div class="footer">
-                                        <p>&copy; 2025 The Avenues Software. All rights reserved.</p>
+                                        <p>&copy; ${myYear} The Avenues Software. All rights reserved.</p>
                                     </div>
                                 </div>
                             </body>

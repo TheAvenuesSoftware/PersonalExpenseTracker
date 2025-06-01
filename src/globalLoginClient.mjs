@@ -10,7 +10,8 @@ export function globalLoginClientJSisLoaded(){
 //     // import * as globalClientMJS from './globalClient.mjs';
     import {universalFetchII} from './globalClient.mjs';
     import {sessionLogout} from './globalSessionsClient.mjs';
-    import {clientConfigSettings} from "./projectClientConfig.mjs";
+    import {clientConfigSettings} from "./projectConfig_Client.mjs";
+    import {postLoginActions} from "./projectClient.mjs";
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 
         // document.addEventListener("DOMContentLoaded", () => {
@@ -169,13 +170,14 @@ async function login_step4(userEmailAddress,createNewAccount,userLoginCode){
             document.getElementById("sign-in-out-button").innerHTML = "Sign Out";
             document.getElementById("sign-in-out-button").classList.add("sign-out-button");
             document.getElementById("sign-in-out-button").classList.remove("sign-in-button");
+            postLoginActions();
         }else{
             document.querySelectorAll('.overlay').forEach(el => {
                 el.style.transition = "opacity 0.5s";
                 el.style.opacity = "0";
                 setTimeout(() => el.remove(), 500);
             });
-            alert("login failed, please try again");
+            alert("🔴 Secure login failed, please try again");
             document.getElementById("sign-in-out-button").innerHTML = "Sign In";
             document.getElementById("sign-in-out-button").classList.add("sign-in-button");
             document.getElementById("sign-in-out-button").classList.remove("sign-out-button");

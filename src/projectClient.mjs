@@ -11,7 +11,7 @@ export function projectMJSisLoaded(){
     import {getGlobalFooter} from "./globalClient.mjs";
     import {doAfterDOMandWindowLoad_globalLoginClient} from "./globalLoginClient.mjs";
     import {sessionLogout} from "./globalSessionsClient.mjs";
-    import {clientConfigSettings} from "./projectClientConfig.mjs";
+    import {clientConfigSettings} from "./projectConfig_Client.mjs";
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -222,3 +222,14 @@ export function projectMJSisLoaded(){
                 getGlobalFooter();
         }
 
+    // postLoginActions
+        export function postLoginActions(){
+            if(consoleLog===true){console.log('postLoginActions() launched.',Date.now().toLocaleString());}
+            // place "project specific" actions to take post secure login here
+        }
+
+    // postLogoutActions
+        export function postLogoutActions(){
+            if(consoleLog===true){console.log('postLogoutActions() launched.',Date.now().toLocaleString());}
+            // place "project specific" actions to take post secure logout here
+        }

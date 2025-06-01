@@ -20,7 +20,9 @@ export function globalServerMJSisLoaded(){
 
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 //  SERVER SIDE IMPORTS ONLY
-    import nodemailer from 'nodemailer'; // MUST BE DONE IN Node.mjs environment
+    import { Router } from "express";
+    const globalRouter = Router();
+    import nodemailer from 'nodemailer';
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 
 
@@ -116,4 +118,24 @@ export function globalServerMJSisLoaded(){
         // convert image data to image file END
         }
 
-// 
+globalRouter.post("/getGlobalFooter", (req, res) => {
+    // if(consoleLog===true){console.log("globalRouter.get('/getGlobalFooter...");}
+    const moment = new Date();
+    const myHtml = `
+        <div class=global-footer-content>
+            <p>&copy; ${moment.getFullYear()} The Avenues Software. All rights reserved.</p>
+            <nav>
+                <ul>
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/privacy">Privacy Policy</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    `
+    res.send(myHtml);
+    // const myHtml = `<div>...footer</div>`;
+    // res.send(myHtml);
+});
+
+export default globalRouter;
